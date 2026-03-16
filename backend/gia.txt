@@ -1,0 +1,396 @@
+Perfecto 👍 vamos a empezar **correctamente el Backend de tu plataforma**, paso a paso, para que te quede **profesional y listo para mostrar en tu proyecto de grado**.
+
+La idea es construir una **API REST con Node.js + Express + MongoDB** que permita manejar:
+
+* Usuarios
+* Login
+* Roles
+* Proyectos de grado
+* Subida de documentos
+* Seguimiento de proyectos
+
+---
+
+# 2️⃣ Instalar dependencias del proyecto
+
+Instalar librerías necesarias:
+
+```bash
+npm install express mongoose cors dotenv bcryptjs jsonwebtoken multer
+```
+
+Explicación:
+
+| Librería     | Uso                        |
+| ------------ | -------------------------- |
+| express      | Crear servidor             |
+| mongoose     | Conectar MongoDB           |
+| cors         | Permitir conexión frontend |
+| dotenv       | Variables de entorno       |
+| bcryptjs     | Encriptar contraseñas      |
+| jsonwebtoken | Autenticación JWT          |
+| multer       | Subir archivos             |
+
+Instalar nodemon (para desarrollo):
+
+```bash
+npm install nodemon --save-dev
+```
+
+---
+
+# 3️⃣ Crear estructura del proyecto
+
+Dentro de **backend** crear esta estructura:
+
+```
+backend
+│
+├── controllers
+│   ├── authController.js
+│   └── projectController.js
+│
+├── models
+│   ├── User.js
+│   └── Project.js
+│
+├── routes
+│   ├── authRoutes.js
+│   └── projectRoutes.js
+│
+├── middleware
+│   └── authMiddleware.js
+│
+├── config
+│   └── db.js
+│
+├── uploads
+│
+├── .env
+├── server.js
+└── package.json
+```
+
+---
+
+# 4️⃣ Crear servidor principal
+
+Crear archivo:
+
+```
+server.js
+```
+
+Código:
+
+```javascript
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+
+const connectDB = require("./config/db");
+
+const authRoutes = require("./routes/authRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+
+const app = express();
+
+connectDB();
+
+app.use(cors());
+app.use(express.json());
+
+app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`);
+});
+```
+
+---
+
+# 5️⃣ Conectar MongoDB
+
+Archivo:
+
+```
+config/db.js
+```
+
+Código:
+
+```javascript
+const mongoose = require("mongoose");
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+
+    console.log("MongoDB conectado");
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+};
+
+module.exports = connectDB;
+```
+
+---
+
+# 6️⃣ Crear modelo de usuario
+
+Archivo:
+
+```
+models/User.js
+```
+
+```javascript
+const mongoose = require("mongoose");
+
+const UserSchema = new mongoose.Schema({
+  nombre: {
+    type: String,
+    required: true
+  },
+
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+
+  password: {
+    type: String,
+    required: true
+  },
+
+  rol: {
+    type: String,
+    enum: ["estudiante", "asesor", "jurado", "coordinador"],
+    default: "estudiante"
+  },
+
+  fechaRegistro: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model("User", UserSchema);
+```
+
+---
+
+# 7️⃣ Crear modelo de proyectos
+
+Archivo:
+
+```
+models/Project.js
+```
+
+```javascript
+const mongoose = require("mongoose");
+
+const ProjectSchema = new mongoose.Schema({
+
+  titulo: String,
+
+  problema: String,
+
+  justificacion: String,
+
+  objetivos: String,
+
+  estudiante: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
+
+  estado: {
+    type: String,
+    enum: ["propuesta", "aprobado", "en_revision", "finalizado"],
+    default: "propuesta"
+  },
+
+  fechaCreacion: {
+    type: Date,
+    default: Date.now
+  }
+
+});
+
+module.exports = mongoose.model("Project", ProjectSchema);
+```
+
+---
+
+# 8️⃣ Crear rutas de autenticación
+
+Archivo:
+
+```
+routes/authRoutes.js
+```
+
+```javascript
+const express = require("express");
+const router = express.Router();
+
+const { registerUser, loginUser } = require("../controllers/authController");
+
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+
+module.exports = router;
+```
+
+---
+
+# 9️⃣ Crear controlador de autenticación
+
+Archivo:
+
+```
+controllers/authController.js
+```
+
+```javascript
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
+exports.registerUser = async (req, res) => {
+
+  const { nombre, email, password } = req.body;
+
+  try {
+
+    const userExist = await User.findOne({ email });
+
+    if (userExist) {
+      return res.status(400).json({ message: "Usuario ya existe" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      nombre,
+      email,
+      password: hashedPassword
+    });
+
+    await user.save();
+
+    res.json({ message: "Usuario registrado" });
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+exports.loginUser = async (req, res) => {
+
+  const { email, password } = req.body;
+
+  try {
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "Usuario no encontrado" });
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password);
+
+    if (!validPassword) {
+      return res.status(400).json({ message: "Contraseña incorrecta" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, rol: user.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({ token });
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+```
+
+---
+
+# 🔐 10 Crear archivo `.env`
+
+```
+.env
+```
+
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/iser_proyectos
+JWT_SECRET=secret123
+```
+
+---
+
+# 11️⃣ Ejecutar servidor
+
+En la terminal:
+
+```bash
+npx nodemon server.js
+```
+
+Deberías ver:
+
+```
+MongoDB conectado
+Servidor corriendo en puerto 5000
+```
+
+---
+
+# 12️⃣ Probar API
+
+Usa **Postman** o **Thunder Client**
+
+### Registrar usuario
+
+POST
+
+```
+http://localhost:5000/api/auth/register
+```
+
+Body JSON
+
+```json
+{
+"nombre":"Cristhian",
+"email":"cristhian@iser.edu",
+"password":"123456"
+}
+```
+
+---
+
+### Login
+
+POST
+
+```
+http://localhost:5000/api/auth/login
+```
+
+---
+
+
