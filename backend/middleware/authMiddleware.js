@@ -2,45 +2,38 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
 
-  const token = req.headers["authorization"];
+  const authHeader = req.headers["authorization"];
+
+  if (!authHeader) {
+    return res.status(401).json({
+      message: "Acceso denegado. Token requerido"
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(403).json({ message: "Token requerido" });
+    return res.status(401).json({
+      message: "Token inválido"
+    });
   }
 
   try {
 
-    const decoded = jwt.verify(
-      token.replace("Bearer ", ""),
-      process.env.JWT_SECRET
-    );
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded;
+    req.user = verified;
 
     next();
 
   } catch (error) {
 
-    res.status(401).json({ message: "Token inválido" });
+    return res.status(403).json({
+      message: "Token inválido o expirado"
+    });
 
   }
 
 };
 
-const checkRole = (...roles) => {
-
-  return (req, res, next) => {
-
-    if (!roles.includes(req.user.rol)) {
-      return res.status(403).json({
-        message: "No tienes permiso"
-      });
-    }
-
-    next();
-
-  };
-
-};
-
-module.exports = { verifyToken, checkRole };
+module.exports = verifyToken;

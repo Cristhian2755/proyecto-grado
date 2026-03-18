@@ -1,0 +1,34 @@
+﻿Resumen de cambios y configuración del proyecto (PostgreSQL / Azure)
+
+1) Conexión a PostgreSQL (Azure)
+   - La conexión se realiza desde el backend (carpeta ackend) usando el archivo ackend/config/db.js.
+   - La cadena de conexión se guarda en .env en la variable DATABASE_URL (o PG_CONNECTION_STRING).
+   - Se utiliza el paquete pg y un pool de conexiones.
+
+2) Estructura de tablas y migraciones
+   - El esquema básico se define en database/migrations/init.sql.
+   - Tablas principales:
+     - usuarios (modelo ackend/models/User.js)
+     - proyectos (modelo ackend/models/Project.js)
+     - lineas_tematicas (modelo ackend/models/LineaTematica.js)
+     - evaluaciones (modelo ackend/models/Evaluacion.js)
+     - 
+otificaciones (modelo ackend/models/Notificacion.js)
+     - entregas (modelo ackend/models/Entrega.js)
+
+3) Seed / inicialización de datos
+   - Hay un script de seed SQL en database/seed/seed.sql.
+   - Puedes ejecutarlo con una herramienta como psql o usando tu cliente preferido.
+
+4) Rutas y controladores
+   - Ruta de autenticación: ackend/routes/authRoutes.js -> egister & login.
+   - Controlador de auth usa la tabla usuarios y bcrypt para comparar contraseñas.
+   - Ruta de proyectos: ackend/routes/projectRoutes.js con middleware de token (uthMiddleware) y rol (oleMiddleware).
+   - Controlador de proyectos (ackend/controllers/projectController.js) crea, lista y revisa proyectos usando PostgreSQL.
+
+5) Cómo iniciar el backend (requisito)
+   - Siempre ejecutar desde la carpeta ackend:
+     cd backend && npm run dev
+
+---
+Este archivo está ubicado al mismo nivel de README.md para que tengas un resumen rápido de cómo funciona la conexión a PostgreSQL.

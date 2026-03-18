@@ -1,18 +1,28 @@
-const mongoose = require("mongoose");
+﻿const path = require("path");
+const { Pool } = require("pg");
 
-const connectDB = async () => {
-  try {
+// Cargar variables de entorno desde la raíz del proyecto (.env)
+require("dotenv").config({ path: path.resolve(__dirname, "..", "..", ".env") });
 
-    await mongoose.connect(process.env.MONGO_URI);
+const connectionString = process.env.DATABASE_URL || process.env.PG_CONNECTION_STRING;
 
-    console.log("MongoDB Atlas se conectado correctamente");
+if (!connectionString) {
+  console.error(
+    "Falta la variable de entorno DATABASE_URL o PG_CONNECTION_STRING en .env"
+  );
+  process.exit(1);
+}
 
-  } catch (error) {
-
-    console.error("Error de coneccion a MongoDB:", error.message);
-    process.exit(1);
-
+const pool = new Pool({
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false
   }
-};
+});
 
-module.exports = connectDB;
+pool.on("error", (err) => {
+  console.error("Error inesperado en el cliente PostgreSQL:", err);
+  process.exit(-1);
+});
+
+module.exports = pool;
