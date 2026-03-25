@@ -1,24 +1,19 @@
 ﻿const pool = require("../config/db");
 
 class LineaTematica {
-  constructor({ id, nombre }) {
-    this.id = id;
-    this.nombre = nombre;
-  }
-
   static async findAll() {
     const result = await pool.query(
       "SELECT * FROM lineas_tematicas ORDER BY nombre"
     );
-    return result.rows.map((row) => new LineaTematica(row));
+    return result.rows;
   }
 
   static async create({ nombre }) {
     const result = await pool.query(
-      "INSERT INTO lineas_tematicas (nombre) VALUES () RETURNING *",
+      "INSERT INTO lineas_tematicas (nombre) VALUES ($1) RETURNING *",
       [nombre]
     );
-    return new LineaTematica(result.rows[0]);
+    return result.rows[0];
   }
 }
 

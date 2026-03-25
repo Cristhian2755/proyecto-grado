@@ -1,42 +1,33 @@
 ﻿const pool = require("../config/db");
 
 class Evaluacion {
-  constructor({ id, proyecto_id, evaluador_id, comentario, aprobado, fecha_evaluacion }) {
-    this.id = id;
-    this.proyectoId = proyecto_id;
-    this.evaluadorId = evaluador_id;
-    this.comentario = comentario;
-    this.aprobado = aprobado;
-    this.fechaEvaluacion = fecha_evaluacion;
-  }
-
   static async findByProject(projectId) {
     const result = await pool.query(
-      "SELECT * FROM evaluaciones WHERE proyecto_id =  ORDER BY fecha_evaluacion DESC",
+      "SELECT * FROM evaluaciones WHERE proyecto_id = $1 ORDER BY fecha_evaluacion DESC",
       [projectId]
     );
-    return result.rows.map((row) => new Evaluacion(row));
+    return result.rows;
   }
 
-  async save() {
-    if (this.id) {
-      const result = await pool.query(
-        UPDATE evaluaciones
-         SET comentario = , aprobado = 
-         WHERE id = 
-         RETURNING *,
-        [this.comentario, this.aprobado, this.id]
-      );
-      return new Evaluacion(result.rows[0]);
-    }
-
+  static async create({ proyecto_id, evaluador_id, comentario, aprobado }) {
     const result = await pool.query(
-      INSERT INTO evaluaciones (proyecto_id, evaluador_id, comentario, aprobado)
-       VALUES (, , , )
-       RETURNING *,
-      [this.proyectoId, this.evaluadorId, this.comentario, this.aprobado]
+      `INSERT INTO evaluaciones (proyecto_id, evaluador_id, comentario, aprobado)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [proyecto_id, evaluador_id, comentario, aprobado]
     );
-    return new Evaluacion(result.rows[0]);
+    return result.rows[0];
+  }
+
+  static async update(id, { comentario, aprobado }) {
+    const result = await pool.query(
+      `UPDATE evaluaciones
+       SET comentario = $1, aprobado = $2
+       WHERE id = $3
+       RETURNING *`,
+      [comentario, aprobado, id]
+    );
+    return result.rows[0] || null;
   }
 }
 

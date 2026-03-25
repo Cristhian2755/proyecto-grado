@@ -15,22 +15,22 @@ exports.registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
+    const newUser = await User.create({
       nombre,
       email,
       password: hashedPassword,
       rol: "estudiante"
     });
 
-    await newUser.save();
-
-    res.json({
-      message: "Usuario registrado correctamente"
+    res.status(201).json({
+      message: "Usuario registrado correctamente",
+      user: { id: newUser.id, nombre: newUser.nombre, email: newUser.email, rol: newUser.rol }
     });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: "Error en el servidor"
+      message: error.message
     });
   }
 };

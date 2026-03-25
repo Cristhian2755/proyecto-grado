@@ -1,41 +1,41 @@
 ﻿const pool = require("../config/db");
 
 class Notificacion {
-  constructor({ id, usuario_id, mensaje, leido, fecha }) {
-    this.id = id;
-    this.usuarioId = usuario_id;
-    this.mensaje = mensaje;
-    this.leido = leido;
-    this.fecha = fecha;
-  }
-
   static async findByUser(userId) {
     const result = await pool.query(
-      "SELECT * FROM notificaciones WHERE usuario_id =  ORDER BY fecha DESC",
+      "SELECT * FROM notificaciones WHERE usuario_id = $1 ORDER BY fecha DESC",
       [userId]
     );
-    return result.rows.map((row) => new Notificacion(row));
+    return result.rows;
   }
 
-  async save() {
-    if (this.id) {
-      const result = await pool.query(
-        UPDATE notificaciones
-         SET mensaje = , leido = 
-         WHERE id = 
-         RETURNING *,
-        [this.mensaje, this.leido, this.id]
-      );
-      return new Notificacion(result.rows[0]);
-    }
-
+  static async create({ usuario_id, mensaje, leido = false }) {
     const result = await pool.query(
-      INSERT INTO notificaciones (usuario_id, mensaje, leido)
-       VALUES (, , )
-       RETURNING *,
-      [this.usuarioId, this.mensaje, this.leido]
+      `INSERT INTO notificaciones (usuario_id, mensaje, leido)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
+      [usuario_id, mensaje, leido]
     );
-    return new Notificacion(result.rows[0]);
+    return result.rows[0];
+  }
+
+  static async update(id, { mensaje, leido }) {
+    const result = await pool.query(
+      `UPDATE notificaciones
+       SET mensaje = $1, leido = $2
+       WHERE id = $3
+       RETURNING *`,
+      [mensaje, leido, id]
+    );
+    return result.rows[0] || null;
+  }
+
+  static async delete(id) {
+    const result = await pool.query(
+      "DELETE FROM notificaciones WHERE id = $1",
+      [id]
+    );
+    return result.rowCount > 0;
   }
 }
 

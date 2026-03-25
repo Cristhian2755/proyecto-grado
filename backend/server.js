@@ -3,7 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 // Conexión a PostgreSQL (usa DATABASE_URL desde .env)
-require("./config/db");
+require('dotenv').config();
 
 const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/projectRoutes");
@@ -23,5 +23,6 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log('Servidor corriendo...');
+    console.log(`URL: http://localhost:${PORT}`);
 });

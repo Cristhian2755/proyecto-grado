@@ -1,42 +1,41 @@
 ﻿const pool = require("../config/db");
 
 class Entrega {
-  constructor({ id, proyecto_id, estudiante_id, descripcion, fecha_entrega, archivo_url }) {
-    this.id = id;
-    this.proyectoId = proyecto_id;
-    this.estudianteId = estudiante_id;
-    this.descripcion = descripcion;
-    this.fechaEntrega = fecha_entrega;
-    this.archivoUrl = archivo_url;
-  }
-
   static async findByProject(projectId) {
     const result = await pool.query(
-      "SELECT * FROM entregas WHERE proyecto_id =  ORDER BY fecha_entrega DESC",
+      "SELECT * FROM entregas WHERE proyecto_id = $1 ORDER BY fecha_entrega DESC",
       [projectId]
     );
-    return result.rows.map((row) => new Entrega(row));
+    return result.rows;
   }
 
-  async save() {
-    if (this.id) {
-      const result = await pool.query(
-        UPDATE entregas
-         SET descripcion = , archivo_url = 
-         WHERE id = 
-         RETURNING *,
-        [this.descripcion, this.archivoUrl, this.id]
-      );
-      return new Entrega(result.rows[0]);
-    }
-
+  static async create({ proyecto_id, estudiante_id, descripcion, archivo_url }) {
     const result = await pool.query(
-      INSERT INTO entregas (proyecto_id, estudiante_id, descripcion, archivo_url)
-       VALUES (, , , )
-       RETURNING *,
-      [this.proyectoId, this.estudianteId, this.descripcion, this.archivoUrl]
+      `INSERT INTO entregas (proyecto_id, estudiante_id, descripcion, archivo_url)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [proyecto_id, estudiante_id, descripcion, archivo_url]
     );
-    return new Entrega(result.rows[0]);
+    return result.rows[0];
+  }
+
+  static async update(id, { descripcion, archivo_url }) {
+    const result = await pool.query(
+      `UPDATE entregas
+       SET descripcion = $1, archivo_url = $2
+       WHERE id = $3
+       RETURNING *`,
+      [descripcion, archivo_url, id]
+    );
+    return result.rows[0] || null;
+  }
+
+  static async delete(id) {
+    const result = await pool.query(
+      "DELETE FROM entregas WHERE id = $1",
+      [id]
+    );
+    return result.rowCount > 0;
   }
 }
 
