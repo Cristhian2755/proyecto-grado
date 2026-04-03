@@ -1,20 +1,23 @@
-
+// controladores para autenticación de usuarios
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+// Registrar nuevo usuario
 exports.registerUser = async (req, res) => {
-  const { nombre, email, password } = req.body;
-
   try {
-    const existingUser = await User.findOne({ email });
+    const { nombre, email, password } = req.body;
 
-    if (existingUser) {
-      return res.status(400).json({ message: "Usuario ya existe" });
+    if (!nombre || !email || !password) {
+      return res.status(400).json({ message: "Campos requeridos faltantes" });
+    }
+
+    const userExist = await User.findByEmail(email);
+    if (userExist) {
+      return res.status(400).json({ message: "El email ya está registrado" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await User.create({
       nombre,
       email,
@@ -24,56 +27,50 @@ exports.registerUser = async (req, res) => {
 
     res.status(201).json({
       message: "Usuario registrado correctamente",
-      user: { id: newUser.id, nombre: newUser.nombre, email: newUser.email, rol: newUser.rol }
+      data: { id: newUser.id, nombre: newUser.nombre, email: newUser.email }
     });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: error.message
-    });
+    res.status(500).json({ message: "Error al registrar usuario", error: error.message });
   }
 };
 
+// Iniciar sesión
 exports.loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    const user = await User.findOne({ email });
+    const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email y contraseña requeridos" });
+    }
+
+    const user = await User.findByEmail(email);
     if (!user) {
-      return res.status(400).json({
-        message: "Usuario no encontrado"
-      });
+      return res.status(401).json({ message: "Credenciales incorrectas" });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
-
     if (!validPassword) {
-      return res.status(400).json({
-        message: "Contraseña incorrecta"
-      });
+      return res.status(401).json({ message: "Credenciales incorrectas" });
     }
 
     const token = jwt.sign(
-      {
-        id: user.id,
-        nombre: user.nombre,
-        email: user.email,
-        rol: user.rol
-      },
+      { id: user.id, email: user.email, rol: user.rol },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "24h" }
     );
 
     res.json({
       message: "Login exitoso",
-      token
+      data: {
+        token,
+        user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol }
+      }
     });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Error en el servidor"
-    });
+    res.status(500).json({ message: "Error al iniciar sesión", error: error.message });
   }
 };

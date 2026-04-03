@@ -1,23 +1,22 @@
-const checkRole = (...roles) => {
-
+// Verificar rol de usuario
+const checkRole = (...rolesPermitidos) => {
   return (req, res, next) => {
+    const userRole = req.user?.rol;
 
-    if (!req.user) {
+    if (!userRole) {
       return res.status(401).json({
         message: "Usuario no autenticado"
       });
     }
 
-    if (!roles.includes(req.user.rol)) {
+    if (!rolesPermitidos.includes(userRole)) {
       return res.status(403).json({
-        message: "No tienes permiso para acceder"
+        message: "No tienes permisos para acceder a este recurso"
       });
     }
 
     next();
-
   };
-
 };
 
-module.exports = checkRole;
+module.exports = { checkRole };

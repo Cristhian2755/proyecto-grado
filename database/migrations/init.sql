@@ -1,54 +1,62 @@
-﻿-- database/migrations/init.sql
--- Inicializa el esquema de la base de datos para la aplicación
-
-CREATE TABLE IF NOT EXISTS usuarios (
-  id SERIAL PRIMARY KEY,
-  nombre TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL,
-  rol TEXT NOT NULL DEFAULT 'estudiante',
-  fecha_registro TIMESTAMPTZ NOT NULL DEFAULT NOW()
+CREATE TABLE roles (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS lineas_tematicas (
-  id SERIAL PRIMARY KEY,
-  nombre TEXT NOT NULL UNIQUE
+CREATE TABLE usuarios (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    contrasena TEXT NOT NULL,
+    rol_id BIGINT REFERENCES roles(id)
 );
 
-CREATE TABLE IF NOT EXISTS proyectos (
-  id SERIAL PRIMARY KEY,
-  titulo TEXT NOT NULL,
-  problema TEXT NOT NULL,
-  justificacion TEXT NOT NULL,
-  objetivos TEXT NOT NULL,
-  estudiante_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-  linea_tematica_id INTEGER REFERENCES lineas_tematicas(id),
-  estado TEXT NOT NULL DEFAULT 'pendiente',
-  fecha_creacion TIMESTAMPTZ NOT NULL DEFAULT NOW()
+CREATE TABLE lineas_tematicas (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS evaluaciones (
-  id SERIAL PRIMARY KEY,
-  proyecto_id INTEGER NOT NULL REFERENCES proyectos(id) ON DELETE CASCADE,
-  evaluador_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-  comentario TEXT,
-  aprobado BOOLEAN NOT NULL DEFAULT FALSE,
-  fecha_evaluacion TIMESTAMPTZ NOT NULL DEFAULT NOW()
+CREATE TABLE proyectos (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    titulo TEXT NOT NULL,
+    problema TEXT NOT NULL,
+    justificacion TEXT NOT NULL,
+    objetivos TEXT NOT NULL,
+    estudiante_id BIGINT REFERENCES usuarios(id),
+    linea_tematica_id BIGINT REFERENCES lineas_tematicas(id),
+    estado TEXT NOT NULL DEFAULT 'Propuesto'
 );
 
-CREATE TABLE IF NOT EXISTS notificaciones (
-  id SERIAL PRIMARY KEY,
-  usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-  mensaje TEXT NOT NULL,
-  leido BOOLEAN NOT NULL DEFAULT FALSE,
-  fecha TIMESTAMPTZ NOT NULL DEFAULT NOW()
+CREATE TABLE revisiones (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    proyecto_id BIGINT REFERENCES proyectos(id),
+    revisor_id BIGINT REFERENCES usuarios(id),
+    comentario TEXT,
+    aprobado BOOLEAN DEFAULT FALSE,
+    fecha_revision TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS entregas (
-  id SERIAL PRIMARY KEY,
-  proyecto_id INTEGER NOT NULL REFERENCES proyectos(id) ON DELETE CASCADE,
-  estudiante_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-  descripcion TEXT NOT NULL,
-  fecha_entrega TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  archivo_url TEXT
+CREATE TABLE notificaciones (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    usuario_id BIGINT REFERENCES usuarios(id),
+    mensaje TEXT NOT NULL,
+    leido BOOLEAN DEFAULT FALSE,
+    fecha TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE entregas (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    proyecto_id BIGINT REFERENCES proyectos(id),
+    archivo TEXT NOT NULL,
+    version INT NOT NULL,
+    fecha_entrega TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE evaluaciones (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    entrega_id BIGINT REFERENCES entregas(id),
+    evaluador_id BIGINT REFERENCES usuarios(id),
+    nota DECIMAL(5, 2),
+    comentario TEXT,
+    fecha_evaluacion TIMESTAMPTZ DEFAULT NOW()
 );

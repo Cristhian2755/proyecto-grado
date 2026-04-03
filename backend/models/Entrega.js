@@ -1,41 +1,33 @@
-﻿const pool = require("../config/db");
+const { pool } = require('../config/db');
 
 class Entrega {
-  static async findByProject(projectId) {
-    const result = await pool.query(
-      "SELECT * FROM entregas WHERE proyecto_id = $1 ORDER BY fecha_entrega DESC",
-      [projectId]
-    );
-    return result.rows;
-  }
-
-  static async create({ proyecto_id, estudiante_id, descripcion, archivo_url }) {
-    const result = await pool.query(
-      `INSERT INTO entregas (proyecto_id, estudiante_id, descripcion, archivo_url)
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [proyecto_id, estudiante_id, descripcion, archivo_url]
-    );
+  static async create(entregaData) {
+    const { proyecto_id, archivo, version } = entregaData;
+    const query = `
+      INSERT INTO entregas (proyecto_id, archivo, version)
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `;
+    const result = await pool.query(query, [proyecto_id, archivo, version]);
     return result.rows[0];
   }
 
-  static async update(id, { descripcion, archivo_url }) {
-    const result = await pool.query(
-      `UPDATE entregas
-       SET descripcion = $1, archivo_url = $2
-       WHERE id = $3
-       RETURNING *`,
-      [descripcion, archivo_url, id]
-    );
-    return result.rows[0] || null;
+  static async findById(id) {
+    const query = 'SELECT * FROM entregas WHERE id = $1';
+    const result = await pool.query(query, [id]);
+    return result.rows[0];
   }
 
-  static async delete(id) {
-    const result = await pool.query(
-      "DELETE FROM entregas WHERE id = $1",
-      [id]
-    );
-    return result.rowCount > 0;
+  static async findByProyecto(proyecto_id) {
+    const query = 'SELECT * FROM entregas WHERE proyecto_id = $1 ORDER BY fecha_entrega DESC';
+    const result = await pool.query(query, [proyecto_id]);
+    return result.rows;
+  }
+
+  static async findAll() {
+    const query = 'SELECT * FROM entregas';
+    const result = await pool.query(query);
+    return result.rows;
   }
 }
 

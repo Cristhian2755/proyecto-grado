@@ -1,50 +1,30 @@
-﻿const path = require("path");
-const { Pool } = require("pg");
-
-// Cargar variables de entorno desde la raíz del proyecto (.env)
-require("dotenv").config({ path: path.resolve(__dirname, "..", "..", ".env") });
-
-function getConnectionString() {
-  // Preferir variables PG_* explícitas para evitar ambigüedades con URL
-  const { PGHOST, PGUSER, PGPASSWORD, PGDATABASE, PGPORT } = process.env;
-  if (PGHOST && PGUSER && PGPASSWORD && PGDATABASE) {
-    const port = PGPORT || "5432";
-    return `postgresql://${encodeURIComponent(PGUSER)}:${encodeURIComponent(PGPASSWORD)}@${PGHOST}:${port}/${PGDATABASE}`;
-  }
-
-  // Fallback a DATABASE_URL si no se especifican las PG_* variables.
-  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
-  if (process.env.PG_CONNECTION_STRING) return process.env.PG_CONNECTION_STRING;
-
-  return null;
-}
-
-const connectionString = getConnectionString();
-
-if (!connectionString) {
-  console.error(
-    "Falta la variable de entorno DATABASE_URL (o la configuración PGHOST/PGUSER/PGPASSWORD/PGDATABASE) en .env"
-  );
-  process.exit(1);
-}
-
-try {
-  const url = new URL(connectionString);
-  console.log(`Conectando a PostgreSQL con usuario: ${url.username}@${url.hostname}`);
-} catch (err) {
-  // Si no es un URL válido, no hacemos log
-}
+//Conexion de DB Azure por medio de Pool
+const { Pool } = require('pg');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 
 const pool = new Pool({
-  connectionString,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  host: process.env.PGHOST,
+  port: process.env.PGPORT,
+  database: process.env.PGDATABASE,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  ssl: { rejectUnauthorized: false } // Para Azure
 });
+
+const connectDB = async () => {
+  try {
+    await pool.connect();
+    console.log("PostgreSQL conectado correctamente");
+  } catch (error) {
+    console.error("Error de conexión a PostgreSQL:", error.message);
+    process.exit(1);
+  }
+};
 
 pool.on("error", (err) => {
   console.error("Error inesperado en el cliente PostgreSQL:", err);
   process.exit(-1);
 });
 
-module.exports = pool;
+module.exports = { pool, connectDB };

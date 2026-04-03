@@ -1,18 +1,13 @@
-﻿-- database/queries/usuarios.sql
+-- Consultas para tabla usuarios
 
--- Busca usuario por correo
--- Params:  = email
-SELECT * FROM usuarios WHERE email =  LIMIT 1;
+-- Obtener todos los usuarios
+SELECT * FROM usuarios;
 
--- Inserta nuevo usuario
--- Params:  = nombre,  = email,  = password hash,  = rol
-INSERT INTO usuarios (nombre, email, password, rol)
-VALUES (, , , )
-RETURNING *;
+-- Obtener usuario por email
+SELECT * FROM usuarios WHERE email = $1;
 
--- Actualiza datos del usuario
--- Params:  = nombre,  = email,  = rol,  = id
-UPDATE usuarios
-SET nombre = , email = , rol = 
-WHERE id = 
-RETURNING *;
+-- Obtener usuarios por rol
+SELECT * FROM usuarios WHERE rol = $1;
+
+-- Contar usuarios por rol
+SELECT rol, COUNT(*) FROM usuarios GROUP BY rol;

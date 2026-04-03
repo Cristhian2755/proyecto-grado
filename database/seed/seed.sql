@@ -1,21 +1,38 @@
-﻿-- database/seed/seed.sql
--- Datos iniciales para la aplicación (puede ejecutarse con psql o una herramienta de migración).
+-- Insertar roles
+INSERT INTO roles (nombre) VALUES
+('Coordinador'),
+('Estudiante'),
+('Asesor'),
+('Jurado');
 
--- Usuarios (contraseña hasheada usando bcrypt; reemplaza con tu propio hash si es necesario)
-INSERT INTO usuarios (nombre, email, password, rol)
-VALUES
-  ('Administrador', 'admin@example.com', '', 'coordinador'),
-  ('Estudiante Demo', 'estudiante@example.com', '', 'estudiante');
+-- Insertar líneas temáticas
+INSERT INTO lineas_tematicas (nombre) VALUES
+('Ingeniería de Software'),
+('Desarrollo Web'),
+('Base de Datos'),
+('Inteligencia Artificial'),
+('Ciberseguridad');
 
--- Lineas tematicas
-INSERT INTO lineas_tematicas (nombre)
-VALUES ('Inteligencia Artificial'),
-       ('Sistemas Distribuidos');
+-- Insertar usuarios
+INSERT INTO usuarios (nombre, email, contrasena, rol_id) VALUES
+('Admin ISER', 'admin@iser.edu.co', 'hashed_password', 1),
+('Carlos Estudiante', 'carlos@iser.edu.co', 'hashed_password', 2),
+('Maria Asesor', 'maria@iser.edu.co', 'hashed_password', 3),
+('Juan Jurado', 'juan@iser.edu.co', 'hashed_password', 4);
 
--- Proyecto ejemplo (asignado al estudiante demo)
-INSERT INTO proyectos (titulo, problema, justificacion, objetivos, estudiante_id)
-VALUES ('Proyecto Demostración',
-        'Descripción del problema...',
-        'Justificación del proyecto de demostración',
-        'Objetivo 1; Objetivo 2;',
-        (SELECT id FROM usuarios WHERE email = 'estudiante@example.com'));
+-- Insertar proyectos
+INSERT INTO proyectos (titulo, problema, justificacion, objetivos, estudiante_id, linea_tematica_id, estado) VALUES
+('Sistema de Gestión de Proyectos', 
+ 'No existe un sistema centralizado para gestionar los proyectos de grado',
+ 'Es necesario optimizar el proceso de administración de proyectos académicos',
+ 'Crear una plataforma web para gestionar proyectos de grado de forma integral',
+ 2, 1, 'Propuesto');
+
+-- Insertar revisiones
+INSERT INTO revisiones (proyecto_id, revisor_id, comentario, aprobado) VALUES
+(1, 3, 'Proyecto con buena fundamentación teórica', FALSE);
+
+-- Insertar notificaciones
+INSERT INTO notificaciones (usuario_id, mensaje, leido) VALUES
+(2, 'Tu proyecto ha sido revisado', FALSE),
+(3, 'Nuevo proyecto para revisar', FALSE);

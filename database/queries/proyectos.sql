@@ -1,28 +1,15 @@
-﻿-- database/queries/proyectos.sql
+-- Consultas para tabla proyectos
 
--- Listar proyectos con información del estudiante
-SELECT p.*, u.nombre AS estudiante_nombre, u.email AS estudiante_email, u.rol AS estudiante_rol
-FROM proyectos p
-JOIN usuarios u ON u.id = p.estudiante_id
-ORDER BY p.id;
+-- Obtener todos los proyectos
+SELECT * FROM proyectos;
 
--- Obtener un proyecto por su id
--- Params:  = id
-SELECT p.*, u.nombre AS estudiante_nombre, u.email AS estudiante_email, u.rol AS estudiante_rol
-FROM proyectos p
-JOIN usuarios u ON u.id = p.estudiante_id
-WHERE p.id = 
-LIMIT 1;
+-- Obtener proyectos de un estudiante
+SELECT * FROM proyectos WHERE estudiante_id = $1;
 
--- Insertar proyecto
--- Params:  = titulo,  = problema,  = justificacion,  = objetivos,  = estudiante_id
-INSERT INTO proyectos (titulo, problema, justificacion, objetivos, estudiante_id)
-VALUES (, , , , )
-RETURNING *;
+-- Obtener proyectos por estado
+SELECT * FROM proyectos WHERE estado = $1;
 
--- Actualizar estado de proyecto
--- Params:  = estado,  = id
-UPDATE proyectos
-SET estado = 
-WHERE id = 
-RETURNING *;
+-- Obtener proyectos con datos del estudiante
+SELECT p.*, u.nombre as nombre_estudiante, u.email 
+FROM proyectos p 
+JOIN usuarios u ON p.estudiante_id = u.id;

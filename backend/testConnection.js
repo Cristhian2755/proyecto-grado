@@ -1,13 +1,17 @@
-﻿// verificar que eta conectado a la bsae de datos de Azure
-const pool = require("./config/db");
+const { pool } = require('./config/db');
 
-(async () => {
+async function testConnection() {
   try {
-    const res = await pool.query("SELECT 1");
-    console.log("Conexión exitosa a PostgreSQL Azure", res.rows[0]);
-  } catch (err) {
-    console.error("Error conectando a PostgreSQL Azure:", err);
-  } finally {
-    await pool.end();
+    const client = await pool.connect();
+    console.log('Conexión exitosa a PostgreSQL');
+    const result = await client.query('SELECT NOW()');
+    console.log('Hora del servidor:', result.rows[0]);
+    client.release();
+    process.exit(0);
+  } catch (error) {
+    console.error('Error de conexión:', error);
+    process.exit(1);
   }
-})();
+}
+
+testConnection();

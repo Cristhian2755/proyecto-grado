@@ -1,38 +1,26 @@
-﻿const path = require("path");
 const { Pool } = require("pg");
-
-// Cargar variables de entorno desde la raíz del proyecto (.env)
-require("dotenv").config({ path: path.resolve(__dirname, "..", "..", ".env") });
-
-function getConnectionString() {
-  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
-  if (process.env.PG_CONNECTION_STRING) return process.env.PG_CONNECTION_STRING;
-
-  const { PGHOST, PGUSER, PGPASSWORD, PGDATABASE, PGPORT } = process.env;
-  if (PGHOST && PGUSER && PGPASSWORD && PGDATABASE) {
-    const port = PGPORT || "5432";
-    return `postgresql://${encodeURIComponent(PGUSER)}:${encodeURIComponent(PGPASSWORD)}@${PGHOST}:${port}/${PGDATABASE}`;
-  }
-
-  return null;
-}
-
-const connectionString = getConnectionString();
-
-if (!connectionString) {
-  throw new Error("Falta la variable de entorno DATABASE_URL (o la configuración PGHOST/PGUSER/PGPASSWORD/PGDATABASE) en .env");
-}
+require("dotenv").config({ path: "../../.env" });
 
 const pool = new Pool({
-  connectionString,
-  ssl: {
-    rejectUnauthorized: false
-  }
+    host: process.env.PGHOST,
+    port: process.env.PGPORT,
+    database: process.env.PGDATABASE,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
-pool.on("error", (err) => {
-  console.error("Error inesperado en el cliente PostgreSQL:", err);
-  process.exit(-1);
-});
+async function connectDatabase() {
+    try {
+        await pool.query("SELECT NOW()");
+        console.log("✓ PostgreSQL conectado correctamente");
+        return pool;
+    } catch (error) {
+        console.error("Error conectando PostgreSQL:", error);
+        throw error;
+    }
+}
 
-module.exports = pool;
+module.exports = connectDatabase;
