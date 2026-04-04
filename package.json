@@ -1,5 +1,16 @@
 {
+  "name": "proyecto-grado",
+  "private": true,
   "dependencies": {
     "dotenv": "^17.3.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend start",
+    "dev": "concurrently -n BACKEND,FRONTEND -c green,blue \"npm --prefix backend run dev\" \"npm --prefix frontend start\""
   }
 }

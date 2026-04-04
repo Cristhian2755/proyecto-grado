@@ -1,0 +1,68 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.app-shell {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #f3f8ff 0%, #e6f4ea 100%);
+}
+
+.card {
+  width: min(760px, 100%);
+  background: #ffffff;
+  border: 1px solid #dce7f6;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 14px 35px rgba(16, 47, 91, 0.08);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.badge {
+  margin: 0 0 10px;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.6rem, 2.2vw, 2.3rem);
+}
+
+.subtitle {
+  margin: 10px 0 22px;
+  color: #334155;
+}
+
+.status-box {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.actions a {
+  text-decoration: none;
+  background: #0b5fff;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.actions a:hover {
+  background: #0a4bd1;
+}

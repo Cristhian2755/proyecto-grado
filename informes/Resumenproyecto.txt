@@ -1,0 +1,310 @@
+elaboración del proyecto desde la documentación de la propuesta hasta su elaboración teniendo en cuenta el siguinete resumen 
+
+Desarrollar una Plataforma Web Inteligente para la Gestión de Proyectos de Grado del ISER, que permita registrar, organizar y hacer seguimiento a los trabajos de grado de manera digital y centralizada. El sistema permitiría que los estudiantes carguen su propuesta (título, problema, justificación y objetivos), mientras que los docentes puedan revisarla, aprobarla y hacer seguimiento al avance del proyecto dentro de la misma plataforma. El componente innovador sería la integración de una Inteligencia Artificial que analice automáticamente el contenido del proyecto y lo clasifique según su línea temática, como redes, seguridad informática, desarrollo de software o infraestructura tecnológica. Esto facilitaría la organización académica, evitaría duplicidad de temas y apoyaría la asignación de directores según su área de experiencia
+## 🧩 Problemática Identificada
+
+Actualmente, muchas instituciones gestionan los proyectos de grado mediante:
+
+* Correos electrónicos
+* Documentos físicos
+* Hojas de cálculo
+* Procesos manuales
+
+Esto genera:
+
+* Falta de trazabilidad
+* Retrasos en revisiones
+* Desorganización de entregas
+* Dificultad para generar reportes
+* Escasa analítica académica
+
+---
+
+## 💡 Propuesta de Solución
+
+Se desarrollará una plataforma web con arquitectura moderna que permita:
+
+* Registro y autenticación de usuarios con roles (estudiante, asesor, coordinador, administrador)
+* Gestión completa del ciclo de vida del proyecto
+* Subida y control de versiones de entregas
+* Flujo de aprobación estructurado
+* Sistema de evaluaciones
+* Panel administrativo con métricas
+* Sistema de notificaciones automáticas
+* Módulo básico de análisis predictivo para detectar proyectos en riesgo
+
+---
+
+## 🛠 Tecnologías a Utilizar
+
+* Backend: Node.js
+* Framework Backend: Express.js
+* Frontend: Angular
+* Base de Datos: PostgreSQL
+* Autenticación: JWT
+
+---
+
+## 🏗 Arquitectura
+
+* API RESTful
+* Separación Frontend / Backend
+* Patrón MVC
+* Control de acceso basado en roles (RBAC)
+* Seguridad con hash de contraseñas y middleware de validación
+
+---
+
+## 🚀 Diferencial Innovador
+
+Este proyecto no será solo un sistema CRUD, sino que incorporará:
+
+* Panel de analítica académica
+* Detección automática de retrasos
+* Alertas inteligentes
+* Dashboard con métricas institucionales
+* Diseño escalable para futura integración con otros sistemas
+
+---
+
+## 🎓 Impacto Institucional
+
+* Digitalización del proceso de proyectos de grado
+* Mayor control y transparencia
+* Reducción de carga administrativa
+* Mejora en toma de decisiones académicas
+* Modernización tecnológica institucional
+
+---
+
+## 🏆 Nivel del Proyecto
+
+Es un proyecto:
+
+* Técnico y profesional
+* Escalable
+* Seguro
+* Con enfoque empresarial
+* Innovador por su componente de analítica
+
+
+---Estructura del proyecto---
+
+PROYECTO-GRADO.
+├── .vscode/
+├── backend/(logica del funcionamiento)
+│   ├── config/
+│   │   └── db.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   └── projectController.js
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   ├── errorMiddleware.js
+│   │   └── roleMiddleware.js
+│   ├── models/
+│   │   ├── Entrega.js
+│   │   ├── Evaluacion.js
+│   │   ├── LineaTematica.js
+│   │   ├── Notificacion.js
+│   │   ├── Project.js
+│   │   └── User.js
+│   ├── node_modules/
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   └── projectRoutes.js
+│   ├── uploads/
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── server.js
+│   └── testConnection.js
+├── database/ (pgadmin4)
+│   ├── config/
+│   │   └── db.js
+│   ├── migrations/
+│   │   └── init.sql
+│   ├── node_modules/
+│   ├── queries/
+│   │   ├── proyectos.sql
+│   │   └── usuarios.sql
+│   ├── seed/
+│   │   └── seed.sql
+│   └── database.js
+├── docs/ (aca es donde se guarda los proyectos de los estudiantes)
+├── frontend/ (aca va todo lo de angular)
+│   ├── .angular/
+│   ├── .editorconfig
+│   ├── .gitignore
+│   ├── .prettierrc
+│   ├── .vscode/
+│   │   ├── extensions.json
+│   │   ├── launch.json
+│   │   ├── mcp.json
+│   │   └── tasks.json
+│   ├── angular.json
+│   ├── dist/
+│   ├── node_modules/
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── proxy.conf.json
+│   ├── public/
+│   │   └── favicon.ico
+│   ├── README.md
+│   ├── src/
+│   │   ├── index.html
+│   │   ├── main.ts
+│   │   ├── styles.scss
+│   │   └── app/
+│   │       ├── app.config.ts
+│   │       ├── app.html
+│   │       ├── app.routes.ts
+│   │       ├── app.scss
+│   │       ├── app.spec.ts
+│   │       └── app.ts
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   └── tsconfig.spec.json
+├── ia/ (aca es donde se incorpora la ia para el proyecto)
+├── .env
+├── .env.example (como copia de seguridad del .env)
+└── README.md
+
+manteniendo esa estructura origiunal 
+
+
+
+Resumen del Funcionamiento del Backend y la Carpeta `database`
+
+---
+
+## 🧩 Backend (carpeta `backend/`)
+
+### `server.js`
+- Punto de entrada de la API (Express).
+- Carga variables de entorno con `dotenv`.
+- Configura CORS y JSON body parsing.
+- Registra rutas bajo `/api/auth` y `/api/projects`.
+- Expone una ruta raíz (`/`) de salud básica.
+- Inicia el servidor en `process.env.PORT || 5000`.
+
+### `config/db.js`
+- Crea un pool de conexiones PostgreSQL usando `pg`.
+- Lee variables de entorno (`PGHOST`, `PGUSER`, `PGPASSWORD`, `PGDATABASE`, `PGPORT`) desde `.env`.
+- Genera un `connectionString` y asegura SSL (`rejectUnauthorized: false`) para Azure.
+- Exporta el pool para que el resto del backend use la misma conexión.
+
+### `testConnection.js`
+- Script de utilidad para validar que el backend puede conectarse a PostgreSQL.
+- Ejecuta `SELECT 1` y muestra el resultado o el error.
+
+---
+
+## 🧠 Controladores (carpeta `controllers/`)
+
+### `authController.js`
+- Maneja registro de usuario (`registerUser`) y login (`loginUser`).
+- Usa `bcryptjs` para hashear y comparar contraseñas.
+- Usa `jsonwebtoken` para generar un JWT en el login.
+- Consulta/crea usuarios mediante el modelo `User`.
+
+### `projectController.js`
+- Maneja creación de proyectos (`createProject`), listado de proyectos (`getProjects`) y revisión de proyectos (`reviewProject`).
+- Usa el modelo `Project` para leer y escribir la tabla `proyectos`.
+- Aplica la propiedad `req.user.id` (establecida por el middleware JWT) como `estudiante_id` al crear un proyecto.
+
+---
+
+## 🗺️ Rutas (carpeta `routes/`)
+
+### `authRoutes.js`
+- Define rutas de autenticación:
+  - `POST /api/auth/register` → `authController.registerUser`
+  - `POST /api/auth/login` → `authController.loginUser`
+
+### `projectRoutes.js`
+- Define rutas para proyectos, protegidas por JWT:
+  - `GET /api/projects/` → lista proyectos (`verifyToken`)
+  - `POST /api/projects/` → crea proyecto (requiere rol `estudiante`)
+  - `PUT /api/projects/review/:id` → actualiza estado (requiere rol `asesor`)
+- Utiliza middleware `verifyToken` y `checkRole`.
+
+---
+
+## 🔐 Middlewares (carpeta `middleware/`)
+
+### `authMiddleware.js`
+- Extrae el token JWT del header `Authorization: Bearer <token>`.
+- Valida el token con `JWT_SECRET`.
+- Si es válido, inyecta `req.user` con los datos del token.
+- Si falla, responde 401/403.
+
+### `roleMiddleware.js`
+- Recibe una lista de roles permitidos.
+- Comprueba que `req.user.rol` exista y coincida con alguno de los roles.
+- Devuelve 401 si no hay usuario autenticado o 403 si el rol no está permitido.
+
+### `errorMiddleware.js`
+- Un handler genérico de errores (no está conectado de forma explícita en `server.js`, pero está disponible para ser usado en la cadena de middlewares).
+
+---
+
+## 💾 Modelos (carpeta `models/`)
+
+Estos archivos encapsulan operaciones de base de datos usando el pool de PostgreSQL (`backend/config/db.js`).
+
+### `User.js`
+- Representa la tabla `usuarios`.
+- Métodos:
+  - `findOne({ email })` → busca un usuario por email.
+  - `findById(id)` → busca un usuario por id.
+  - `save()` → inserta o actualiza un usuario.
+
+### `Project.js`
+- Representa la tabla `proyectos` (junto con datos del estudiante asociado).
+- Métodos:
+  - `find()` → lista todos los proyectos con info del estudiante.
+  - `findById(id)` → obtiene un proyecto por id.
+  - `save()` → inserta o actualiza un proyecto.
+
+### `Entrega.js`, `Evaluacion.js`, `LineaTematica.js`, `Notificacion.js`
+- Clases pensadas para mapear las tablas `entregas`, `evaluaciones`, `lineas_tematicas` y `notificaciones`.
+- Actualmente contienen consultas SQL incompletas (faltan placeholders `($1, $2, ...)`), lo que impide que funcionen correctamente sin reparación.
+
+---
+
+## 🗃️ Carpeta `database/` (scripts y esquema)
+
+### `database/config/db.js`
+- Similar a `backend/config/db.js`, crea un pool PostgreSQL para scripts de la carpeta `database/`.
+- Lee el mismo `.env` del proyecto raíz.
+
+### `database/database.js`
+- Wrapper ligero que exporta:
+  - `query(text, params)` → ejecuta un query con el pool.
+  - `close()` → cierra el pool.
+- Usado por scripts o utilidades que necesiten ejecutar SQL desde `database/`.
+
+### `migrations/init.sql`
+- Script para inicializar el esquema de la base de datos.
+- Crea tablas:
+  - `usuarios`
+  - `lineas_tematicas`
+  - `proyectos`
+  - `evaluaciones`
+  - `notificaciones`
+  - `entregas`
+- Define llaves foráneas y defaults relevantes.
+
+### `seed/seed.sql`
+- Script de datos iniciales para poblar la base:
+  - Usuarios demo (coordinador y estudiante).
+  - Línea temática de ejemplo.
+  - Proyecto de demostración asociado al estudiante.
+
+### `queries/` (templates SQL)
+- `usuarios.sql` y `proyectos.sql` contienen ejemplos de queries para:
+  - buscar, insertar y actualizar usuarios
+  - listar, obtener, insertar y actualizar proyectos
+- Actualmente los archivos contienen placeholders (`=`) en lugar de valores `$1`, `$2`, etc.; funcionan como plantilla, pero no pueden ejecutarse tal cual.
+
+---
