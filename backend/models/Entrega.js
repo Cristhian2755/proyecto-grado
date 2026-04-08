@@ -12,6 +12,12 @@ class Entrega {
     return result.rows[0];
   }
 
+  static async getNextVersion(proyecto_id) {
+    const query = 'SELECT COALESCE(MAX(version), 0) AS max_version FROM entregas WHERE proyecto_id = $1';
+    const result = await pool.query(query, [proyecto_id]);
+    return Number(result.rows[0].max_version) + 1;
+  }
+
   static async findById(id) {
     const query = 'SELECT * FROM entregas WHERE id = $1';
     const result = await pool.query(query, [id]);

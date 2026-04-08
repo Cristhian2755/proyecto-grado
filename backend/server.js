@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 const { connectDB, pool } = require("./config/db");
@@ -7,6 +8,7 @@ const errorHandler = require("./middleware/errorMiddleware");
 
 const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/projectRoutes");
+const entregaRoutes = require("./routes/entregaRoutes");
 
 const app = express();
 
@@ -16,10 +18,12 @@ connectDB();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use("/docs", express.static(path.join(__dirname, "..", "docs")));
 
 // Rutas
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/entregas", entregaRoutes);
 
 // Health check
 app.get("/health", async (req, res) => {

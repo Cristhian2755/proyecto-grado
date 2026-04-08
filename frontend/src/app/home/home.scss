@@ -1,0 +1,63 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.home-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+  padding: 24px;
+}
+
+.home-card {
+  width: min(560px, 100%);
+  background: white;
+  border-radius: 22px;
+  padding: 32px;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+}
+
+.eyebrow {
+  color: #1d9bf0;
+  font-weight: 700;
+  margin: 0 0 12px;
+  letter-spacing: 0.08em;
+}
+
+h1 {
+  margin: 0;
+  color: #0f172a;
+}
+
+p {
+  color: #475569;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.actions a,
+.actions button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 16px;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.actions a {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.actions button {
+  background: #1d9bf0;
+  color: white;
+}

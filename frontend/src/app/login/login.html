@@ -1,0 +1,50 @@
+<main class="login-page">
+  <section class="brand-panel">
+    <div class="brand-mark">ISER</div>
+    <h1>Trabajos de grado ISER</h1>
+    <p>Accede a la plataforma académica de una forma limpia, rápida y simple.</p>
+  </section>
+
+  <section class="login-card">
+    <h2>Iniciar sesión</h2>
+    <p class="subtitle">Ingresa tus credenciales para continuar.</p>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+      <label>
+        Correo electrónico
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="correo@iser.edu"
+          autocomplete="email"
+          required
+        />
+      </label>
+
+      <label>
+        Contraseña
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Tu contraseña"
+          autocomplete="current-password"
+          required
+        />
+      </label>
+
+      <p class="error" *ngIf="error()">{{ error() }}</p>
+      <p class="success" *ngIf="success()">{{ success() }}</p>
+
+      <button type="submit" [disabled]="loading()">
+        {{ loading() ? 'Ingresando...' : 'Entrar' }}
+      </button>
+    </form>
+
+    <div class="links">
+      <a routerLink="/">Volver al inicio</a>
+      <a href="#">¿Olvidaste tu contraseña?</a>
+    </div>
+  </section>
+</main>
