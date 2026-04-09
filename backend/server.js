@@ -55,7 +55,8 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
-  console.log(`✓ Servidor corriendo en puerto ${PORT}`);
-  console.log(`✓ Base de datos: ProyectoGrado (Azure)`);
+  console.log(`✓ Backend corriendo en http://localhost:${PORT}`);
+  console.log(`✓ API disponible en http://localhost:${PORT}/api`);
   console.log(`✓ Health check: http://localhost:${PORT}/health`);
+  console.log(`✓ Conectado a PostgreSQL Azure desde backend`);
 });

@@ -15,7 +15,7 @@ const pool = new Pool({
 const connectDB = async () => {
   try {
     await pool.connect();
-    console.log("PostgreSQL conectado correctamente");
+    console.log(`✓ PostgreSQL conectado correctamente (${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE})`);
   } catch (error) {
     console.error("Error de conexión a PostgreSQL:", error.message);
     process.exit(1);
