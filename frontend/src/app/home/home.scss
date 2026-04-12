@@ -1,3 +1,11 @@
+.home-redirect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: #2f3b52;
+  font-weight: 600;
+}
 :host {
   display: block;
   min-height: 100dvh;

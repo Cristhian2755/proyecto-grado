@@ -1,0 +1,59 @@
+<main class="home-page">
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <h1>Panel del Docente</h1>
+    </div>
+    
+    <nav class="nav-menu" aria-label="Navegacion principal">
+      <button class="nav-item" (click)="goToHome('/home-administrador')">Ver Home Admin</button>
+      <button class="nav-item" (click)="goToHome('/home-coordinador')">Ver Home Coordinador</button>
+      <button class="nav-item" (click)="goToHome('/home-estudiante')">Ver Home Estudiantes</button>
+    </nav>
+
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ displayName }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Mis Proyectos Asignados</h2>
+      <button class="btn-outline" (click)="loadAssignedProjects()" [disabled]="loading()">Recargar</button>
+    </div>
+
+    <p class="error" *ngIf="error()">{{ error() }}</p>
+
+    <div class="projects-table" *ngIf="assignedProjects().length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Título del Proyecto</th>
+            <th>Estudiante</th>
+            <th>Línea Temática</th>
+            <th>Estado</th>
+            <th>Email del Estudiante</th>
+            <th>Comentario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let project of assignedProjects()">
+            <td>{{ project.titulo }}</td>
+            <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
+            <td>{{ project.linea_tematica || 'No especificada' }}</td>
+            <td><span class="badge">{{ project.estado }}</span></td>
+            <td>{{ project.estudiante_email || '-' }}</td>
+            <td>{{ project.comentario || 'Sin comentarios' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p *ngIf="!loading() && assignedProjects().length === 0" class="empty">
+      No tienes proyectos asignados en este momento.
+    </p>
+  </section>
+</main>

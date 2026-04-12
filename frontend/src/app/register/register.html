@@ -1,0 +1,72 @@
+<main class="login-page">
+  <section class="brand-panel">
+    <div class="brand-mark">ISER</div>
+    <h1>Trabajos de grado ISER</h1>
+    <p>Crea tu cuenta para acceder a la plataforma.</p>
+  </section>
+
+  <section class="login-card">
+    <h2>Crear cuenta</h2>
+    <p class="subtitle">Completa el formulario para registrarte.</p>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" novalidate>
+      <label>
+        Nombre completo
+        <input
+          type="text"
+          name="nombre"
+          [(ngModel)]="nombre"
+          placeholder="Tu nombre"
+          required
+        />
+      </label>
+
+      <label>
+        Correo electrónico
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="correo@iser.edu"
+          autocomplete="email"
+          required
+        />
+      </label>
+
+      <label>
+        Contraseña
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Al menos 6 caracteres"
+          autocomplete="new-password"
+          required
+        />
+      </label>
+
+      <label>
+        Confirmar contraseña
+        <input
+          type="password"
+          name="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          placeholder="Repite tu contraseña"
+          autocomplete="new-password"
+          required
+        />
+      </label>
+
+      <p class="error" *ngIf="error()">{{ error() }}</p>
+      <p class="success" *ngIf="success()">{{ success() }}</p>
+
+      <button type="submit" [disabled]="loading()">
+        {{ loading() ? 'Registrando...' : 'Registrarse' }}
+      </button>
+    </form>
+
+    <div class="links">
+      <a routerLink="/login">¿Ya tienes cuenta? Inicia sesión</a>
+    </div>
+  </section>
+</main>

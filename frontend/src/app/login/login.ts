@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,8 @@ export class LoginComponent {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly auth: AuthService
   ) {}
 
   onSubmit(): void {
@@ -42,7 +44,8 @@ export class LoginComponent {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         this.success.set('Inicio de sesión correcto.');
-        this.router.navigate(['/home']);
+        const targetRoute = this.auth.getHomeRouteByRole(response?.data?.user?.rol ?? null);
+        this.router.navigate([targetRoute]);
       },
       error: (err) => {
         this.error.set(err?.error?.message ?? 'No se pudo iniciar sesión.');

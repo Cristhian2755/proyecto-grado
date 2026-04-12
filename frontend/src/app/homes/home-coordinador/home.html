@@ -1,0 +1,118 @@
+<main class="home-page">
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <h1>Panel del Coordinador</h1>
+    </div>
+
+    <nav class="nav-menu" aria-label="Navegacion principal">
+      <button class="nav-item" (click)="goToHome('/home-administrador')">Ver Home Admin</button>
+      <button class="nav-item" (click)="goToHome('/home-docente')">Ver Home Docentes</button>
+      <button class="nav-item" (click)="goToHome('/home-estudiante')">Ver Home Estudiantes</button>
+    </nav>
+
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ displayName }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div class="tab-buttons">
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'dashboard'"
+          (click)="switchTab('dashboard')">
+          Dashboard
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'usuarios'"
+          (click)="switchTab('usuarios')">
+          Usuarios
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'proyectos'"
+          (click)="switchTab('proyectos')">
+          Proyectos
+        </button>
+      </div>
+      <button class="btn-outline" (click)="loadDashboardData()" [disabled]="loading()">Recargar</button>
+    </div>
+
+    <p class="error" *ngIf="error()">{{ error() }}</p>
+
+    <!-- Tab Dashboard -->
+    <section *ngIf="activeTab() === 'dashboard'" class="dashboard-tab">
+      <div class="metrics-grid">
+        <div class="metric-card" *ngFor="let metric of executiveMetrics()">
+          <div class="metric-icon">{{ metric.icon }}</div>
+          <div class="metric-content">
+            <span class="metric-label">{{ metric.label }}</span>
+            <span class="metric-value">{{ metric.value }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab Usuarios -->
+    <section *ngIf="activeTab() === 'usuarios'" class="users-tab">
+      <h3>Gestión de Usuarios</h3>
+      
+      <div class="table-wrap" *ngIf="users().length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users()">
+              <td>{{ user.nombre }}</td>
+              <td>{{ user.email }}</td>
+              <td><span class="badge">{{ user.rol }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p *ngIf="!loading() && users().length === 0" class="empty">No hay usuarios para mostrar.</p>
+    </section>
+
+    <!-- Tab Proyectos -->
+    <section *ngIf="activeTab() === 'proyectos'" class="projects-tab">
+      <h3>Proyectos del Sistema</h3>
+      
+      <div class="projects-table" *ngIf="projects().length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Estudiante</th>
+              <th>Línea Temática</th>
+              <th>Estado</th>
+              <th>Email Estudiante</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let project of projects()">
+              <td>{{ project.titulo }}</td>
+              <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
+              <td>{{ project.linea_tematica || 'No especificada' }}</td>
+              <td><span class="badge">{{ project.estado }}</span></td>
+              <td>{{ project.estudiante_email || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p *ngIf="!loading() && projects().length === 0" class="empty">No hay proyectos para mostrar.</p>
+    </section>
+  </section>
+</main>

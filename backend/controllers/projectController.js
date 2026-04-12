@@ -64,6 +64,18 @@ exports.getMyProjects = async (req, res) => {
   }
 };
 
+// Obtener proyectos asignados a un docente (como revisor/asesor/jurado)
+exports.getMyAssignedProjects = async (req, res) => {
+  try {
+    const docente_id = req.user.id;
+    const projects = await Project.findByDocente(docente_id);
+    res.json({ data: projects });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener tus proyectos asignados" });
+  }
+};
+
 // Actualizar proyecto
 exports.updateProject = async (req, res) => {
   try {

@@ -74,3 +74,113 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: "Error al iniciar sesión", error: error.message });
   }
 };
+
+// CRUD de usuarios para administradores
+
+// Listar todos los usuarios
+exports.listUsers = async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.json({ data: users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener usuarios", error: error.message });
+  }
+};
+
+// Crear nuevo usuario (admin)
+exports.createUser = async (req, res) => {
+  try {
+    const { nombre, email, password, rol } = req.body;
+
+    if (!nombre || !email || !password || !rol) {
+      return res.status(400).json({ message: "Campos requeridos faltantes" });
+    }
+
+    const allowedRoles = ['administrador', 'coordinador', 'estudiante', 'docente', 'asesor', 'jurado'];
+    if (!allowedRoles.includes(rol)) {
+      return res.status(400).json({ message: "Rol no válido" });
+    }
+
+    const userExists = await User.findByEmail(email);
+    if (userExists) {
+      return res.status(400).json({ message: "El email ya está registrado" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      nombre,
+      email,
+      password: hashedPassword,
+      rol
+    });
+
+    res.status(201).json({
+      message: "Usuario creado correctamente",
+      data: { id: newUser.id, nombre: newUser.nombre, email: newUser.email, rol: newUser.rol }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al crear usuario", error: error.message });
+  }
+};
+
+// Actualizar usuario
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, email, password, rol } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const updates = {};
+    if (nombre) updates.nombre = nombre;
+    if (email) {
+      const emailExists = await User.findByEmail(email);
+      if (emailExists && emailExists.id !== user.id) {
+        return res.status(400).json({ message: "El email ya está en uso" });
+      }
+      updates.email = email;
+    }
+    if (password) {
+      updates.password = await bcrypt.hash(password, 10);
+    }
+    if (rol) {
+      const allowedRoles = ['administrador', 'coordinador', 'estudiante', 'docente', 'asesor', 'jurado'];
+      if (!allowedRoles.includes(rol)) {
+        return res.status(400).json({ message: "Rol no válido" });
+      }
+      updates.rol = rol;
+    }
+
+    const updatedUser = await User.updateUser(id, updates);
+    res.json({
+      message: "Usuario actualizado correctamente",
+      data: updatedUser
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar usuario", error: error.message });
+  }
+};
+
+// Eliminar usuario
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    await User.deleteUser(id);
+    res.json({ message: "Usuario eliminado correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al eliminar usuario", error: error.message });
+  }
+};

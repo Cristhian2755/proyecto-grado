@@ -8,6 +8,7 @@ const { checkRole } = require("../middleware/roleMiddleware");
 // Rutas públicas (requieren autenticación)
 router.get("/", verifyToken, projectController.getProjects);
 router.get("/my-projects", verifyToken, projectController.getMyProjects);
+router.get("/my-assigned-projects", verifyToken, projectController.getMyAssignedProjects);
 router.get("/:id", verifyToken, projectController.getProjectById);
 
 // Rutas privadas (solo estudiantes pueden crear)

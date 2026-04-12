@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -8,6 +9,13 @@ import { RouterLink } from '@angular/router';
   styleUrl: './home.scss'
 })
 export class HomeComponent {
+  constructor(
+    private readonly auth: AuthService,
+    private readonly router: Router
+  ) {
+    this.router.navigate([this.auth.getHomeRouteByRole()]);
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
