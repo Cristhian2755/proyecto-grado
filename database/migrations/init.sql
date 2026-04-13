@@ -1,6 +1,6 @@
 CREATE TABLE roles (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    nombre TEXT NOT NULL
+    nombre TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE usuarios (
@@ -8,7 +8,14 @@ CREATE TABLE usuarios (
     nombre TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     contrasena TEXT NOT NULL,
-    rol_id BIGINT REFERENCES roles(id)
+    rol_principal TEXT NOT NULL DEFAULT 'estudiante'
+);
+
+CREATE TABLE usuario_roles (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    usuario_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+    rol TEXT NOT NULL,
+    UNIQUE(usuario_id, rol)
 );
 
 CREATE TABLE lineas_tematicas (

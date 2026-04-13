@@ -1,0 +1,78 @@
+<main class="project-page">
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <h1>Lista de Proyectos</h1>
+    </div>
+
+    <nav class="nav-menu" aria-label="Navegacion principal">
+      <button class="nav-item" type="button" (click)="goToHome('/home-coordinador')">Volver al coordinador</button>
+      <button class="nav-item" type="button" (click)="goToHome('/home-administrador')">Estudiantes</button>
+      <button class="nav-item" type="button" (click)="goToHome('/home-docente')">Docentes</button>
+    </nav>
+
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ displayName }}</span>
+      </div>
+      <button class="btn-logout" type="button" (click)="logout()" title="Cerrar sesion">Salir</button>
+    </div>
+  </header>
+
+  <section class="panel-card">
+    <div class="section-header">
+      <div>
+        <h2>Estado de Proyectos</h2>
+        <p>Vista de seguimiento para el coordinador</p>
+      </div>
+    </div>
+
+    @if (error()) {
+    <div class="alert error">{{ error() }}</div>
+    }
+
+    @if (loading()) {
+    <div class="alert info">Cargando proyectos...</div>
+    }
+
+    <div class="table-wrapper">
+      <table class="projects-table">
+        <thead>
+          <tr>
+            <th>Nombre estudiante</th>
+            <th>Titulo proyecto</th>
+            <th>Estado</th>
+            <th>Avance</th>
+            <th>Asesor</th>
+            <th>Jurados</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (project of projects(); track project.id) {
+          <tr>
+            <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
+            <td>{{ project.titulo }}</td>
+            <td><span class="badge estado">{{ project.estado }}</span></td>
+            <td>
+              <div class="progress-cell">
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="project.avance ?? 0"></div>
+                </div>
+                <span>{{ project.avance ?? 0 }}%</span>
+              </div>
+            </td>
+            <td>{{ project.asesor_nombre || 'Por asignar' }}</td>
+            <td>
+              <ul class="jury-list">
+                @for (jurado of (project.jurados_nombres || ['Por asignar']); track jurado) {
+                <li>{{ jurado }}</li>
+                }
+              </ul>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

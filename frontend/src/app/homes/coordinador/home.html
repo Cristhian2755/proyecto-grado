@@ -1,0 +1,137 @@
+<main class="home-page">
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <h1>Panel del Coordinador</h1>
+    </div>
+
+    <nav class="nav-menu" aria-label="Navegacion principal">
+      <button class="nav-item primary" type="button" (click)="goToStudentRegister()">Registrar Estudiante</button>
+      <button class="nav-item" type="button">Registrar Docente</button>
+    </nav>
+
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ displayName }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
+    </div>
+  </header>
+
+  <section class="dashboard-layout">
+    <div class="main-column">
+      <article class="glass-panel resumen-ejecutivo">
+        <div class="section-header">
+          <h2>Resumen Ejecutivo</h2>
+        </div>
+
+        <div class="stats-grid">
+          @for (stat of getStats(); track stat.label) {
+          <div class="stat-card">
+            <div class="stat-icon">{{ stat.icon }}</div>
+            <div class="stat-content">
+              <p class="stat-label">{{ stat.label }}</p>
+              <p class="stat-value">{{ stat.value }}</p>
+            </div>
+          </div>
+          }
+        </div>
+
+        <section class="proyectos-section">
+          <div class="section-header compact">
+            <h3>Estado de Proyectos</h3>
+            <button class="btn-secondary" type="button" (click)="goToProjects()">Proyectos</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="proyectos-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Estudiante</th>
+                  <th>Estado</th>
+                  <th>Avance (%)</th>
+                  <th>Alertas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let proyecto of projects()">
+                  <td>{{ proyecto.titulo }}</td>
+                  <td>{{ proyecto.estudiante_nombre || 'Sin asignar' }}</td>
+                  <td>{{ proyecto.estado }}</td>
+                  <td>{{ proyecto.avance ?? 0 }}%</td>
+                  <td>
+                    <span [class]="(proyecto.avance ?? 0) < 40 ? 'alerta critica' : 'alerta normal'">
+                      {{ (proyecto.avance ?? 0) < 40 ? 'Retraso' : 'Sin alerta' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </article>
+
+      <article class="glass-panel acciones-rapidas">
+        <h3>Acciones Rápidas</h3>
+        <div class="actions-grid">
+          @for (action of quickActions; track action.label) {
+          <button class="btn-action" [class.btn-ghost]="action.ghost" type="button" (click)="action.action()">
+            {{ action.label }}
+          </button>
+          }
+        </div>
+      </article>
+    </div>
+
+    <aside class="ia-column">
+      <article class="glass-panel ia-panel">
+        <h3>Asistente IA</h3>
+        <p class="ia-desc">Recomendaciones inteligentes para facilitar la asignacion docente.</p>
+
+        @for (card of assistantCards; track card.title) {
+        <section class="ia-card" [class.chatbot-card]="card.title === 'Chatbot IA'" [class.muted]="card.muted">
+          <h4>{{ card.title }}</h4>
+
+          @if (card.title === 'Chatbot IA') {
+          <div class="chat-container">
+            <div class="chat-message assistant">
+              <p>{{ card.body }}</p>
+            </div>
+            <div class="chat-message user">
+              <p>¿Por qué es válida esa recomendación?</p>
+            </div>
+            <div class="chat-message assistant">
+              <ul class="chat-reasons">
+                @for (item of card.bullets || []; track item) {
+                <li>{{ item }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+          <div class="chat-input-group">
+            <input type="text" class="chat-input" placeholder="Haz una pregunta..." />
+            <button type="button" class="btn-send">→</button>
+          </div>
+          } @else {
+          <p>{{ card.body }}</p>
+
+          @if (card.bullets?.length) {
+          <p class="ia-razones">Razones:</p>
+          <ul>
+            @for (item of card.bullets || []; track item) {
+            <li>{{ item }}</li>
+            }
+          </ul>
+          }
+
+          @if (card.button) {
+          <button class="btn-secondary full" type="button">{{ card.button }}</button>
+          }
+          }
+        </section>
+        }
+      </article>
+    </aside>
+  </section>
+</main>

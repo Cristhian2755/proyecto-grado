@@ -5,6 +5,7 @@ database/node_modules/
 
 # Env files
 .env
+.env.example
 
 # Logs
 npm-debug.log*

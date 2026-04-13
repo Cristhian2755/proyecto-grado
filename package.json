@@ -9,6 +9,7 @@
   },
   "scripts": {
     "predev": "node scripts/prepare-dev.js",
+    "init-db": "node database/database.js",
     "install:all": "npm install --prefix backend && npm install --prefix frontend",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend start",

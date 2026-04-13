@@ -4,10 +4,12 @@ import { LoginComponent } from './login/login';
 import { RegisterComponent } from './register/register';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password';
 import { ResetPasswordComponent } from './reset-password/reset-password';
-import { HomeAdministradorComponent } from './homes/home-administrador/home-administrador';
-import { HomeEstudianteComponent } from './homes/home-estudiante/home-estudiante';
-import { HomeDocenteComponent } from './homes/home-docente/home-docente';
-import { HomeCoordinadorComponent } from './homes/home-coordinador/home';
+import { HomeAdministradorComponent } from './homes/administrador/home-administrador';
+import { HomeEstudianteComponent } from './homes/estudiante/home-estudiante';
+import { HomeDocenteComponent } from './homes/docente/home-docente';
+import { HomeCoordinadorComponent } from './homes/coordinador/home';
+import { ProjectComponent } from './project/project';
+import { StudentRegisterComponent } from './student-register/student-register';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { HomeComponent } from './home/home';
@@ -62,6 +64,18 @@ export const routes: Routes = [
 		component: HomeCoordinadorComponent,
 		canActivate: [AuthGuard, RoleGuard],
 		data: { roles: ['coordinador'] }
+	},
+	{
+		path: 'project',
+		component: ProjectComponent,
+		canActivate: [AuthGuard, RoleGuard],
+		data: { roles: ['coordinador', 'administrador'] }
+	},
+	{
+		path: 'register-student',
+		component: StudentRegisterComponent,
+		canActivate: [AuthGuard, RoleGuard],
+		data: { roles: ['coordinador', 'administrador'] }
 	},
 	{
 		path: '**',

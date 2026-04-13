@@ -5,15 +5,30 @@
 
 .home-page {
   min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
   padding: 18px;
   color: #0f172a;
+}
+
+.home-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.84), rgba(255, 255, 255, 0.72)), url('../../../Imagen3.png') center/cover no-repeat;
+  pointer-events: none;
+}
+
+.home-page > * {
+  position: relative;
+  z-index: 1;
 }
 
 .top-navbar,
 .panel {
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 24px;
-  background: rgba(132, 132, 132, 0.611);
+  background: rgba(255, 255, 255, 0.68);
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
   backdrop-filter: blur(8px);
 }

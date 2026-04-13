@@ -13,6 +13,26 @@ type UserRow = {
   rol: string;
 };
 
+type StatCard = {
+  icon: string;
+  label: string;
+  value: string;
+};
+
+type QuickAction = {
+  label: string;
+  ghost?: boolean;
+  action: () => void;
+};
+
+type AssistantCard = {
+  title: string;
+  body: string;
+  bullets?: string[];
+  button?: string;
+  muted?: boolean;
+};
+
 @Component({
   selector: 'app-home-coordinador',
   standalone: true,
@@ -32,8 +52,44 @@ export class HomeCoordinadorComponent {
   readonly projects = signal<Proyecto[]>([]);
   readonly loading = signal(false);
   readonly error = signal('');
-  readonly activeTab = signal<'dashboard' | 'usuarios' | 'proyectos'>('dashboard');
-  readonly executiveMetrics = signal<Array<{ label: string; value: string; icon: string }>>([]);
+  readonly stats: StatCard[] = [
+    { icon: '📁', label: 'Proyectos Activos', value: '' },
+    { icon: '👥', label: 'Alumnos Registrados', value: '' },
+    { icon: '📋', label: 'Asignaciones Pendientes', value: '15 docentes' },
+    { icon: '📊', label: 'Indicador de Avance Promedio', value: '72%' }
+  ];
+
+  readonly quickActions: QuickAction[] = [
+    { label: 'Propuestas', ghost: true, action: () => this.goToProjects() },
+    { label: 'Cronogramas', ghost: true, action: () => this.goToProjects() },
+    { label: 'Informes', ghost: true, action: () => this.goToProjects() },
+    { label: 'Anexos', ghost: true, action: () => this.goToProjects() },
+    { label: 'Asesorias', action: () => this.goToProjects() }
+  ];
+
+  readonly assistantCards: AssistantCard[] = [
+    {
+      title: 'Chatbot IA',
+      body: 'Hola, he analizado los proyectos. Recomiendo a Dr. Morales como asesor.',
+      bullets: ['Perfil especializado en IA', 'Publicaciones recientes', 'Disponibilidad actual']
+    },
+    {
+      title: 'Asesor recomendado',
+      body: 'Estudiante X (Tema IA): Dr. Morales',
+      bullets: ['Perfil Docente: IA', 'Publicaciones Recientes'],
+      button: 'Recomendaciones'
+    },
+    {
+      title: 'Sugerencia de Jurado',
+      body: 'Proyecto de Redes',
+      button: 'Sugerencia'
+    },
+    {
+      title: 'Alertas del Asistente',
+      body: '"Docente Y tiene sobrecarga - 5 asesorias"',
+      muted: true
+    }
+  ];
 
   constructor() {
     const user = this.auth.getStoredUser();
@@ -44,6 +100,14 @@ export class HomeCoordinadorComponent {
 
   goToHome(path: string): void {
     this.router.navigate([path]);
+  }
+
+  goToProjects(): void {
+    this.router.navigate(['/project']);
+  }
+
+  goToStudentRegister(): void {
+    this.router.navigate(['/register-student']);
   }
 
   logout(): void {
@@ -86,7 +150,6 @@ export class HomeCoordinadorComponent {
     this.projectService.getAllProjects().pipe(finalize(() => this.loading.set(false))).subscribe({
       next: (response) => {
         this.projects.set(response?.data ?? []);
-        this.updateMetrics();
       },
       error: (err: any) => {
         this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
@@ -95,20 +158,24 @@ export class HomeCoordinadorComponent {
   }
 
   switchTab(tab: 'dashboard' | 'usuarios' | 'proyectos'): void {
-    this.activeTab.set(tab);
+    void tab;
   }
 
-  private updateMetrics(): void {
+  getStats(): StatCard[] {
     const projects = this.projects();
-    const projectCount = projects.length;
-    const userCount = this.users().filter(u => u.rol?.toLowerCase() === 'estudiante').length;
-    
-    this.executiveMetrics.set([
-      { label: 'Proyectos Activos', value: projectCount.toString(), icon: '📁' },
-      { label: 'Estudiantes Registrados', value: userCount.toString(), icon: '👥' },
-      { label: 'Total Usuarios', value: this.users().length.toString(), icon: '⚖️' },
-      { label: 'Proyectos en Propuesta', value: projects.filter(p => p.estado === 'propuesta').length.toString(), icon: '📈' }
-    ]);
+    const students = this.users().filter((user) => user.rol?.toLowerCase() === 'estudiante').length;
+
+    return this.stats.map((stat) => {
+      if (stat.label === 'Proyectos Activos') {
+        return { ...stat, value: String(projects.length) };
+      }
+
+      if (stat.label === 'Alumnos Registrados') {
+        return { ...stat, value: String(students) };
+      }
+
+      return stat;
+    });
   }
 
   private getDisplayName(user: Record<string, unknown> | null): string {

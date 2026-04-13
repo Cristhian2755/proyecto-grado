@@ -15,6 +15,8 @@ export interface Proyecto {
   linea_tematica: string;
   rol: string;
   estado: string;
+  avance?: number;
+  alertas?: string;
   revisor_id?: number;
   comentario?: string;
   aprobado?: boolean;

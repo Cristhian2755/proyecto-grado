@@ -16,7 +16,7 @@
           type="email"
           name="email"
           [(ngModel)]="email"
-          placeholder="correo@iser.edu"
+          placeholder="Correo"
           autocomplete="email"
           required
         />
@@ -28,14 +28,18 @@
           type="password"
           name="password"
           [(ngModel)]="password"
-          placeholder="Tu contraseña"
+          placeholder="Contraseña"
           autocomplete="current-password"
           required
         />
       </label>
 
-      <p class="error" *ngIf="error()">{{ error() }}</p>
-      <p class="success" *ngIf="success()">{{ success() }}</p>
+      @if (error()) {
+      <p class="error">{{ error() }}</p>
+      }
+      @if (success()) {
+      <p class="success">{{ success() }}</p>
+      }
 
       <button type="submit" [disabled]="loading()">
         {{ loading() ? 'Ingresando...' : 'Entrar' }}

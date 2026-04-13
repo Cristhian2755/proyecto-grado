@@ -8,12 +8,16 @@ const normalizeRole = (role) => {
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
-  if (normalized.includes("administrador")) return "administrador";
-  if (normalized.includes("coordinador")) return "coordinador";
-  if (normalized.includes("estudiante")) return "estudiante";
-  if (normalized.includes("docente") || normalized.includes("asesor") || normalized.includes("jurado")) return "docente";
+  const roleMap = {
+    "administrador": "administrador",
+    "coordinador": "coordinador",
+    "estudiante": "estudiante",
+    "docente": "docente",
+    "asesor": "asesor",
+    "jurado": "jurado"
+  };
 
-  return normalized;
+  return roleMap[normalized] || normalized;
 };
 
 const checkRole = (...rolesPermitidos) => {

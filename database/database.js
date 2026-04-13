@@ -1,14 +1,15 @@
 const { Pool } = require('pg');
-const fs = require('fs');
 const path = require('path');
+const bcrypt = require('../backend/node_modules/bcryptjs');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+require('dotenv').config({ path: path.join(__dirname, '..', 'backend', '.env') });
 
 const pool = new Pool({
-  host: process.env.PGHOST,
-  port: process.env.PGPORT,
-  database: process.env.PGDATABASE,
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
+  host: process.env.PGHOST || process.env.DB_HOST,
+  port: Number(process.env.PGPORT || process.env.DB_PORT || 5432),
+  database: process.env.PGDATABASE || process.env.DB_NAME,
+  user: process.env.PGUSER || process.env.DB_USER,
+  password: process.env.PGPASSWORD || process.env.DB_PASSWORD,
   ssl: { rejectUnauthorized: false }
 });
 
@@ -16,6 +17,7 @@ async function initDatabase() {
   const client = await pool.connect();
   try {
     console.log('Inicializando BD...');
+    const defaultPassword = await bcrypt.hash('Admin12345!', 10);
 
     // Drop CASCADE de todas las tablas
     console.log('Limpiando....');
@@ -25,6 +27,7 @@ async function initDatabase() {
       'DROP TABLE IF EXISTS notificaciones CASCADE',
       'DROP TABLE IF EXISTS revisiones CASCADE',
       'DROP TABLE IF EXISTS proyectos CASCADE',
+      'DROP TABLE IF EXISTS usuario_roles CASCADE',
       'DROP TABLE IF EXISTS usuarios CASCADE',
       'DROP TABLE IF EXISTS lineas_tematicas CASCADE',
       'DROP TABLE IF EXISTS roles CASCADE'
@@ -51,10 +54,20 @@ async function initDatabase() {
           nombre TEXT NOT NULL,
           email TEXT UNIQUE NOT NULL,
           contrasena TEXT NOT NULL,
-          rol_id BIGINT REFERENCES roles(id)
+          rol_principal TEXT NOT NULL DEFAULT 'estudiante'
       )
     `);
     console.log('✓ Tabla usuarios creada');
+
+    await client.query(`
+      CREATE TABLE usuario_roles (
+          id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+          usuario_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+          rol TEXT NOT NULL,
+          UNIQUE(usuario_id, rol)
+      )
+    `);
+    console.log('✓ Tabla usuario_roles creada');
 
     await client.query(`
       CREATE TABLE lineas_tematicas (
@@ -129,10 +142,12 @@ async function initDatabase() {
     
     await client.query(`
       INSERT INTO roles (nombre) VALUES
-      ('Coordinador'),
-      ('Estudiante'),
-      ('Asesor'),
-      ('Jurado')
+      ('administrador'),
+      ('coordinador'),
+      ('docente'),
+      ('estudiante'),
+      ('asesor'),
+      ('jurado')
     `);
     console.log('✓ Roles insertados');
 
@@ -147,13 +162,26 @@ async function initDatabase() {
     console.log('✓ Líneas temáticas insertadas');
 
     await client.query(`
-      INSERT INTO usuarios (nombre, email, contrasena, rol_id) VALUES
-      ('Admin ISER', 'admin@iser.edu.co', 'hashed_password', 1),
-      ('Carlos Estudiante', 'carlos@iser.edu.co', 'hashed_password', 2),
-      ('Maria Asesor', 'maria@iser.edu.co', 'hashed_password', 3),
-      ('Juan Jurado', 'juan@iser.edu.co', 'hashed_password', 4)
+      INSERT INTO usuarios (nombre, email, contrasena, rol_principal) VALUES
+      ('Admin ISER', 'admin@iser.edu.co', '${defaultPassword}', 'administrador'),
+      ('Coordinador ISER', 'coordinador@iser.edu.co', '${defaultPassword}', 'coordinador'),
+      ('Carlos Estudiante', 'carlos@iser.edu.co', '${defaultPassword}', 'estudiante'),
+      ('Maria Docente', 'maria@iser.edu.co', '${defaultPassword}', 'docente'),
+      ('Juan Docente', 'juan@iser.edu.co', '${defaultPassword}', 'docente')
     `);
     console.log('✓ Usuarios insertados');
+
+    await client.query(`
+      INSERT INTO usuario_roles (usuario_id, rol) VALUES
+      (1, 'administrador'),
+      (2, 'coordinador'),
+      (3, 'estudiante'),
+      (4, 'docente'),
+      (4, 'asesor'),
+      (5, 'docente'),
+      (5, 'jurado')
+    `);
+    console.log('✓ Roles de usuarios insertados');
 
     await client.query(`
       INSERT INTO proyectos (titulo, problema, justificacion, objetivos, estudiante_id, linea_tematica_id, estado) VALUES

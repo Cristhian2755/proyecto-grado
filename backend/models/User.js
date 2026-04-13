@@ -2,33 +2,40 @@ const { pool } = require('../config/db');
 
 class User {
   static async create(userData) {
-    const { nombre, email, password, rol = 'estudiante' } = userData;
+    const { nombre, email, password, rol = 'estudiante', subroles = [] } = userData;
     
-    // Obtener el ID del rol
-    let rolId;
-    if (typeof rol === 'string') {
-      const roleQuery = 'SELECT id FROM roles WHERE LOWER(nombre) = LOWER($1) LIMIT 1';
-      const roleResult = await pool.query(roleQuery, [rol]);
-      rolId = roleResult.rows[0]?.id || 3; // Default a estudiante (id 3)
-    } else {
-      rolId = rol;
+    const query = `
+      INSERT INTO usuarios (nombre, email, contrasena, rol_principal)
+      VALUES ($1, $2, $3, $4)
+      RETURNING id, nombre, email, rol_principal as rol
+    `;
+    const values = [nombre, email, password, rol];
+    const result = await pool.query(query, values);
+    const user = result.rows[0];
+
+    // Insertar subroles si existen (para docentes que son asesor/jurado)
+    if (subroles && subroles.length > 0) {
+      for (const subrrol of subroles) {
+        await pool.query(
+          `INSERT INTO usuario_roles (usuario_id, rol) VALUES ($1, $2)`,
+          [user.id, subrrol]
+        );
+      }
+    } else if (rol === 'docente') {
+      // Si es docente pero no especifica subroles, inserta el rol docente
+      await pool.query(
+        `INSERT INTO usuario_roles (usuario_id, rol) VALUES ($1, $2)`,
+        [user.id, 'docente']
+      );
     }
 
-    const query = `
-      INSERT INTO usuarios (nombre, email, contrasena, rol_id)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, nombre, email, (SELECT nombre FROM roles WHERE id = rol_id) as rol
-    `;
-    const values = [nombre, email, password, rolId];
-    const result = await pool.query(query, values);
-    return result.rows[0];
+    return user;
   }
 
   static async findByEmail(email) {
     const query = `
-      SELECT u.id, u.nombre, u.email, u.contrasena as password, COALESCE(r.nombre, 'estudiante') as rol
+      SELECT u.id, u.nombre, u.email, u.contrasena as password, u.rol_principal as rol
       FROM usuarios u
-      LEFT JOIN roles r ON r.id = u.rol_id
       WHERE u.email = $1
     `;
     const result = await pool.query(query, [email]);
@@ -37,9 +44,8 @@ class User {
 
   static async findById(id) {
     const query = `
-      SELECT u.id, u.nombre, u.email, u.contrasena as password, COALESCE(r.nombre, 'estudiante') as rol
+      SELECT u.id, u.nombre, u.email, u.contrasena as password, u.rol_principal as rol
       FROM usuarios u
-      LEFT JOIN roles r ON r.id = u.rol_id
       WHERE u.id = $1
     `;
     const result = await pool.query(query, [id]);
@@ -48,13 +54,20 @@ class User {
 
   static async findAll() {
     const query = `
-      SELECT u.id, u.nombre, u.email, COALESCE(r.nombre, 'estudiante') as rol
+      SELECT u.id, u.nombre, u.email, u.rol_principal as rol
       FROM usuarios u
-      LEFT JOIN roles r ON r.id = u.rol_id
       ORDER BY u.id
     `;
     const result = await pool.query(query);
     return result.rows;
+  }
+
+  static async getUserRoles(userId) {
+    const query = `
+      SELECT rol FROM usuario_roles WHERE usuario_id = $1
+    `;
+    const result = await pool.query(query, [userId]);
+    return result.rows.map(row => row.rol);
   }
 
   static async updateUser(id, updates) {
@@ -81,16 +94,8 @@ class User {
     }
 
     if (updates.rol !== undefined) {
-      let rolId;
-      if (typeof updates.rol === 'string') {
-        const roleQuery = 'SELECT id FROM roles WHERE LOWER(nombre) = LOWER($1) LIMIT 1';
-        const roleResult = await pool.query(roleQuery, [updates.rol]);
-        rolId = roleResult.rows[0]?.id || 3;
-      } else {
-        rolId = updates.rol;
-      }
-      fields.push(`rol_id = $${paramCount}`);
-      values.push(rolId);
+      fields.push(`rol_principal = $${paramCount}`);
+      values.push(updates.rol);
       paramCount++;
     }
 
@@ -103,11 +108,29 @@ class User {
       UPDATE usuarios
       SET ${fields.join(', ')}
       WHERE id = $${paramCount}
-      RETURNING id, nombre, email, (SELECT nombre FROM roles WHERE id = rol_id) as rol
+      RETURNING id, nombre, email, rol_principal as rol
     `;
 
     const result = await pool.query(query, values);
     return result.rows[0];
+  }
+
+  static async setUserSubroles(userId, subroles) {
+    // Eliminar subroles anteriores
+    await pool.query(
+      `DELETE FROM usuario_roles WHERE usuario_id = $1`,
+      [userId]
+    );
+
+    // Insertar nuevos subroles
+    for (const subrrol of subroles) {
+      await pool.query(
+        `INSERT INTO usuario_roles (usuario_id, rol) VALUES ($1, $2)`,
+        [userId, subrrol]
+      );
+    }
+
+    return true;
   }
 
   static async deleteUser(id) {

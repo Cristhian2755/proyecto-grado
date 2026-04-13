@@ -1,13 +1,31 @@
 const nodemailer = require('nodemailer');
 
 // Configuración del transporter de email
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'tu-email@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'tu-app-password'
+// Soporta Gmail y Outlook. Define EMAIL_PROVIDER='outlook' en .env para usar Outlook
+const getTransporter = () => {
+  const emailProvider = process.env.EMAIL_PROVIDER || 'gmail';
+  
+  if (emailProvider === 'outlook') {
+    return nodemailer.createTransport({
+      service: 'outlook',
+      auth: {
+        user: process.env.EMAIL_USER || 'tu-email@outlook.com',
+        pass: process.env.EMAIL_PASSWORD || 'tu-contraseña-outlook'
+      }
+    });
   }
-});
+  
+  // Gmail por defecto
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER || 'tu-email@gmail.com',
+      pass: process.env.EMAIL_PASSWORD || 'tu-app-password'
+    }
+  });
+};
+
+const transporter = getTransporter();
 
 // Enviar email de recuperación de contraseña
 exports.sendPasswordResetEmail = async (email, resetLink) => {

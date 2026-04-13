@@ -13,18 +13,26 @@
 
 .home-page {
   min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.84) 0%, rgba(226, 232, 240, 0.74) 100%), url('../../Imagen3.png') center/cover no-repeat;
   padding: 24px;
+}
+
+.home-page > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home-card {
   width: min(560px, 100%);
-  background: white;
+  background: rgba(255, 255, 255, 0.82);
   border-radius: 22px;
   padding: 32px;
   box-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(10px);
 }
 
 .eyebrow {

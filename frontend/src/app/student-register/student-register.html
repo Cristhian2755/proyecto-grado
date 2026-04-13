@@ -1,0 +1,76 @@
+<main class="student-page">
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <h1>Registro de Estudiantes</h1>
+    </div>
+
+    <nav class="nav-menu" aria-label="Navegacion principal">
+      <button class="nav-item" type="button" (click)="goToHome('/home-coordinador')">Volver al coordinador</button>
+      <button class="nav-item" type="button" (click)="goToHome('/home-administrador')">Panel admin</button>
+    </nav>
+
+    <div class="navbar-right">
+      <button class="btn-logout" type="button" (click)="logout()">Salir</button>
+    </div>
+  </header>
+
+  <section class="student-layout">
+    <article class="glass-panel form-card">
+      <div class="section-header">
+        <h2>Registrar nuevo estudiante</h2>
+        <p>El rol se guarda automáticamente como estudiante.</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #studentForm="ngForm" novalidate>
+        <label>
+          Nombre completo
+          <input type="text" name="nombre" [(ngModel)]="nombre" placeholder="Nombre del estudiante" required />
+        </label>
+
+        <label>
+          Correo electrónico
+          <input type="email" name="email" [(ngModel)]="email" placeholder="correo@iser.edu.co" autocomplete="email" required />
+        </label>
+
+        <label>
+          Contraseña
+          <input type="password" name="password" [(ngModel)]="password" placeholder="Contraseña" autocomplete="new-password" required />
+        </label>
+
+        <label>
+          Confirmar contraseña
+          <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Repite la contraseña" autocomplete="new-password" required />
+        </label>
+
+        @if (error()) {
+        <p class="message error">{{ error() }}</p>
+        }
+
+        @if (success()) {
+        <p class="message success">{{ success() }}</p>
+        }
+
+        <button class="submit-btn" type="submit" [disabled]="loading()">
+          {{ loading() ? 'Guardando...' : 'Registrar estudiante' }}
+        </button>
+      </form>
+    </article>
+
+    <aside class="glass-panel side-card">
+      <h3>Últimos registros</h3>
+      <div class="recent-list">
+        @if (recentStudents().length === 0) {
+        <div class="recent-empty">Aún no has registrado estudiantes.</div>
+        }
+
+        @for (student of recentStudents(); track student.email) {
+        <div class="recent-item">
+          <strong>{{ student.nombre }}</strong>
+          <span>{{ student.email }}</span>
+          <small>Rol: estudiante</small>
+        </div>
+        }
+      </div>
+    </aside>
+  </section>
+</main>

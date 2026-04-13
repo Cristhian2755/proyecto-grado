@@ -1,0 +1,198 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.project-page {
+  min-height: 100dvh;
+  padding: 18px;
+  color: #0f172a;
+  background:
+    linear-gradient(150deg, rgba(240, 248, 255, 0.86), rgba(255, 255, 255, 0.7)),
+    url('../../Imagen3.png') center/cover no-repeat;
+}
+
+.top-navbar {
+  display: grid;
+  grid-template-columns: 260px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.34);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.navbar-brand h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.nav-item,
+.btn-logout {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nav-item {
+  background: rgba(29, 155, 240, 0.12);
+  color: #0f172a;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #1d9bf0;
+  color: #fff;
+  font-weight: 800;
+}
+
+.btn-logout {
+  background: #1d9bf0;
+  color: #fff;
+}
+
+.panel-card {
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.34);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+  padding: 16px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.section-header p {
+  margin: 4px 0 0;
+  color: #64748b;
+}
+
+.alert {
+  margin: 12px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.alert.error {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+}
+
+.alert.info {
+  background: rgba(29, 155, 240, 0.1);
+  color: #0369a1;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #d5dde8;
+  background: #fff;
+}
+
+.projects-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+th {
+  background: #f8fbff;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+td {
+  color: #1f2937;
+  font-size: 0.95rem;
+}
+
+.badge.estado {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(29, 155, 240, 0.12);
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.progress-cell {
+  min-width: 140px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(29, 155, 240, 0.12);
+  margin-bottom: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ca2dd, #2e8ad1);
+}
+
+.jury-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+@media (max-width: 900px) {
+  .top-navbar {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-menu {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .project-page {
+    padding: 10px;
+  }
+}

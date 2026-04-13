@@ -95,17 +95,28 @@ export class HomeAdministradorComponent {
       return;
     }
 
+    // Para edición, solo envía campos que hayan cambiado
+    if (this.editingUserId) {
+      const payload: any = {
+        nombre: this.nombre,
+        email: this.email,
+        rol: this.rol
+      };
+      // Solo envía contraseña si no está vacía
+      if (this.password) {
+        payload.password = this.password;
+      }
+      this.updateUser(this.editingUserId, payload);
+      return;
+    }
+
+    // Para creación, todos los campos son requeridos
     const payload = {
       nombre: this.nombre,
       email: this.email,
       password: this.password,
       rol: this.rol
     };
-
-    if (this.editingUserId) {
-      this.updateUser(this.editingUserId, payload);
-      return;
-    }
 
     this.createUser(payload);
   }
@@ -161,7 +172,7 @@ export class HomeAdministradorComponent {
       });
   }
 
-  updateUser(id: number, payload: { nombre: string; email: string; password: string; rol: string }): void {
+  updateUser(id: number, payload: { nombre: string; email: string; rol: string; password?: string }): void {
     const token = localStorage.getItem('token');
     if (!token) {
       this.error.set('No hay sesión activa.');
