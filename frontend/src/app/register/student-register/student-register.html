@@ -1,0 +1,92 @@
+<main class="student-page">
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <h1>Registro de Estudiantes</h1>
+    </div>
+
+    <nav class="nav-menu" aria-label="Navegacion principal">
+    </nav>
+
+    <div class="navbar-right">
+      <button class="nav-item" type="button" (click)="goToHome('/home-coordinador')">Volver</button>
+    </div>
+  </header>
+  <p class="error" *ngIf="error()">{{ error() }}</p>
+  <p class="success" *ngIf="success()">{{ success() }}</p>
+
+  <!-- Sección formulario -->
+  <section class="glass-panel crud-panel">
+    <div class="crud-panel-header">
+      <h3>{{ editingStudentId ? 'Editar estudiante' : 'Registrar nuevo estudiante' }}</h3>
+      <button class="btn-outline" type="button" (click)="startCreate()" *ngIf="editingStudentId">Nuevo registro</button>
+    </div>
+
+    <form class="crud-form three-columns" (ngSubmit)="onSubmit()" #studentForm="ngForm" novalidate>
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" name="nombre" [(ngModel)]="nombre" placeholder="Nombre del estudiante" required />
+      </div>
+
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" name="email" [(ngModel)]="email" placeholder="correo@ejemplo.com" autocomplete="email" required />
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña temporal</label>
+        <div class="password-field">
+          <input type="text" name="password" [(ngModel)]="password" placeholder="Generada automáticamente" readonly />
+          <button type="button" class="btn-generate" (click)="generateTemporaryPassword()">Generar</button>
+        </div>
+      </div>
+
+      <div class="crud-actions">
+        <button class="btn-primary" type="submit" [disabled]="loading()">
+          {{ editingStudentId ? 'Actualizar' : 'Registrar' }}
+        </button>
+        <button class="btn-outline" type="button" (click)="resetForm()" *ngIf="editingStudentId">Limpiar</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Sección tabla de estudiantes -->
+  <section class="glass-panel students-table-panel">
+    <div class="table-header">
+      <h3>Estudiantes Registrados</h3>
+      <button class="btn-outline" (click)="loadStudents()" [disabled]="loading()">Recargar</button>
+    </div>
+
+    <div class="table-wrap" *ngIf="students().length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let student of students()">
+            <td>{{ student.nombre }}</td>
+            <td>{{ student.email }}</td>
+            <td><span class="badge">{{ student.rol }}</span></td>
+            <td>
+              <button class="btn-primary" type="button" (click)="startEdit(student)" [disabled]="loading()">
+                Editar
+              </button>
+            </td>
+            <td>
+              <button class="btn-danger" type="button" (click)="deleteStudent(student)" [disabled]="loading()">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p *ngIf="!loading() && students().length === 0" class="empty">No hay estudiantes registrados aún.</p>
+  </section>
+</main>

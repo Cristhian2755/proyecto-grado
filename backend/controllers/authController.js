@@ -77,10 +77,17 @@ exports.loginUser = async (req, res) => {
 
 // CRUD de usuarios para administradores
 
-// Listar todos los usuarios
+// Listar usuarios (con filtro opcional por rol)
 exports.listUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const { rol } = req.query;
+    let users = await User.findAll();
+    
+    // Filtrar por rol si se proporciona el parámetro
+    if (rol) {
+      users = users.filter(user => user.rol_principal === rol || user.rol === rol);
+    }
+    
     res.json({ data: users });
   } catch (error) {
     console.error(error);

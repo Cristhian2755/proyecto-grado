@@ -1,0 +1,112 @@
+<main class="student-page">
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <h1>Registro de Docentes</h1>
+    </div>
+
+    <nav class="nav-menu" aria-label="Navegacion principal">
+    </nav>
+
+    <div class="navbar-right">
+      <button class="nav-item" type="button" (click)="goToHome('/home-coordinador')">Volver</button>
+    </div>
+  </header>
+  <p class="error" *ngIf="error()">{{ error() }}</p>
+  <p class="success" *ngIf="success()">{{ success() }}</p>
+
+  <!-- Sección formulario -->
+  <section class="glass-panel crud-panel">
+    <div class="crud-panel-header">
+      <h3>{{ editingDocenteId ? 'Editar docente' : 'Registrar nuevo docente' }}</h3>
+      <button class="btn-outline" type="button" (click)="startCreate()" *ngIf="editingDocenteId">Nuevo registro</button>
+    </div>
+
+    <form class="crud-form five-columns" (ngSubmit)="onSubmit()" #docenteForm="ngForm" novalidate>
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" name="nombre" [(ngModel)]="nombre" placeholder="Nombre del docente" required />
+      </div>
+
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" name="email" [(ngModel)]="email" placeholder="correo@ejemplo.com" autocomplete="email" required />
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña temporal</label>
+        <div class="password-field">
+          <input type="text" name="password" [(ngModel)]="password" placeholder="Generada automáticamente" readonly />
+          <button type="button" class="btn-generate" (click)="generateTemporaryPassword()">Generar</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Asesor</label>
+        <select name="esAsesor" [(ngModel)]="esAsesor">
+          <option value="no">No</option>
+          <option value="si">Sí</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Jurado</label>
+        <select name="esJurado" [(ngModel)]="esJurado">
+          <option value="no">No</option>
+          <option value="si">Sí</option>
+        </select>
+      </div>
+
+      <div class="crud-actions">
+        <button class="btn-primary" type="submit" [disabled]="loading()">
+          {{ editingDocenteId ? 'Actualizar' : 'Registrar' }}
+        </button>
+        <button class="btn-outline" type="button" (click)="resetForm()" *ngIf="editingDocenteId">Limpiar</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Sección tabla de docentes -->
+  <section class="glass-panel students-table-panel">
+    <div class="table-header">
+      <h3>Docentes Registrados</h3>
+      <button class="btn-outline" (click)="loadDocentes()" [disabled]="loading()">Recargar</button>
+    </div>
+
+    <div class="table-wrap" *ngIf="docentes().length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Asesor</th>
+            <th>Jurado</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let docente of docentes()">
+            <td>{{ docente.nombre }}</td>
+            <td>{{ docente.email }}</td>
+            <td><span class="badge">{{ docente.rol }}</span></td>
+            <td>{{ docente.esAsesor ? 'Sí' : 'No' }}</td>
+            <td>{{ docente.esJurado ? 'Sí' : 'No' }}</td>
+            <td>
+              <button class="btn-primary" type="button" (click)="startEdit(docente)" [disabled]="loading()">
+                Editar
+              </button>
+            </td>
+            <td>
+              <button class="btn-danger" type="button" (click)="deleteDocente(docente)" [disabled]="loading()">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p *ngIf="!loading() && docentes().length === 0" class="empty">No hay docentes registrados aún.</p>
+  </section>
+</main>

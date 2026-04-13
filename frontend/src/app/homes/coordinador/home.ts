@@ -110,6 +110,10 @@ export class HomeCoordinadorComponent {
     this.router.navigate(['/register-student']);
   }
 
+  goToDocenteRegister(): void {
+    this.router.navigate(['/register-docente']);
+  }
+
   logout(): void {
     this.auth.logout();
   }

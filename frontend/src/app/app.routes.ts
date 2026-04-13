@@ -9,7 +9,8 @@ import { HomeEstudianteComponent } from './homes/estudiante/home-estudiante';
 import { HomeDocenteComponent } from './homes/docente/home-docente';
 import { HomeCoordinadorComponent } from './homes/coordinador/home';
 import { ProjectComponent } from './project/project';
-import { StudentRegisterComponent } from './student-register/student-register';
+import { StudentRegisterComponent } from './register/student-register/student-register';
+import { DocenteRegisterComponent } from './register/docente-register/docente-register';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { HomeComponent } from './home/home';
@@ -74,6 +75,12 @@ export const routes: Routes = [
 	{
 		path: 'register-student',
 		component: StudentRegisterComponent,
+		canActivate: [AuthGuard, RoleGuard],
+		data: { roles: ['coordinador', 'administrador'] }
+	},
+	{
+		path: 'register-docente',
+		component: DocenteRegisterComponent,
 		canActivate: [AuthGuard, RoleGuard],
 		data: { roles: ['coordinador', 'administrador'] }
 	},
