@@ -25,11 +25,11 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (_req, file, cb) => {
-  const allowed = new Set([".pdf", ".doc", ".docx", ".zip", ".rar", ".txt"]);
+  const allowed = new Set([".pdf", ".doc", ".docx", ".xls", ".xlsx"]);
   const ext = path.extname(file.originalname).toLowerCase();
 
   if (!allowed.has(ext)) {
-    return cb(new Error("Tipo de archivo no permitido"));
+    return cb(new Error("Tipo de archivo no permitido. Solo PDF, Word o Excel."));
   }
 
   cb(null, true);

@@ -4,13 +4,15 @@ const bcrypt = require('../backend/node_modules/bcryptjs');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 require('dotenv').config({ path: path.join(__dirname, '..', 'backend', '.env') });
 
+const sslEnabled = String(process.env.PGSSL || process.env.DB_SSL || '').toLowerCase() === 'true';
+
 const pool = new Pool({
   host: process.env.PGHOST || process.env.DB_HOST,
   port: Number(process.env.PGPORT || process.env.DB_PORT || 5432),
   database: process.env.PGDATABASE || process.env.DB_NAME,
   user: process.env.PGUSER || process.env.DB_USER,
   password: process.env.PGPASSWORD || process.env.DB_PASSWORD,
-  ssl: { rejectUnauthorized: false }
+  ssl: sslEnabled ? { rejectUnauthorized: false } : false
 });
 
 async function initDatabase() {
@@ -29,6 +31,7 @@ async function initDatabase() {
       'DROP TABLE IF EXISTS proyectos CASCADE',
       'DROP TABLE IF EXISTS usuario_roles CASCADE',
       'DROP TABLE IF EXISTS usuarios CASCADE',
+      'DROP TABLE IF EXISTS carreras CASCADE',
       'DROP TABLE IF EXISTS lineas_tematicas CASCADE',
       'DROP TABLE IF EXISTS roles CASCADE'
     ];
@@ -54,7 +57,8 @@ async function initDatabase() {
           nombre TEXT NOT NULL,
           email TEXT UNIQUE NOT NULL,
           contrasena TEXT NOT NULL,
-          rol_principal TEXT NOT NULL DEFAULT 'estudiante'
+          rol_principal TEXT NOT NULL DEFAULT 'estudiante',
+          carrera_id BIGINT
       )
     `);
     console.log('✓ Tabla usuarios creada');
@@ -78,6 +82,23 @@ async function initDatabase() {
     console.log('✓ Tabla lineas_tematicas creada');
 
     await client.query(`
+      CREATE TABLE carreras (
+          id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+          nombre TEXT NOT NULL UNIQUE,
+          facultad TEXT,
+          coordinador_id BIGINT REFERENCES usuarios(id)
+      )
+    `);
+    console.log('✓ Tabla carreras creada');
+
+    await client.query(`
+      ALTER TABLE usuarios
+      ADD CONSTRAINT usuarios_carrera_id_fkey
+      FOREIGN KEY (carrera_id) REFERENCES carreras(id)
+    `);
+    console.log('✓ Relación usuarios.carrera_id creada');
+
+    await client.query(`
       CREATE TABLE proyectos (
           id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
           titulo TEXT NOT NULL,
@@ -86,6 +107,7 @@ async function initDatabase() {
           objetivos TEXT NOT NULL,
           estudiante_id BIGINT REFERENCES usuarios(id),
           linea_tematica_id BIGINT REFERENCES lineas_tematicas(id),
+          carrera_id BIGINT REFERENCES carreras(id),
           estado TEXT NOT NULL DEFAULT 'Propuesto'
       )
     `);
@@ -162,6 +184,15 @@ async function initDatabase() {
     console.log('✓ Líneas temáticas insertadas');
 
     await client.query(`
+      INSERT INTO carreras (nombre, facultad, coordinador_id) VALUES
+      ('Ingeniería de Sistemas', 'Facultad de Ingeniería', NULL),
+      ('Arquitectura', 'Facultad de Arquitectura', NULL),
+      ('Medicina', 'Facultad de Ciencias de la Salud', NULL),
+      ('Redes y Sistemas', 'Facultad de Ingeniería', NULL)
+    `);
+    console.log('✓ Carreras insertadas');
+
+    await client.query(`
       INSERT INTO usuarios (nombre, email, contrasena, rol_principal) VALUES
       ('Admin ISER', 'admin@iser.edu.co', '${defaultPassword}', 'administrador'),
       ('Coordinador ISER', 'coordinador@iser.edu.co', '${defaultPassword}', 'coordinador'),
@@ -170,6 +201,16 @@ async function initDatabase() {
       ('Juan Docente', 'juan@iser.edu.co', '${defaultPassword}', 'docente')
     `);
     console.log('✓ Usuarios insertados');
+
+    await client.query(`
+      UPDATE usuarios SET carrera_id = 1 WHERE id IN (2, 3, 4, 5)
+    `);
+    console.log('✓ Usuarios vinculados a carrera');
+
+    await client.query(`
+      UPDATE carreras SET coordinador_id = 2 WHERE id = 1
+    `);
+    console.log('✓ Carrera principal vinculada a coordinador');
 
     await client.query(`
       INSERT INTO usuario_roles (usuario_id, rol) VALUES

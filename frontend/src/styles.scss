@@ -16,3 +16,26 @@ app-root {
 	display: block;
 	min-height: 100dvh;
 }
+
+.navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  display: block;
+  width: auto;
+  max-height: 48px;
+  object-fit: contain;
+}
+
+.brand-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.brand-panel .brand-logo {
+  max-height: 64px;
+}

@@ -1,8 +1,43 @@
 const { execSync, spawnSync } = require('child_process');
+const os = require('os');
 
 const ports = [5001, 4200];
+const isWindows = os.platform() === 'win32';
 
 function getPidsForPort(port) {
+  if (!isWindows) {
+    try {
+      const output = execSync(`lsof -ti tcp:${port} -sTCP:LISTEN`, {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore']
+      });
+
+      return output
+        .split(/\r?\n/)
+        .map((line) => Number(line.trim()))
+        .filter((pid) => Number.isInteger(pid) && pid > 0);
+    } catch {
+      try {
+        const output = execSync(`ss -lptn 'sport = :${port}'`, {
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore']
+        });
+
+        const pids = new Set();
+        const pidRegex = /pid=(\d+)/g;
+        let match;
+
+        while ((match = pidRegex.exec(output)) !== null) {
+          pids.add(Number(match[1]));
+        }
+
+        return [...pids];
+      } catch {
+        return [];
+      }
+    }
+  }
+
   try {
     const output = execSync(`netstat -ano -p tcp | findstr :${port}`, {
       encoding: 'utf8',
@@ -31,6 +66,17 @@ function getPidsForPort(port) {
 }
 
 function killPid(pid, port) {
+  if (!isWindows) {
+    try {
+      process.kill(pid, 'SIGKILL');
+      console.log(`✓ Puerto ${port} liberado (PID ${pid})`);
+      return;
+    } catch (error) {
+      console.log(`⚠ No se pudo liberar el puerto ${port} (PID ${pid}): ${error.message}`);
+      return;
+    }
+  }
+
   const result = spawnSync('taskkill', ['/PID', String(pid), '/F'], {
     encoding: 'utf8'
   });

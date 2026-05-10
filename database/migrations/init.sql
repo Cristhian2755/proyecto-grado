@@ -8,7 +8,8 @@ CREATE TABLE usuarios (
     nombre TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     contrasena TEXT NOT NULL,
-    rol_principal TEXT NOT NULL DEFAULT 'estudiante'
+    rol_principal TEXT NOT NULL DEFAULT 'estudiante',
+    carrera_id BIGINT
 );
 
 CREATE TABLE usuario_roles (
@@ -23,6 +24,17 @@ CREATE TABLE lineas_tematicas (
     nombre TEXT NOT NULL
 );
 
+CREATE TABLE carreras (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    nombre TEXT NOT NULL UNIQUE,
+    facultad TEXT,
+    coordinador_id BIGINT REFERENCES usuarios(id)
+);
+
+ALTER TABLE usuarios
+ADD CONSTRAINT usuarios_carrera_id_fkey
+FOREIGN KEY (carrera_id) REFERENCES carreras(id);
+
 CREATE TABLE proyectos (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     titulo TEXT NOT NULL,
@@ -31,6 +43,7 @@ CREATE TABLE proyectos (
     objetivos TEXT NOT NULL,
     estudiante_id BIGINT REFERENCES usuarios(id),
     linea_tematica_id BIGINT REFERENCES lineas_tematicas(id),
+    carrera_id BIGINT REFERENCES carreras(id),
     estado TEXT NOT NULL DEFAULT 'Propuesto'
 );
 

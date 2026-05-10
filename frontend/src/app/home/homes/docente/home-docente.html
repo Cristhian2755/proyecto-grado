@@ -1,0 +1,101 @@
+<main class="home-page">
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
+      <h1>Panel del Docente</h1>
+    </div>
+    
+    <nav class="nav-menu" aria-label="Navegacion principal">
+      <button class="nav-item" (click)="goToHome('/home-administrador')">Ver Home Admin</button>
+      <button class="nav-item" (click)="goToHome('/home-coordinador')">Ver Home Coordinador</button>
+      <button class="nav-item" (click)="goToHome('/home-estudiante')">Ver Home Estudiantes</button>
+    </nav>
+    
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ displayName }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
+    </div>
+  </header>
+  
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Mis Proyectos Asignados</h2>
+      <button class="btn-outline" (click)="loadAssignedProjects()" [disabled]="loading()">Recargar</button>
+    </div>
+    
+    <p class="error" *ngIf="error()">{{ error() }}</p>
+    
+    <div class="projects-table" *ngIf="assignedProjects().length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Título del Proyecto</th>
+            <th>Estudiante</th>
+            <th>Línea Temática</th>
+            <th>Estado</th>
+            <th>Email del Estudiante</th>
+            <th>Comentario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let project of assignedProjects()">
+            <td>{{ project.titulo }}</td>
+            <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
+            <td>{{ project.linea_tematica || 'No especificada' }}</td>
+            <td><span class="badge">{{ project.estado }}</span></td>
+            <td>{{ project.estudiante_email || '-' }}</td>
+            <td>{{ project.comentario || 'Sin comentarios' }}</td>
+            <td>
+              <button class="btn-action" (click)="openModal(project)">Ver / Revisar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <p *ngIf="!loading() && assignedProjects().length === 0" class="empty">
+      No tienes proyectos asignados en este momento.
+    </p>
+  </section>
+  
+  <!-- Modal for project review -->
+  <div class="modal-backdrop" *ngIf="showModal()" (click)="closeModal()"></div>
+  <div class="modal" *ngIf="showModal()" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h3>Revisión de Proyecto</h3>
+        <button class="modal-close" (click)="closeModal()" aria-label="Cerrar">×</button>
+      </header>
+      <section class="modal-body">
+        <div *ngIf="selectedProject() as project">
+          <div class="project-info">
+            <p><strong>Título:</strong> {{ project.titulo }}</p>
+            <p><strong>Estudiante:</strong> {{ project.estudiante_nombre || 'Sin asignar' }}</p>
+            <p><strong>Email Estudiante:</strong> {{ project.estudiante_email || '-' }}</p>
+            <p><strong>Línea Temática:</strong> {{ project.linea_tematica || 'No especificada' }}</p>
+            <p><strong>Estado Actual:</strong> <span class="badge">{{ project.estado }}</span></p>
+          </div>
+          
+          <div class="form-group">
+            <label for="observation">Observaciones:</label>
+            <textarea id="observation"
+                      [(ngModel)]="project.comentario"
+                      placeholder="Escribe tus observaciones aquí..."
+                      rows="4"></textarea>
+          </div>
+          
+          <div class="modal-actions">
+            <button class="btn-secondary" (click)="closeModal()">Cancelar</button>
+            <button class="btn-primary" (click)="saveObservation()">Guardar Observación</button>
+            <button class="btn-danger" (click)="project.estado = 'EN_CORRECCION'; changeState()">Enviar a Corrección</button>
+            <button class="btn-success" (click)="project.estado = 'APROBADO_DOCENTE'; changeState()">Aprobar (Docente)</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>

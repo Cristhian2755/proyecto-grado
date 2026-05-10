@@ -1,0 +1,123 @@
+<main class="project-page">
+
+  <!-- NAVBAR -->
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
+      <h1>Mi Proyecto de Grado</h1>
+    </div>
+
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ displayName }}</span>
+      </div>
+      <button class="btn-logout" type="button" (click)="logout()">
+        Salir
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <section class="panel-card">
+
+    <!-- ESTADOS -->
+    @if (error()) {
+      <div class="alert error">{{ error() }}</div>
+    }
+
+    @if (loading()) {
+      <div class="alert info">Cargando información...</div>
+    }
+
+    @if (success()) {
+      <div class="alert success">{{ success() }}</div>
+    }
+
+    @if (showProjectForm()) {
+      <form class="project-form" (ngSubmit)="guardarProyecto()">
+        <h3>{{ editingProject() ? 'Editar proyecto' : 'Crear nuevo proyecto' }}</h3>
+
+        <label>
+          Titulo del proyecto
+          <input type="text" name="titulo" [(ngModel)]="titulo" required />
+        </label>
+
+        <div class="upload-row">
+          <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="onFileSelected($event)" />
+          <button class="btn upload" type="button" (click)="subirEntrega()" [disabled]="!project()">
+            Subir archivo a docs
+          </button>
+        </div>
+        <div class="actions">
+          <button class="btn primary" type="submit">{{ editingProject() ? 'Actualizar proyecto' : 'Guardar proyecto' }}</button>
+          <button class="btn secondary" type="button" (click)="cancelarFormulario()">Cancelar</button>
+        </div>
+      </form>
+    }
+
+    <!-- PROYECTO -->
+    @if (project()) {
+      <div class="project-card">
+
+        <h2>{{ project()?.titulo }}</h2>
+
+        <p><strong>Problema:</strong></p>
+        <p>{{ project()?.problema }}</p>
+
+        <p><strong>Objetivos:</strong></p>
+        <p>{{ project()?.objetivos }}</p>
+
+        <div class="actions">
+          <button class="btn primary" (click)="editarProyecto()">
+            Editar proyecto
+          </button>
+
+          @if (entregas().length > 0) {
+            <button class="btn secondary" (click)="verDocumento()">
+              Ver ultimo documento
+            </button>
+          }
+        </div>
+
+      </div>
+
+      <!-- ENTREGAS -->
+      <div class="entregas-section">
+        <h3>Mis entregas</h3>
+
+        <div class="upload-row">
+          <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="onFileSelected($event)" />
+          <button class="btn upload" (click)="subirEntrega()">
+            Subir nueva entrega
+          </button>
+        </div>
+
+        <ul class="entregas-list">
+          @for (entrega of entregas(); track entrega.id) {
+            <li>
+              <span>{{ entrega.nombre_original || entrega.archivo }}</span>
+              <small>{{ entrega.fecha_entrega | date:'short' }}</small>
+              @if (entrega.url_descarga) {
+                <button class="btn-link" type="button" (click)="verDocumento(entrega)">Ver</button>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+
+    }
+
+    <!-- SI NO TIENE PROYECTO -->
+    @if (!project() && !loading() && !showProjectForm()) {
+      <div class="empty-state">
+        <p>No tienes un proyecto registrado</p>
+
+        <button class="btn primary" type="button" (click)="crearProyecto()">
+          Crear proyecto
+        </button>
+      </div>
+    }
+
+  </section>
+</main>
