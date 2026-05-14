@@ -7,6 +7,8 @@ const { connectDB, pool } = require("./config/db");
 const errorHandler = require("./middleware/errorMiddleware");
 
 const authRoutes = require("./routes/authRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+const entregaRoutes = require("./routes/entregaRoutes");
 const aiRoutes = require("./modules/AIClassificationModule/routes/aiRoutes");
 
 const app = express();
@@ -21,6 +23,8 @@ app.use("/docs", express.static(path.join(__dirname, "..", "docs")));
 
 // Rutas
 app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/entregas", entregaRoutes);
 app.use("/api/ai", aiRoutes);
 
 // Health check
@@ -56,5 +60,5 @@ app.listen(PORT, () => {
   console.log(`✓ Backend corriendo en http://localhost:${PORT}`);
   console.log(`✓ API disponible en http://localhost:${PORT}/api`);
   console.log(`✓ Health check: http://localhost:${PORT}/health`);
-  console.log(`✓ Conectado a PostgreSQL local desde backend`);
+  console.log(`✓ Conectado a PostgreSQL Azure desde backend`);
 });

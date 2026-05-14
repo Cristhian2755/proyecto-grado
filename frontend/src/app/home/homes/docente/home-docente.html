@@ -1,101 +1,73 @@
-<main class="home-page">
-  <header class="top-navbar">
+<main class="docentes-container">
+  <!-- Header verde superior -->
+  <header class="navbar-top">
     <div class="navbar-brand">
-      <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
-      <h1>Panel del Docente</h1>
+      <img class="logo-iser" src="/assets/logo_iser.png" alt="ISER" />
     </div>
     
-    <nav class="nav-menu" aria-label="Navegacion principal">
-      <button class="nav-item" (click)="goToHome('/home-administrador')">Ver Home Admin</button>
-      <button class="nav-item" (click)="goToHome('/home-coordinador')">Ver Home Coordinador</button>
-      <button class="nav-item" (click)="goToHome('/home-estudiante')">Ver Home Estudiantes</button>
-    </nav>
-    
-    <div class="navbar-right">
-      <div class="user-profile">
-        <div class="avatar">{{ userInitials }}</div>
-        <span>{{ displayName }}</span>
-      </div>
-      <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
+    <div class="search-box">
+      <input type="text" placeholder="Search" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+      <svg class="search-icon" viewBox="0 0 20 20">
+        <path fill="currentColor" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/>
+      </svg>
     </div>
+
+    <button class="user-icon" (click)="logout()" title="Cerrar sesión">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="12" cy="8" r="4"/><path d="M12 14c-4 0-6 2-6 4v2h12v-2c0-2-2-4-6-4z"/>
+      </svg>
+    </button>
   </header>
-  
-  <section class="panel">
-    <div class="panel-header">
-      <h2>Mis Proyectos Asignados</h2>
-      <button class="btn-outline" (click)="loadAssignedProjects()" [disabled]="loading()">Recargar</button>
-    </div>
-    
-    <p class="error" *ngIf="error()">{{ error() }}</p>
-    
-    <div class="projects-table" *ngIf="assignedProjects().length > 0">
-      <table>
-        <thead>
-          <tr>
-            <th>Título del Proyecto</th>
-            <th>Estudiante</th>
-            <th>Línea Temática</th>
-            <th>Estado</th>
-            <th>Email del Estudiante</th>
-            <th>Comentario</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let project of assignedProjects()">
-            <td>{{ project.titulo }}</td>
-            <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
-            <td>{{ project.linea_tematica || 'No especificada' }}</td>
-            <td><span class="badge">{{ project.estado }}</span></td>
-            <td>{{ project.estudiante_email || '-' }}</td>
-            <td>{{ project.comentario || 'Sin comentarios' }}</td>
-            <td>
-              <button class="btn-action" (click)="openModal(project)">Ver / Revisar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <p *ngIf="!loading() && assignedProjects().length === 0" class="empty">
-      No tienes proyectos asignados en este momento.
-    </p>
-  </section>
-  
-  <!-- Modal for project review -->
-  <div class="modal-backdrop" *ngIf="showModal()" (click)="closeModal()"></div>
-  <div class="modal" *ngIf="showModal()" role="dialog" aria-modal="true">
-    <div class="modal-content">
-      <header class="modal-header">
-        <h3>Revisión de Proyecto</h3>
-        <button class="modal-close" (click)="closeModal()" aria-label="Cerrar">×</button>
-      </header>
-      <section class="modal-body">
-        <div *ngIf="selectedProject() as project">
-          <div class="project-info">
-            <p><strong>Título:</strong> {{ project.titulo }}</p>
-            <p><strong>Estudiante:</strong> {{ project.estudiante_nombre || 'Sin asignar' }}</p>
-            <p><strong>Email Estudiante:</strong> {{ project.estudiante_email || '-' }}</p>
-            <p><strong>Línea Temática:</strong> {{ project.linea_tematica || 'No especificada' }}</p>
-            <p><strong>Estado Actual:</strong> <span class="badge">{{ project.estado }}</span></p>
-          </div>
-          
-          <div class="form-group">
-            <label for="observation">Observaciones:</label>
-            <textarea id="observation"
-                      [(ngModel)]="project.comentario"
-                      placeholder="Escribe tus observaciones aquí..."
-                      rows="4"></textarea>
-          </div>
-          
-          <div class="modal-actions">
-            <button class="btn-secondary" (click)="closeModal()">Cancelar</button>
-            <button class="btn-primary" (click)="saveObservation()">Guardar Observación</button>
-            <button class="btn-danger" (click)="project.estado = 'EN_CORRECCION'; changeState()">Enviar a Corrección</button>
-            <button class="btn-success" (click)="project.estado = 'APROBADO_DOCENTE'; changeState()">Aprobar (Docente)</button>
-          </div>
+
+  <!-- Contenedor principal con tres áreas -->
+  <div class="main-content">
+    <!-- Área izquierda: Opciones de archivos -->
+    <section class="left-panel">
+      <div class="archivos-section">
+        <button class="file-button" *ngFor="let file of fileOptions" 
+                [class.active]="file.id === selectedFile()"
+                (click)="selectFile(file.id)">
+          {{ file.nombre }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Área central: Lista de docentes/estudiantes -->
+    <section class="center-panel">
+      <div class="docentes-list">
+        <div class="docente-item" *ngFor="let docente of filteredDocentes()"
+             [class.active]="docente.id === selectedDocente()?.id"
+             (click)="selectDocente(docente)">
+          {{ docente.nombre }}
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
+
+    <!-- Área derecha: Visor de documento -->
+    <section class="right-panel">
+      <div class="document-viewer">
+        <div *ngIf="selectedDocente() as docente" class="document-content">
+          <h3>{{ docente.nombre }}</h3>
+          <p><strong>Email:</strong> {{ docente.email }}</p>
+          <p><strong>Rol:</strong> {{ docente.rol_principal }}</p>
+          <div class="document-placeholder"></div>
+        </div>
+        <div *ngIf="!selectedDocente()" class="empty-document">
+          Selecciona un docente para ver más información
+        </div>
+      </div>
+    </section>
   </div>
+
+  <!-- Sección inferior: Estadísticas -->
+  <section class="bottom-panel">
+    <div class="stats-container">
+      <div class="stats-header">% trabajos</div>
+      <div class="stats-buttons">
+        <button class="stat-button pending">pendientes</button>
+        <button class="stat-button approved">aprobados</button>
+        <button class="stat-button rejected">reprobados</button>
+      </div>
+    </div>
+  </section>
 </main>

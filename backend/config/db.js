@@ -6,21 +6,18 @@ require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 const sslEnabled = String(process.env.PGSSL || '').toLowerCase() === 'true';
 
 const pool = new Pool({
-  host: process.env.PGHOST || process.env.DB_HOST,
-  port: process.env.PGPORT || process.env.DB_PORT,
-  database: process.env.PGDATABASE || process.env.DB_NAME,
-  user: process.env.PGUSER || process.env.DB_USER,
-  password: process.env.PGPASSWORD || process.env.DB_PASSWORD,
+  host: process.env.PGHOST,
+  port: process.env.PGPORT,
+  database: process.env.PGDATABASE,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
   ssl: sslEnabled ? { rejectUnauthorized: false } : false
 });
 
 const connectDB = async () => {
   try {
     await pool.connect();
-    const host = process.env.PGHOST || process.env.DB_HOST;
-    const port = process.env.PGPORT || process.env.DB_PORT;
-    const database = process.env.PGDATABASE || process.env.DB_NAME;
-    console.log(`✓ PostgreSQL conectado correctamente (${host}:${port}/${database})`);
+    console.log(`✓ PostgreSQL conectado correctamente (${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE})`);
   } catch (error) {
     console.error("Error de conexión a PostgreSQL:", error.message);
     process.exit(1);
