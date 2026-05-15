@@ -9,6 +9,7 @@
   "description": "",
   "main": "database.js",
   "scripts": {
+    "init-db": "node database.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
