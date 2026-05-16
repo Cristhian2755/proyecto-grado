@@ -9,10 +9,11 @@
   },
   "scripts": {
     "predev": "node scripts/prepare-dev.js",
+    "dev:status": "node scripts/dev-status.js",
     "init-db": "node database/database.js",
     "install:all": "npm install --prefix backend && npm install --prefix frontend && npm install --prefix database",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend start",
-    "dev": "node ./node_modules/concurrently/dist/bin/concurrently.js -n BACKEND,FRONTEND -c green,blue \"npm --prefix backend run dev\" \"npm --prefix frontend start\""
+    "dev": "node ./node_modules/concurrently/dist/bin/concurrently.js -n BACKEND,FRONTEND,STATUS -c green,blue,magenta \"npm --prefix backend run dev\" \"npm --prefix frontend start\" \"npm run dev:status\""
   }
 }

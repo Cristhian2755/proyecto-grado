@@ -1,168 +1,170 @@
-<main class="home-administrador">
-  <header class="top-navbar">
+<main class="admin-page">
+    <header class="admin-topbar">
+        <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
 
-    <div class="navbar-brand">
-      <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
-      <h1>Panel del Administrador</h1>
-    </div>
+        <div class="topbar-search" role="search" aria-label="Buscar usuarios">
+            <input
+                type="text"
+                name="search"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        [placeholder]="searchPlaceholder()"
+        [attr.aria-label]="'Buscar ' + searchPlaceholder()"
+            />
+            <button class="search-button" type="button" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+                <span class="search-icon">⌕</span>
+            </button>
+        </div>
+        <nav class="nav-menu" aria-label="Navegacion principal">
+      <button type="button" class="tab-btn" [class.active]="activeTab() === 'usuarios'" (click)="switchTab('usuarios')"> Gestión de Usuarios </button>
+      <button type="button" class="btn-outline" [class.active]="activeTab() === 'proyectos'" (click)="switchTab('proyectos')"> Proyectos </button>
+        </nav>
 
-    <nav class="nav-menu" aria-label="Navegacion principal">
-      <button class="nav-item" (click)="goToHome('/home-estudiante')">Ver Home Estudiantes</button>
-      <button class="nav-item" (click)="goToHome('/home-docente')">Ver Home Docentes</button>
-      <button class="nav-item" (click)="goToHome('/home-coordinador')">Ver Home Coordinador</button>
-    </nav>
+        <div class="navbar-right">
+            <div class="user-profile">
+                <div class="avatar">{{ userInitials }}</div>
+                <span>{{ displayName }}</span>
+            </div>
+            <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
+        </div>
+    </header>
 
-    <div class="navbar-right">
-      <div class="user-profile">
-        <div class="avatar">{{ userInitials }}</div>
-        <span>{{ displayName }}</span>
-      </div>
-      <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
-    </div>
-  </header>
 
-  <section class="panel">
-    <div class="panel-header">
-      <div class="tab-buttons">
-        <button 
-          class="tab-btn" 
-          [class.active]="activeTab() === 'usuarios'"
-          (click)="switchTab('usuarios')">
-          Gestión de Usuarios
-        </button>
-        <button 
-          class="tab-btn" 
-          [class.active]="activeTab() === 'proyectos'"
-          (click)="switchTab('proyectos')">
-          Proyectos
-        </button>
-      </div>
-      <button class="btn-outline" (click)="activeTab() === 'usuarios' ? loadUsers() : loadProjects()" [disabled]="loading()">Recargar</button>
-    </div>
+  <section class="admin-content">
+    <p class="error-message" *ngIf="error()">{{ error() }}</p>
+    <p class="success-message" *ngIf="success()">{{ success() }}</p>
 
-    <p class="error" *ngIf="error()">{{ error() }}</p>
-    <p class="success" *ngIf="success()">{{ success() }}</p>
-
-    <!-- Tab de Usuarios -->
-    <section *ngIf="activeTab() === 'usuarios'" class="crud-panel">
-      <div class="crud-panel-header">
-        <h3>{{ editingUserId ? 'Editar usuario' : 'Añadir usuario' }}</h3>
-        <button class="btn-outline" type="button" (click)="startCreate()">Nuevo usuario</button>
+    @if (activeTab() === 'usuarios') {
+    <section class="card-section">
+      <div class="section-heading">
+        <h2>Datos</h2>
       </div>
 
-      <form class="crud-form" (ngSubmit)="submitForm()" #userForm="ngForm" novalidate>
-        <label>
-          Nombre
-          <input
-            type="text"
-            name="nombre"
-            [(ngModel)]="nombre"
-            placeholder="Nombre completo"
-            required
-          />
-        </label>
-
-        <label>
-          Email
-          <input
-            type="email"
-            name="email"
-            [(ngModel)]="email"
-            placeholder="correo@iser.edu.co"
-            required
-          />
-        </label>
-
-        <label>
-          Contraseña
+      <div class="data-card">
+        <form class="data-grid" (ngSubmit)="submitForm()" #userForm="ngForm" novalidate>
+          <input type="text" name="nombre" [(ngModel)]="nombre" placeholder="nombre" required />
+          <input type="email" name="email" [(ngModel)]="email" placeholder="correo" required />
           <input
             type="password"
             name="password"
             [(ngModel)]="password"
             [required]="!editingUserId"
-            placeholder="{{ editingUserId ? 'Dejar en blanco para conservarla' : 'Contraseña inicial' }}"
+            placeholder="contraseña"
           />
-        </label>
+          <button class="save-button" type="submit" [disabled]="loading()">GUARDAR</button>
 
-        <label>
-          Rol
-          <select name="rol" [(ngModel)]="rol" required>
-            <option *ngFor="let role of allowedRoles" [value]="role">{{ role }}</option>
+          <select name="rol" [(ngModel)]="rol" (ngModelChange)="onRoleChange($event)" required>
+            <option value="" disabled selected>rol</option>
+            @for (role of roleOptions; track role) {
+            <option [value]="role">{{ role }}</option>
+            }
           </select>
-        </label>
 
-        <div class="crud-actions">
-          <button class="btn-primary" type="submit" [disabled]="loading()">
-            {{ editingUserId ? 'Actualizar usuario' : 'Crear usuario' }}
-          </button>
-          <button class="btn-outline" type="button" (click)="resetForm()">Limpiar</button>
-        </div>
-      </form>
+          @if (rol === 'docente') {
+          <select name="subrol" [(ngModel)]="subrol" required>
+            <option value="" disabled selected>sub rol</option>
+            @for (subrole of subroleOptions; track subrole) {
+            <option [value]="subrole">{{ subrole }}</option>
+            }
+          </select>
+          } @else {
+          <input type="text" name="subrol" [(ngModel)]="subrol" placeholder="sub rol" disabled />
+          }
 
-      <div class="table-wrap" *ngIf="users().length > 0">
-        <table>
-          <thead>
+          <select name="carreraId" [(ngModel)]="carreraId">
+            <option value="">programa</option>
+            @for (carrera of carreras(); track carrera.id) {
+            <option [value]="carrera.id">{{ carrera.nombre }}</option>
+            }
+          </select>
+        </form>
+      </div>
+    </section>
+
+    <section class="card-section users-section">
+      <div class="section-heading">
+        <h2>Usuarios</h2>
+      </div>
+
+      <div class="users-card">
+        @if (loading()) {
+        <p class="loading-message">Cargando usuarios...</p>
+        } @else if (filteredUsers().length === 0) {
+        <p class="empty-message">No hay usuarios para mostrar.</p>
+        } @else {
+        <div class="table-wrap">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Contraseña</th>
+                <th>Rol</th>
+                <th>Sub Rol</th>
+                <th>Programa</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+          @for (user of filteredUsers(); track user.id) {
             <tr>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Contraseña</th>
-              <th>Rol actual</th>
-              <th>Editar usuario</th>
-              <th>Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users()">
               <td>{{ user.nombre }}</td>
               <td>{{ user.email }}</td>
-              <td><span class="badge badge-muted">********</span></td>
-              <td><span class="badge">{{ user.rol }}</span></td>
-              <td>
-                <button class="btn-primary" type="button" (click)="startEdit(user)" [disabled]="loading()">
-                  Editar
-                </button>
-              </td>
-              <td>
-                <button class="btn-danger" type="button" (click)="deleteUser(user)" [disabled]="loading()">
-                  Eliminar
-                </button>
+              <td>********</td>
+              <td>{{ user.rol }}</td>
+              <td>{{ (user.subroles && user.subroles.length) ? user.subroles.join(', ') : '-' }}</td>
+              <td>{{ user.carrera_nombre || 'Sin programa' }}</td>
+              <td class="table-actions">
+                <button class="edit-button" type="button" (click)="startEdit(user)">Editar</button>
+                <button class="delete-button" type="button" (click)="deleteUser(user)">Eliminar</button>
               </td>
             </tr>
-          </tbody>
-        </table>
+          }
+            </tbody>
+          </table>
+        </div>
+        }
+      </div>
+    </section>
+    } @else {
+    <section class="card-section projects-section">
+      <div class="section-heading">
+        <h2>Proyectos</h2>
       </div>
 
-      <p *ngIf="!loading() && users().length === 0" class="empty">No hay usuarios para mostrar.</p>
-    </section>
-
-    <!-- Tab de Proyectos -->
-    <section *ngIf="activeTab() === 'proyectos'" class="projects-panel">
-      <h3>Proyectos del Sistema</h3>
-      
-      <div class="projects-table" *ngIf="projects().length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Estudiante</th>
-              <th>Línea Temática</th>
-              <th>Estado</th>
-              <th>Email Estudiante</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let project of projects()">
-              <td>{{ project.titulo }}</td>
-              <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
-              <td>{{ project.linea_tematica || 'No especificada' }}</td>
-              <td><span class="badge">{{ project.estado }}</span></td>
-              <td>{{ project.estudiante_email || '-' }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="projects-card">
+        @if (projectLoading()) {
+        <p class="loading-message">Cargando proyectos...</p>
+        } @else if (filteredProjects().length === 0) {
+        <p class="empty-message">No hay proyectos para mostrar.</p>
+        } @else {
+        <div class="table-wrap">
+          <table class="projects-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Estudiante</th>
+                <th>Línea temática</th>
+                <th>Estado</th>
+                <th>Email estudiante</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (project of filteredProjects(); track project.id) {
+              <tr>
+                <td>{{ project.titulo }}</td>
+                <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
+                <td>{{ project.linea_tematica || 'No especificada' }}</td>
+                <td><span class="project-badge">{{ project.estado }}</span></td>
+                <td>{{ project.estudiante_email || '-' }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
       </div>
-
-      <p *ngIf="!loading() && projects().length === 0" class="empty">No hay proyectos para mostrar.</p>
     </section>
+    }
   </section>
 </main>

@@ -2,7 +2,11 @@ const Entrega = require("../models/Entrega");
 
 exports.uploadEntrega = async (req, res) => {
   try {
-    const { proyecto_id } = req.body;
+    console.log('[entregaController] req.body:', req.body);
+    console.log('[entregaController] req.file:', req.file && { originalname: req.file.originalname, filename: req.file.filename });
+
+    const proyecto_id = req.body.proyecto_id || req.query?.proyecto_id;
+    const carpeta = req.body.carpeta || req.query?.carpeta;
 
     if (!proyecto_id) {
       return res.status(400).json({ message: "proyecto_id es requerido" });
@@ -13,7 +17,8 @@ exports.uploadEntrega = async (req, res) => {
     }
 
     const version = await Entrega.getNextVersion(proyecto_id);
-    const relativePath = `docs/${req.file.filename}`;
+    const folderName = carpeta || 'propuesta';
+    const relativePath = `docs/${folderName}/${req.file.filename}`;
 
     const nuevaEntrega = await Entrega.create({
       proyecto_id,

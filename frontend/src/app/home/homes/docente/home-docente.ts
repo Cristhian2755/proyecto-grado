@@ -1,22 +1,10 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { ProjectService, Proyecto } from '../../../services/project.service';
-
-interface Docente {
-  id: number;
-  nombre: string;
-  email: string;
-  rol_principal: string;
-}
-
-interface FileOption {
-  id: string;
-  nombre: string;
-}
 
 @Component({
   selector: 'app-home-docente',
@@ -30,104 +18,93 @@ export class HomeDocenteComponent {
   private readonly auth = inject(AuthService);
   private readonly projectService = inject(ProjectService);
 
-  readonly searchTerm = signal('');
-  readonly selectedFile = signal<string>('propuesta');
-  readonly selectedDocente = signal<Docente | null>(null);
-  readonly docentes = signal<Docente[]>([]);
+  readonly displayName: string;
+  readonly userInitials: string;
+  readonly assignedProjects = signal<Proyecto[]>([]);
   readonly loading = signal(false);
   readonly error = signal('');
-
-  readonly fileOptions: FileOption[] = [
-    { id: 'propuesta', nombre: 'propuesta' },
-    { id: 'cronograma', nombre: 'cronograma' },
-    { id: 'informe-semana-6', nombre: 'informe semana 6' },
-    { id: 'anexos', nombre: 'anexos' },
-    { id: 'asesorias', nombre: 'asesorías' },
-    { id: 'informe-final', nombre: 'informe final' }
-  ];
-
-  readonly filteredDocentes = computed(() => {
-    const search = this.searchTerm().toLowerCase();
-    return this.docentes().filter(d => 
-      d.nombre.toLowerCase().includes(search) || 
-      d.email.toLowerCase().includes(search)
-    );
-  });
+  /** Modal state */
+  readonly selectedProject = signal<Proyecto | null>(null);
+  readonly showModal = signal(false);
 
   constructor() {
-    this.loadDocentes();
+    const user = this.auth.getStoredUser();
+    this.displayName = this.getDisplayName(user);
+    this.userInitials = this.buildInitials(this.displayName);
+    this.loadAssignedProjects();
   }
 
-  loadDocentes(): void {
-    this.loading.set(true);
-    this.error.set('');
-
-    this.projectService.getMyAssignedProjects().pipe(
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: (response: any) => {
-        const docentes: Docente[] = [];
-        const seenIds = new Set<number>();
-
-        // Extraer docentes únicos de los proyectos
-        if (Array.isArray(response?.data)) {
-          response.data.forEach((project: any) => {
-            // Si hay información del revisor/docente en el proyecto
-            if (project.revisor_id && !seenIds.has(project.revisor_id)) {
-              seenIds.add(project.revisor_id);
-              docentes.push({
-                id: project.revisor_id,
-                nombre: project.revisor_nombre || `Revisor ${project.revisor_id}`,
-                email: project.revisor_email || 'sin-email@iser.edu.co',
-                rol_principal: 'docente'
-              });
-            }
-          });
-        }
-
-        // Si no hay docentes, agregar algunos de prueba
-        if (docentes.length === 0) {
-          docentes.push(
-            { id: 1, nombre: 'María García', email: 'maria@iser.edu.co', rol_principal: 'docente' },
-            { id: 2, nombre: 'Juan López', email: 'juan@iser.edu.co', rol_principal: 'docente' },
-            { id: 3, nombre: 'Carlos Martín', email: 'carlos@iser.edu.co', rol_principal: 'docente' },
-            { id: 4, nombre: 'Ana Rodríguez', email: 'ana@iser.edu.co', rol_principal: 'docente' },
-            { id: 5, nombre: 'Pedro Sánchez', email: 'pedro@iser.edu.co', rol_principal: 'docente' }
-          );
-        }
-
-        this.docentes.set(docentes);
-        if (docentes.length > 0) {
-          this.selectedDocente.set(docentes[0]);
-        }
-      },
-      error: (err: any) => {
-        this.error.set(err?.error?.message ?? 'Error al cargar docentes');
-        // Agregar datos de prueba en caso de error
-        const testDocentes: Docente[] = [
-          { id: 1, nombre: 'María García', email: 'maria@iser.edu.co', rol_principal: 'docente' },
-          { id: 2, nombre: 'Juan López', email: 'juan@iser.edu.co', rol_principal: 'docente' },
-          { id: 3, nombre: 'Carlos Martín', email: 'carlos@iser.edu.co', rol_principal: 'docente' },
-          { id: 4, nombre: 'Ana Rodríguez', email: 'ana@iser.edu.co', rol_principal: 'docente' },
-          { id: 5, nombre: 'Pedro Sánchez', email: 'pedro@iser.edu.co', rol_principal: 'docente' }
-        ];
-        this.docentes.set(testDocentes);
-        if (testDocentes.length > 0) {
-          this.selectedDocente.set(testDocentes[0]);
-        }
-      }
-    });
-  }
-
-  selectFile(fileId: string): void {
-    this.selectedFile.set(fileId);
-  }
-
-  selectDocente(docente: Docente): void {
-    this.selectedDocente.set(docente);
+  goToHome(path: string): void {
+    this.router.navigate([path]);
   }
 
   logout(): void {
     this.auth.logout();
+  }
+
+  loadAssignedProjects(): void {
+    this.loading.set(true);
+    this.error.set('');
+
+    this.projectService.getMyAssignedProjects().pipe(finalize(() => this.loading.set(false))).subscribe({
+      next: (response) => {
+        this.assignedProjects.set(response?.data ?? []);
+      },
+      error: (err: any) => {
+        this.error.set(err?.error?.message ?? 'No se pudieron cargar tus proyectos asignados.');
+      }
+    });
+  }
+
+  /** Modal actions */
+  openModal(project: Proyecto): void {
+    this.selectedProject.set(project);
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.selectedProject.set(null);
+    this.showModal.set(false);
+  }
+
+  saveObservation(): void {
+    const project = this.selectedProject();
+    if (!project) return;
+    this.projectService.updateProject(project.id, { comentario: project.comentario }).subscribe({
+      next: () => {
+        this.closeModal();
+        this.loadAssignedProjects();
+      },
+      error: (err: any) => {
+        this.error.set(err?.error?.message ?? 'Error al guardar observación');
+      }
+    });
+  }
+
+  changeState(): void {
+    const project = this.selectedProject();
+    if (!project) return;
+    this.projectService.updateProject(project.id, { estado: project.estado }).subscribe({
+      next: () => {
+        this.closeModal();
+        this.loadAssignedProjects();
+      },
+      error: (err: any) => {
+        this.error.set(err?.error?.message ?? 'Error al cambiar estado');
+      }
+    });
+  }
+
+  private getDisplayName(user: Record<string, unknown> | null): string {
+    const values = [user?.['nombre'], user?.['name'], user?.['fullName'], user?.['email']];
+    const firstValid = values.find((value) => typeof value === 'string' && value.trim().length > 0) as string | undefined;
+    return firstValid?.trim() || 'Docente';
+  }
+
+  private buildInitials(text: string): string {
+    const tokens = text.trim().split(/\s+/).filter(Boolean);
+    if (tokens.length === 0) return 'DO';
+    if (tokens.length === 1) return tokens[0].slice(0, 2).toUpperCase();
+    return (tokens[0][0] + tokens[1][0]).toUpperCase();
   }
 }

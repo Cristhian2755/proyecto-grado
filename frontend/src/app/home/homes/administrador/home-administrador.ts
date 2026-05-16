@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -12,6 +12,15 @@ type UserRow = {
   nombre: string;
   email: string;
   rol: string;
+  carrera_id?: number | null;
+  carrera_nombre?: string | null;
+  subroles?: string[];
+};
+
+type CarreraRow = {
+  id: number;
+  nombre: string;
+  facultad?: string | null;
 };
 
 @Component({
@@ -30,26 +39,67 @@ export class HomeAdministradorComponent {
   readonly displayName: string;
   readonly userInitials: string;
   readonly users = signal<UserRow[]>([]);
+  readonly carreras = signal<CarreraRow[]>([]);
   readonly projects = signal<Proyecto[]>([]);
   readonly loading = signal(false);
+  readonly projectLoading = signal(false);
   readonly error = signal('');
   readonly success = signal('');
   readonly activeTab = signal<'usuarios' | 'proyectos'>('usuarios');
+  readonly searchPlaceholder = computed(() => (this.activeTab() === 'usuarios' ? 'usuarios' : 'proyectos'));
+  readonly filteredUsers = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    if (!query) {
+      return this.users();
+    }
+
+    return this.users().filter((user) => {
+      const values = [user.nombre, user.email, user.rol].join(' ').toLowerCase();
+      return values.includes(query);
+    });
+  });
+
+  readonly filteredProjects = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    if (!query) {
+      return this.projects();
+    }
+
+    return this.projects().filter((project) => {
+      const values = [
+        project.titulo,
+        project.estudiante_nombre,
+        project.linea_tematica,
+        project.estado,
+        project.estudiante_email
+      ]
+        .join(' ')
+        .toLowerCase();
+
+      return values.includes(query);
+    });
+  });
+
+  searchQuery = signal('');
 
   nombre = '';
   email = '';
   password = '';
-  rol = 'estudiante';
+  rol = '';
+  subrol = '';
+  carreraId = '';
   editingUserId: number | null = null;
 
   readonly allowedRoles = ['administrador', 'coordinador', 'estudiante', 'docente', 'asesor', 'jurado'];
+  readonly roleOptions = ['estudiante', 'docente', 'coordinador', 'administrador'];
+  readonly subroleOptions = ['asesor', 'jurado'];
 
   constructor() {
     const user = this.auth.getStoredUser();
     this.displayName = this.getDisplayName(user);
     this.userInitials = this.buildInitials(this.displayName);
+    this.loadCarreras();
     this.loadUsers();
-    this.loadProjects();
   }
 
   goToHome(path: string): void {
@@ -65,11 +115,14 @@ export class HomeAdministradorComponent {
   }
 
   startEdit(user: UserRow): void {
+    this.activeTab.set('usuarios');
     this.editingUserId = user.id;
     this.nombre = user.nombre;
     this.email = user.email;
     this.password = '';
     this.rol = user.rol.toLowerCase();
+    this.subrol = this.rol === 'docente' ? this.subrol : '';
+    this.carreraId = user.carrera_id ? String(user.carrera_id) : '';
     this.error.set('');
     this.success.set('');
   }
@@ -80,11 +133,34 @@ export class HomeAdministradorComponent {
     this.email = '';
     this.password = '';
     this.rol = 'estudiante';
+    this.subrol = '';
+    this.carreraId = '';
+  }
+
+  onRoleChange(role: string): void {
+    this.rol = role;
+    if (role !== 'docente') {
+      this.subrol = '';
+    }
+  }
+
+  switchTab(tab: 'usuarios' | 'proyectos'): void {
+    this.activeTab.set(tab);
+
+    if (tab === 'proyectos') {
+      this.loadProjects();
+    }
   }
 
   submitForm(): void {
     if (!this.nombre || !this.email || !this.rol) {
       this.error.set('Completa nombre, email y rol.');
+      this.success.set('');
+      return;
+    }
+
+    if (this.rol === 'docente' && !this.subrol) {
+      this.error.set('Selecciona un sub rol para docente.');
       this.success.set('');
       return;
     }
@@ -95,30 +171,70 @@ export class HomeAdministradorComponent {
       return;
     }
 
+    const selectedCarreraId = this.carreraId ? Number(this.carreraId) : null;
+    if (this.carreraId && Number.isNaN(selectedCarreraId)) {
+      this.error.set('Selecciona un programa válido.');
+      this.success.set('');
+      return;
+    }
+
     // Para edición, solo envía campos que hayan cambiado
     if (this.editingUserId) {
       const payload: any = {
         nombre: this.nombre,
         email: this.email,
-        rol: this.rol
+        rol: this.rol,
+        carrera_id: selectedCarreraId
       };
       // Solo envía contraseña si no está vacía
       if (this.password) {
         payload.password = this.password;
+      }
+      // Enviar subroles si el rol es docente
+      if (this.rol === 'docente') {
+        payload.subroles = this.subrol ? [this.subrol] : [];
       }
       this.updateUser(this.editingUserId, payload);
       return;
     }
 
     // Para creación, todos los campos son requeridos
-    const payload = {
+    const payload: any = {
       nombre: this.nombre,
       email: this.email,
       password: this.password,
-      rol: this.rol
+      rol: this.rol,
+      carrera_id: selectedCarreraId
     };
+    if (this.rol === 'docente') {
+      payload.subroles = this.subrol ? [this.subrol] : [];
+    }
 
     this.createUser(payload);
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
+  }
+
+  loadCarreras(): void {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.error.set('No hay sesión activa.');
+      return;
+    }
+
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http
+      .get<{ data: CarreraRow[] }>('/api/auth/carreras', { headers })
+      .subscribe({
+        next: (response) => {
+          this.carreras.set(response?.data ?? []);
+        },
+        error: (err: any) => {
+          this.error.set(err?.error?.message ?? 'No se pudieron cargar los programas.');
+        }
+      });
   }
 
   loadUsers(): void {
@@ -137,7 +253,13 @@ export class HomeAdministradorComponent {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
-          this.users.set(response?.data ?? []);
+          this.users.set(
+            (response?.data ?? []).map((user) => ({
+              ...user,
+              carrera_nombre: user.carrera_nombre ?? 'Sin programa',
+              subroles: user.subroles ?? []
+            }))
+          );
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los usuarios.');
@@ -145,7 +267,33 @@ export class HomeAdministradorComponent {
       });
   }
 
-  createUser(payload: { nombre: string; email: string; password: string; rol: string }): void {
+  loadProjects(): void {
+    this.projectLoading.set(true);
+    this.error.set('');
+
+    this.projectService
+      .getAllProjects()
+      .pipe(finalize(() => this.projectLoading.set(false)))
+      .subscribe({
+        next: (response) => {
+          const rows = (response?.data ?? []) as Proyecto[];
+          this.projects.set(
+            rows.map((project) => ({
+              ...project,
+              estudiante_nombre: project.estudiante_nombre || 'Sin asignar',
+              linea_tematica: project.linea_tematica || 'No especificada',
+              estudiante_email: project.estudiante_email || '-',
+              estado: project.estado || 'Pendiente'
+            }))
+          );
+        },
+        error: (err: any) => {
+          this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
+        }
+      });
+  }
+
+  createUser(payload: { nombre: string; email: string; password: string; rol: string; carrera_id: number | null }): void {
     const token = localStorage.getItem('token');
     if (!token) {
       this.error.set('No hay sesión activa.');
@@ -172,7 +320,7 @@ export class HomeAdministradorComponent {
       });
   }
 
-  updateUser(id: number, payload: { nombre: string; email: string; rol: string; password?: string }): void {
+  updateUser(id: number, payload: { nombre: string; email: string; rol: string; carrera_id: number | null; password?: string }): void {
     const token = localStorage.getItem('token');
     if (!token) {
       this.error.set('No hay sesión activa.');
@@ -230,24 +378,6 @@ export class HomeAdministradorComponent {
           this.error.set(err?.error?.message ?? 'No se pudo eliminar el usuario.');
         }
       });
-  }
-
-  loadProjects(): void {
-    this.loading.set(true);
-    this.error.set('');
-
-    this.projectService.getAllProjects().pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: (response) => {
-        this.projects.set(response?.data ?? []);
-      },
-      error: (err: any) => {
-        this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
-      }
-    });
-  }
-
-  switchTab(tab: 'usuarios' | 'proyectos'): void {
-    this.activeTab.set(tab);
   }
 
   updateRole(user: UserRow, role: string): void {

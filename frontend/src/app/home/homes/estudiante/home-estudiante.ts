@@ -22,6 +22,49 @@ export class HomeEstudianteComponent {
   readonly myProjects = signal<Proyecto[]>([]);
   readonly loading = signal(false);
   readonly error = signal('');
+  readonly fileTypes = ['propuesta','cronograma','informe semana 6','anexos','asesorias','informe final'];
+  readonly selectedFile = signal<string>(this.fileTypes[0]);
+
+  selectFile(file: string): void {
+    this.selectedFile.set(file);
+  }
+
+  goToUpload(): void {
+    const carpeta = this.selectedFile();
+    this.router.navigate(['/project-estudiante'], {
+      queryParams: { carpeta }
+    });
+  }
+
+  private countByStatus() {
+    const projects = this.myProjects() || [];
+    const counts = { approved: 0, pending: 0, failed: 0 };
+    for (const p of projects) {
+      const estado = (p.estado || '').toString().toLowerCase();
+      if (estado.includes('aprob')) counts.approved++;
+      else if (estado.includes('reprob') || estado.includes('rechaz')) counts.failed++;
+      else counts.pending++;
+    }
+    return counts;
+  }
+
+  get approvedPercent(): number {
+    const { approved, pending, failed } = this.countByStatus();
+    const total = approved + pending + failed || 1;
+    return Math.round((approved / total) * 100);
+  }
+
+  get pendingPercent(): number {
+    const { approved, pending, failed } = this.countByStatus();
+    const total = approved + pending + failed || 1;
+    return Math.round((pending / total) * 100);
+  }
+
+  get failedPercent(): number {
+    const { approved, pending, failed } = this.countByStatus();
+    const total = approved + pending + failed || 1;
+    return Math.max(0, 100 - this.approvedPercent - this.pendingPercent);
+  }
 
   constructor() {
     const user = this.auth.getStoredUser();

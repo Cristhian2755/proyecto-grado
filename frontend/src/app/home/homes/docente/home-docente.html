@@ -1,73 +1,73 @@
-<main class="docentes-container">
-  <!-- Header verde superior -->
-  <header class="navbar-top">
+<main class="home-page docente-layout">
+  <header class="top-navbar">
     <div class="navbar-brand">
-      <img class="logo-iser" src="/assets/logo_iser.png" alt="ISER" />
-    </div>
-    
-    <div class="search-box">
-      <input type="text" placeholder="Search" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
-      <svg class="search-icon" viewBox="0 0 20 20">
-        <path fill="currentColor" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/>
-      </svg>
+      <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
+      <h1>Panel del Docente</h1>
     </div>
 
-    <button class="user-icon" (click)="logout()" title="Cerrar sesión">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <circle cx="12" cy="8" r="4"/><path d="M12 14c-4 0-6 2-6 4v2h12v-2c0-2-2-4-6-4z"/>
-      </svg>
-    </button>
+    <div class="search-area">
+      <form class="search-form" role="search" (submit)="$event.preventDefault()">
+        <div class="search-input-wrap">
+          <input class="search-input" type="search" placeholder="Buscar proyectos, estudiantes..." aria-label="Buscar" />
+          <button class="search-btn" type="submit" title="Buscar" (click)="$event.preventDefault()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M21 21l-4.35-4.35" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="11" cy="11" r="6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ displayName }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
+    </div>
   </header>
 
-  <!-- Contenedor principal con tres áreas -->
-  <div class="main-content">
-    <!-- Área izquierda: Opciones de archivos -->
-    <section class="left-panel">
-      <div class="archivos-section">
-        <button class="file-button" *ngFor="let file of fileOptions" 
-                [class.active]="file.id === selectedFile()"
-                (click)="selectFile(file.id)">
-          {{ file.nombre }}
+  <section class="dashboard-grid">
+    <aside class="panel files-panel">
+      <div class="file-list">
+        <button class="file">propuesta</button>
+        <button class="file">cronograma</button>
+        <button class="file">informe semana 6</button>
+        <button class="file">anexos</button>
+        <button class="file">asesorias</button>
+        <button class="file active">informe final</button>
+      </div>
+    </aside>
+
+    <div class="panel students-column">
+      <div class="student-list">
+        <button class="student-button" *ngFor="let p of assignedProjects()"> 
+          {{ p.estudiante_nombre || p.titulo || 'nombre' }}
         </button>
+        <p *ngIf="!assignedProjects().length" class="empty-students">nombre</p>
       </div>
-    </section>
+    </div>
 
-    <!-- Área central: Lista de docentes/estudiantes -->
-    <section class="center-panel">
-      <div class="docentes-list">
-        <div class="docente-item" *ngFor="let docente of filteredDocentes()"
-             [class.active]="docente.id === selectedDocente()?.id"
-             (click)="selectDocente(docente)">
-          {{ docente.nombre }}
+    <div class="panel viewer-large">
+      <div class="viewer-empty"></div>
+    </div>
+
+    <div class="panel progress-box">
+      <div class="progress-title">% tabajos</div>
+      <div class="progress-bar-outer">
+        <div class="progress-sections">
+          <button class="pill pending">pendientes</button>
+          <button class="pill approved">aprobados</button>
+          <button class="pill failed">reprobados</button>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Área derecha: Visor de documento -->
-    <section class="right-panel">
-      <div class="document-viewer">
-        <div *ngIf="selectedDocente() as docente" class="document-content">
-          <h3>{{ docente.nombre }}</h3>
-          <p><strong>Email:</strong> {{ docente.email }}</p>
-          <p><strong>Rol:</strong> {{ docente.rol_principal }}</p>
-          <div class="document-placeholder"></div>
-        </div>
-        <div *ngIf="!selectedDocente()" class="empty-document">
-          Selecciona un docente para ver más información
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- Sección inferior: Estadísticas -->
-  <section class="bottom-panel">
-    <div class="stats-container">
-      <div class="stats-header">% trabajos</div>
-      <div class="stats-buttons">
-        <button class="stat-button pending">pendientes</button>
-        <button class="stat-button approved">aprobados</button>
-        <button class="stat-button rejected">reprobados</button>
-      </div>
+    <div class="panel right-info">
+      <div class="info-row">info de alumno (ser el asesor o el jurado)</div>
+      <div class="info-row">info de alumno (ser el asesor o el jurado)</div>
+      <div class="info-row">info de alumno (ser el asesor o el jurado)</div>
     </div>
   </section>
 </main>

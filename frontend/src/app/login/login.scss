@@ -1,21 +1,22 @@
 :host {
   display: block;
-  min-height: 100dvh;
+  height: 100dvh;
 }
 
 .login-page {
-  min-height: 100dvh;
+  height: 100dvh;
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 56px);
   color: #0f172a;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(rgba(255, 255, 255, 0.75), 
-  rgba(255, 255, 255, 0.75)), 
-  url('/assets/fondo.png') center/cover no-repeat;
+  background: #ffffff url('/assets/fondo.png') center top / cover no-repeat;
 }
 
-.login-page::before,
 .login-page::after {
   content: '';
   position: absolute;
@@ -23,12 +24,6 @@
   width: 100%;
   pointer-events: none;
   display: none;
-}
-
-.login-page::before {
-  top: 0;
-  height: min(32vh, 280px);
-  background: linear-gradient(135deg, rgba(29, 155, 240, 0.08), transparent);
 }
 
 .login-page::after {
@@ -41,7 +36,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 90px 64px 64px;
+  padding: 48px 40px;
   gap: 18px;
   position: relative;
   z-index: 1;
@@ -76,9 +71,11 @@
 }
 
 .login-card {
-  margin: auto;
+  margin: 0;
+  justify-self: center;
   width: min(420px, calc(100% - 32px));
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
   color: #0f172a;
   border-radius: 24px;
   padding: 36px;
@@ -111,7 +108,8 @@ label {
 }
 
 input {
-  width: 90%;
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid #cbd5e1;
   border-radius: 14px;
   padding: 14px 16px;
@@ -177,20 +175,23 @@ button:disabled {
 @media (max-width: 900px) {
   .login-page {
     grid-template-columns: 1fr;
+    padding: 18px;
+    height: auto;
+    min-height: 100dvh;
   }
 
   .brand-panel {
-    padding: 40px 24px 0;
+    padding: 24px 8px 0;
   }
 
   .login-card {
-    margin: 24px auto 40px;
+    margin: 12px auto 28px;
   }
 }
 
 @media (max-width: 520px) {
   .brand-panel {
-    padding: 28px 18px 0;
+    padding: 16px 4px 0;
   }
 
   .login-card {

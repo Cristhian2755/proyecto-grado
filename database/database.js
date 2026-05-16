@@ -29,6 +29,8 @@ async function initDatabase() {
       'DROP TABLE IF EXISTS notificaciones CASCADE',
       'DROP TABLE IF EXISTS revisiones CASCADE',
       'DROP TABLE IF EXISTS proyectos CASCADE',
+      'DROP TABLE IF EXISTS revisiones CASCADE',
+      'DROP TABLE IF EXISTS docente_estudiantes CASCADE',
       'DROP TABLE IF EXISTS usuario_roles CASCADE',
       'DROP TABLE IF EXISTS usuarios CASCADE',
       'DROP TABLE IF EXISTS carreras CASCADE',
@@ -72,6 +74,17 @@ async function initDatabase() {
       )
     `);
     console.log('✓ Tabla usuario_roles creada');
+
+    await client.query(`
+      CREATE TABLE docente_estudiantes (
+          id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+          docente_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+          estudiante_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+          rol TEXT NOT NULL CHECK (rol IN ('asesor', 'jurado')),
+          UNIQUE(docente_id, estudiante_id)
+      )
+    `);
+    console.log('✓ Tabla docente_estudiantes creada');
 
     await client.query(`
       CREATE TABLE lineas_tematicas (
@@ -185,10 +198,15 @@ async function initDatabase() {
 
     await client.query(`
       INSERT INTO carreras (nombre, facultad, coordinador_id) VALUES
-      ('Ingeniería de Sistemas', 'Facultad de Ingeniería', NULL),
-      ('Arquitectura', 'Facultad de Arquitectura', NULL),
-      ('Medicina', 'Facultad de Ciencias de la Salud', NULL),
-      ('Redes y Sistemas', 'Facultad de Ingeniería', NULL)
+      ('Tecnología en gestión de redes y sistemas', 'Tecnología', NULL),
+      ('Tecnología en construcción de obras civiles', 'Tecnología', NULL),
+      ('Tecnología en procesos agroindustriales', 'Tecnología', NULL),
+      ('Tecnología en producción agropecuaria', 'Tecnología', NULL),
+      ('Tecnología en gestión industrial', 'Tecnología', NULL),
+      ('Tecnología en gestión comunitaria', 'Tecnología', NULL),
+      ('Técnica profesional en seguridad y salud en el trabajo', 'Técnica profesional', NULL),
+      ('Tecnología en gestión empresarial', 'Tecnología', NULL),
+      ('Tecnología en gestión de mercadeo', 'Tecnología', NULL)
     `);
     console.log('✓ Carreras insertadas');
 

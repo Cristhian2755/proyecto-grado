@@ -15,105 +15,59 @@
   </header>
 
   <section class="dashboard-layout">
-    <aside class="left-sidebar card-shell">
-      <button class="menu-item active" type="button">Mi proyecto (resumen)</button>
-      <button class="menu-item" type="button">Progreso</button>
-      <button class="menu-item" type="button">Entregas recientes</button>
-      <button class="menu-item" type="button">Observaciones</button>
-      <button class="menu-item" type="button">Evaluaciones</button>
-      <button class="menu-item" type="button">Cronograma</button>
-      <button class="btn-primary" type="button" (click)="goToProjectEstudiante()">My Proyecto</button>
-    </aside>
-
-    <div class="main-column">
-      <section class="card-shell summary-card">
-        <div class="summary-header">
-          <h2>Resumen Principal</h2>
-          <button class="btn-outline" (click)="loadMyProjects()" [disabled]="loading()">Recargar</button>
+    <div class="left-column">
+      <div class="panel files-panel card-shell">
+        <div class="panel-inner">
+          <div *ngFor="let f of fileTypes" class="file-item">
+            <button class="file-button" [class.active]="selectedFile() === f" (click)="selectFile(f)">
+              {{ f }}
+            </button>
+          </div>
         </div>
-
-        <div class="quick-cards">
-          <article class="mini-card">
-            <p class="mini-label">Mi Proyecto</p>
-            <p class="mini-value">{{ myProjects()[0]?.titulo || 'Sin proyecto' }}</p>
-          </article>
-          <article class="mini-card">
-            <p class="mini-label">Estado Actual</p>
-            <p class="mini-value accent">{{ myProjects()[0]?.estado || 'Sin estado' }}</p>
-          </article>
-          <article class="mini-card">
-            <p class="mini-label">Ultima Actualizacion</p>
-            <p class="mini-value">Reciente</p>
-          </article>
-          <article class="mini-card">
-            <p class="mini-label">Total del Proyectos</p>
-            <p class="mini-value">{{ myProjects().length }}</p>
-          </article>
-        </div>
-
-        <p class="error" *ngIf="error()">{{ error() }}</p>
-
-        <div class="projects-table" *ngIf="myProjects().length > 0">
-          <table>
-            <thead>
-              <tr>
-                <th>Titulo del Proyecto</th>
-                <th>Linea Tematica</th>
-                <th>Estado</th>
-                <th>Problema</th>
-                <th>Objetivos</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let project of myProjects()">
-                <td>{{ project.titulo }}</td>
-                <td>{{ project.linea_tematica || 'No especificada' }}</td>
-                <td><span class="badge">{{ project.estado }}</span></td>
-                <td>{{ (project.problema || '').substring(0, 55) }}...</td>
-                <td>{{ (project.objetivos || '').substring(0, 55) }}...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p *ngIf="!loading() && myProjects().length === 0" class="empty">
-          No tienes proyectos registrados en este momento.
-        </p>
-      </section>
-
-      <section class="card-shell timeline-card">
-        <h3>Cronograma del Proyecto</h3>
-        <div class="timeline-row">
-          <span class="step done">Entrega 1</span>
-          <span class="step active">Revision</span>
-          <span class="step">Entrega 2</span>
-          <span class="step">Aprobacion final</span>
-        </div>
-      </section>
+      </div>
     </div>
 
-    <aside class="ia-column card-shell">
-      <h3>Asistente IA</h3>
-      <p class="ia-desc">Sugerencias para mejorar tu proyecto y avanzar mas rapido.</p>
+    <div class="main-column">
+      <div class="panel viewer-panel card-shell">
+        <div class="viewer-content">
+          <div class="viewer-actions viewer-actions--top">
+            <button class="btn-primary" type="button" (click)="goToUpload()">Subir archivo</button>
+          </div>
 
-      <section class="ia-box">
-        <h4>Recomendacion</h4>
-        <p>Fortalece la seccion de objetivos con resultados medibles y un alcance temporal claro.</p>
-      </section>
-
-      <section class="ia-box">
-        <h4>Alerta</h4>
-        <p>Tienes una entrega pendiente. Prioriza el ajuste del problema y la bibliografia.</p>
-      </section>
-
-      <section class="ia-box chat-box">
-        <h4>Chat IA</h4>
-        <div class="chat-message assistant">Puedo ayudarte a mejorar tu planteamiento del problema.</div>
-        <div class="chat-input-group">
-          <input type="text" class="chat-input" placeholder="Escribe tu pregunta..." />
-          <button type="button" class="btn-send">Enviar</button>
+          <p *ngIf="myProjects().length === 0">Aún no hay proyectos o archivos. Sube tu primer archivo.</p>
+          <div *ngIf="myProjects().length > 0">
+            <p><strong>Mi Proyecto:</strong> {{ myProjects()[0]?.titulo || 'Sin proyecto' }}</p>
+            <p><strong>Archivo:</strong> {{ selectedFile() }}</p>
+            <div class="document-placeholder">Vista previa del archivo</div>
+          </div>
         </div>
-      </section>
+      </div>
+
+      <div class="panel progress-panel card-shell">
+        <h4>% trabajos</h4>
+        <div class="progress-track">
+          <div class="segment pending" [style.width.%]="pendingPercent">&nbsp;</div>
+          <div class="segment approved" [style.width.%]="approvedPercent">&nbsp;</div>
+          <div class="segment failed" [style.width.%]="failedPercent">&nbsp;</div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="dot pending"></span> pendientes</span>
+          <span class="legend-item"><span class="dot approved"></span> aprobados</span>
+          <span class="legend-item"><span class="dot failed"></span> reprobados</span>
+        </div>
+        <div class="state-buttons">
+          <button class="state-btn pending">pendientes</button>
+          <button class="state-btn approved">aprobados</button>
+          <button class="state-btn failed">reprobados</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="right-column card-shell">
+      <h3>Cronograma académico</h3>
+      <div class="cronograma-placeholder">
+        Cronograma trabajo de grado
+      </div>
     </aside>
   </section>
 </main>

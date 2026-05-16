@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const { connectDB, pool } = require("./config/db");
@@ -12,6 +13,33 @@ const entregaRoutes = require("./routes/entregaRoutes");
 const aiRoutes = require("./modules/AIClassificationModule/routes/aiRoutes");
 
 const app = express();
+
+function getJwtHealth() {
+  if (!process.env.JWT_SECRET) {
+    return {
+      jwt: "no configurado",
+      jwtConfigured: false,
+      jwtStatus: "no configurado"
+    };
+  }
+
+  try {
+    const token = jwt.sign({ health: true }, process.env.JWT_SECRET, { expiresIn: "1m" });
+    jwt.verify(token, process.env.JWT_SECRET);
+
+    return {
+      jwt: "funcionando",
+      jwtConfigured: true,
+      jwtStatus: "funcionando"
+    };
+  } catch (error) {
+    return {
+      jwt: "error",
+      jwtConfigured: false,
+      jwtStatus: `error: ${error.message}`
+    };
+  }
+}
 
 // Conectar a BD
 connectDB();
@@ -29,11 +57,14 @@ app.use("/api/ai", aiRoutes);
 
 // Health check
 app.get("/health", async (req, res) => {
+  const jwtHealth = getJwtHealth();
+
   try {
     const result = await pool.query("SELECT NOW()");
     res.json({
       status: "OK",
       database: "conectado",
+      ...jwtHealth,
       timestamp: result.rows[0].now,
       port: process.env.PORT || 5001
     });
@@ -41,6 +72,7 @@ app.get("/health", async (req, res) => {
     res.status(500).json({
       status: "ERROR",
       database: "desconectado",
+      ...jwtHealth,
       error: error.message
     });
   }

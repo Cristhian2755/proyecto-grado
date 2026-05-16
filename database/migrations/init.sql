@@ -19,6 +19,14 @@ CREATE TABLE usuario_roles (
     UNIQUE(usuario_id, rol)
 );
 
+CREATE TABLE docente_estudiantes (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    docente_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+    estudiante_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+    rol TEXT NOT NULL CHECK (rol IN ('asesor', 'jurado')),
+    UNIQUE(docente_id, estudiante_id)
+);
+
 CREATE TABLE lineas_tematicas (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     nombre TEXT NOT NULL

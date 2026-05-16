@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { ProjectService, Proyecto } from '../services/project.service';
@@ -24,7 +24,17 @@ type EntregaRow = {
   styleUrl: './project-estudiante.scss'
 })
 export class ProjectEstudianteComponent {
+  readonly folderOptions = [
+    { value: 'propuesta', label: 'Propuesta' },
+    { value: 'cronograma', label: 'Cronograma' },
+    { value: 'informe semana 6', label: 'Informe semana 6' },
+    { value: 'anexos', label: 'Anexos' },
+    { value: 'asesoria', label: 'Asesoría' },
+    { value: 'informe final', label: 'Informe final' }
+  ];
+
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly auth = inject(AuthService);
   private readonly http = inject(HttpClient);
   private readonly projectService = inject(ProjectService);
@@ -38,6 +48,7 @@ export class ProjectEstudianteComponent {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly success = signal('');
+  readonly selectedFolder = signal('propuesta');
 
   titulo = '';
   problema = '';
@@ -49,11 +60,19 @@ export class ProjectEstudianteComponent {
     const user = this.auth.getStoredUser();
     this.displayName = this.getDisplayName(user);
     this.userInitials = this.buildInitials(this.displayName);
+    this.route.queryParamMap.subscribe((params) => {
+      const carpeta = params.get('carpeta') || 'propuesta';
+      this.selectedFolder.set(carpeta);
+    });
     this.loadProject();
   }
 
   goToHome(path: string): void {
     this.router.navigate([path]);
+  }
+
+  onFolderChange(value: string): void {
+    this.selectedFolder.set(this.normalizeFolder(value));
   }
 
   logout(): void {
@@ -196,8 +215,10 @@ export class ProjectEstudianteComponent {
     const uploads = this.selectedFiles.map((file) => {
       const formData = new FormData();
       formData.append('proyecto_id', String(current.id));
+      formData.append('carpeta', this.selectedFolder());
       formData.append('archivo', file);
-      return this.http.post<{ message: string; data: EntregaRow }>('/api/entregas/upload', formData, { headers });
+      const url = `/api/entregas/upload?carpeta=${encodeURIComponent(this.selectedFolder())}`;
+      return this.http.post<{ message: string; data: EntregaRow }>(url, formData, { headers });
     });
 
     forkJoin(uploads)
@@ -257,5 +278,20 @@ export class ProjectEstudianteComponent {
     }
 
     return (tokens[0][0] + tokens[1][0]).toUpperCase();
+  }
+
+  private normalizeFolder(value: string): string {
+    const normalized = (value || '').toLowerCase().trim();
+    const allowed = new Map(this.folderOptions.map((option) => [option.value, option.value]));
+
+    if (allowed.has(normalized)) {
+      return normalized;
+    }
+
+    if (normalized === 'asesorias') {
+      return 'asesoria';
+    }
+
+    return 'propuesta';
   }
 }

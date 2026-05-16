@@ -11,6 +11,14 @@ type StudentRow = {
   nombre: string;
   email: string;
   rol: string;
+  carrera_id?: number | null;
+  carrera_nombre?: string | null;
+};
+
+type CarreraRow = {
+  id: number;
+  nombre: string;
+  facultad?: string | null;
 };
 
 @Component({
@@ -31,6 +39,8 @@ export class StudentRegisterComponent implements OnInit {
   loading = signal(false);
   error = signal('');
   success = signal('');
+  readonly carreras = signal<CarreraRow[]>([]);
+  carreraId = '';
   readonly students = signal<StudentRow[]>([]);
   editingStudentId: number | null = null;
 
@@ -43,7 +53,28 @@ export class StudentRegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadCarreras();
     this.loadStudents();
+  }
+
+  loadCarreras(): void {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.error.set('No hay sesión activa.');
+      return;
+    }
+
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.http
+      .get<{ data: CarreraRow[] }>('/api/auth/carreras', { headers })
+      .subscribe({
+        next: (response) => {
+          this.carreras.set(response?.data ?? []);
+        },
+        error: (err: any) => {
+          this.error.set(err?.error?.message ?? 'No se pudieron cargar los programas.');
+        }
+      });
   }
 
   loadStudents(): void {
@@ -78,6 +109,7 @@ export class StudentRegisterComponent implements OnInit {
     this.nombre = student.nombre;
     this.email = student.email;
     this.password = '';
+    this.carreraId = student.carrera_id ? String(student.carrera_id) : '';
     this.error.set('');
     this.success.set('');
   }
@@ -87,6 +119,7 @@ export class StudentRegisterComponent implements OnInit {
     this.nombre = '';
     this.email = '';
     this.password = '';
+    this.carreraId = '';
   }
 
   generateTemporaryPassword(): void {
@@ -132,12 +165,26 @@ export class StudentRegisterComponent implements OnInit {
     this.error.set('');
     this.success.set('');
 
+    if (!this.carreraId) {
+      this.loading.set(false);
+      this.error.set('Selecciona un programa.');
+      return;
+    }
+
+    const selectedCarreraId = Number(this.carreraId);
+    if (Number.isNaN(selectedCarreraId)) {
+      this.loading.set(false);
+      this.error.set('Selecciona un programa válido.');
+      return;
+    }
+
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.http.post<{ message: string; data: StudentRow }>('/api/auth/register', {
       nombre: this.nombre,
       email: this.email,
       password: this.password,
-      rol: 'estudiante'
+      rol: 'estudiante',
+      carrera_id: selectedCarreraId
     }, { headers })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
@@ -165,9 +212,23 @@ export class StudentRegisterComponent implements OnInit {
     this.error.set('');
     this.success.set('');
 
+    if (!this.carreraId) {
+      this.loading.set(false);
+      this.error.set('Selecciona un programa.');
+      return;
+    }
+
+    const selectedCarreraId = Number(this.carreraId);
+    if (Number.isNaN(selectedCarreraId)) {
+      this.loading.set(false);
+      this.error.set('Selecciona un programa válido.');
+      return;
+    }
+
     const payload: any = {
       nombre: this.nombre,
-      email: this.email
+      email: this.email,
+      carrera_id: selectedCarreraId
     };
     if (this.password) {
       payload.password = this.password;

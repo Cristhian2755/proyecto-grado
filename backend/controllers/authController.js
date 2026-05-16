@@ -87,18 +87,42 @@ exports.listUsers = async (req, res) => {
     if (rol) {
       users = users.filter(user => user.rol_principal === rol || user.rol === rol);
     }
-    
-    res.json({ data: users });
+    // Para los docentes, adjuntar sus subroles (asesor/jurado)
+    const usersWithSubroles = await Promise.all(users.map(async (u) => {
+      if (u.rol === 'docente') {
+        try {
+          const roles = await User.getUserRoles(u.id);
+          const subroles = (roles || []).filter(r => r !== 'docente');
+          return { ...u, subroles };
+        } catch (e) {
+          return { ...u, subroles: [] };
+        }
+      }
+      return { ...u, subroles: [] };
+    }));
+
+    res.json({ data: usersWithSubroles });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener usuarios", error: error.message });
   }
 };
 
+// Listar carreras para el selector de programas
+exports.listCarreras = async (req, res) => {
+  try {
+    const carreras = await User.findAllCarreras();
+    res.json({ data: carreras });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener programas", error: error.message });
+  }
+};
+
 // Crear nuevo usuario (admin/coordinador)
 exports.createUser = async (req, res) => {
   try {
-    const { nombre, email, password, rol, subroles = [] } = req.body;
+    const { nombre, email, password, rol, subroles = [], carrera_id = null } = req.body;
 
     if (!nombre || !email || !password || !rol) {
       return res.status(400).json({ message: "Campos requeridos faltantes" });
@@ -107,6 +131,18 @@ exports.createUser = async (req, res) => {
     const allowedRoles = ['administrador', 'coordinador', 'estudiante', 'docente'];
     if (!allowedRoles.includes(rol)) {
       return res.status(400).json({ message: "Rol no válido" });
+    }
+
+    const normalizedCarreraId = carrera_id === '' || carrera_id === null || carrera_id === undefined ? null : Number(carrera_id);
+    if (normalizedCarreraId !== null && Number.isNaN(normalizedCarreraId)) {
+      return res.status(400).json({ message: "Programa no válido" });
+    }
+
+    if (normalizedCarreraId !== null) {
+      const carreraExists = await User.findCarreraById(normalizedCarreraId);
+      if (!carreraExists) {
+        return res.status(400).json({ message: "El programa seleccionado no existe" });
+      }
     }
 
     const allowedSubroles = ['asesor', 'jurado'];
@@ -133,6 +169,7 @@ exports.createUser = async (req, res) => {
       email,
       password: hashedPassword,
       rol,
+      carrera_id: normalizedCarreraId,
       subroles: rol === 'docente' ? subroles : []
     });
 
@@ -150,7 +187,7 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, email, password, rol, subroles } = req.body;
+    const { nombre, email, password, rol, subroles, carrera_id } = req.body;
 
     const user = await User.findById(id);
     if (!user) {
@@ -175,6 +212,22 @@ exports.updateUser = async (req, res) => {
         return res.status(400).json({ message: "Rol no válido" });
       }
       updates.rol = rol;
+    }
+
+    if (carrera_id !== undefined) {
+      const normalizedCarreraId = carrera_id === '' || carrera_id === null ? null : Number(carrera_id);
+      if (normalizedCarreraId !== null && Number.isNaN(normalizedCarreraId)) {
+        return res.status(400).json({ message: "Programa no válido" });
+      }
+
+      if (normalizedCarreraId !== null) {
+        const carreraExists = await User.findCarreraById(normalizedCarreraId);
+        if (!carreraExists) {
+          return res.status(400).json({ message: "El programa seleccionado no existe" });
+        }
+      }
+
+      updates.carrera_id = normalizedCarreraId;
     }
 
     const updatedUser = await User.updateUser(id, updates);
@@ -281,5 +334,89 @@ exports.setUserSubroles = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al asignar subroles", error: error.message });
+  }
+};
+
+exports.getUserAssignments = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    if (user.rol !== 'docente') {
+      return res.status(400).json({ message: "Solo los docentes tienen asignaciones" });
+    }
+
+    const assignments = await User.getDocenteAssignments(id);
+    res.json({ data: assignments });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener asignaciones", error: error.message });
+  }
+};
+
+exports.assignStudentToDocente = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { studentId, role } = req.body;
+
+    if (!studentId || !role) {
+      return res.status(400).json({ message: "studentId y role son requeridos" });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Docente no encontrado" });
+    }
+
+    if (user.rol !== 'docente') {
+      return res.status(400).json({ message: "Solo los docentes pueden recibir asignaciones" });
+    }
+
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: "Estudiante no encontrado" });
+    }
+
+    if (student.rol !== 'estudiante') {
+      return res.status(400).json({ message: "Solo se pueden asignar estudiantes" });
+    }
+
+    const allowedRoles = ['asesor', 'jurado'];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({ message: "Rol inválido" });
+    }
+
+    const assignment = await User.setDocenteAssignment(id, studentId, role);
+    res.json({ message: "Asignación guardada correctamente", data: assignment });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al guardar asignación", error: error.message });
+  }
+};
+
+exports.removeUserAssignment = async (req, res) => {
+  try {
+    const { id, studentId } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Docente no encontrado" });
+    }
+
+    if (user.rol !== 'docente') {
+      return res.status(400).json({ message: "Solo los docentes tienen asignaciones" });
+    }
+
+    const deleted = await User.deleteDocenteAssignment(id, studentId);
+    if (!deleted) {
+      return res.status(404).json({ message: "Asignación no encontrada" });
+    }
+
+    res.json({ message: "Asignación eliminada correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al eliminar asignación", error: error.message });
   }
 };

@@ -13,6 +13,18 @@ INSERT INTO lineas_tematicas (nombre) VALUES
 ('Inteligencia Artificial'),
 ('Ciberseguridad');
 
+-- Insertar carreras académicas
+INSERT INTO carreras (nombre, facultad, coordinador_id) VALUES
+('Tecnología en gestión de redes y sistemas', 'Tecnología', NULL),
+('Tecnología en construcción de obras civiles', 'Tecnología', NULL),
+('Tecnología en procesos agroindustriales', 'Tecnología', NULL),
+('Tecnología en producción agropecuaria', 'Tecnología', NULL),
+('Tecnología en gestión industrial', 'Tecnología', NULL),
+('Tecnología en gestión comunitaria', 'Tecnología', NULL),
+('Técnica profesional en seguridad y salud en el trabajo', 'Técnica profesional', NULL),
+('Tecnología en gestión empresarial', 'Tecnología', NULL),
+('Tecnología en gestión de mercadeo', 'Tecnología', NULL);
+
 -- Insertar usuarios
 INSERT INTO usuarios (nombre, email, contrasena, rol_id) VALUES
 ('Admin ISER', 'admin@iser.edu.co', 'hashed_password', 1),

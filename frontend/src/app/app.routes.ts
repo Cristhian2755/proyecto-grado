@@ -7,7 +7,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password';
 import { HomeAdministradorComponent } from './home/homes/administrador/home-administrador';
 import { HomeEstudianteComponent } from './home/homes/estudiante/home-estudiante';
 import { HomeDocenteComponent } from './home/homes/docente/home-docente';
-import { HomeCoordinadorComponent } from './home/homes/coordinador/home';
+import { HomeCoordinadorComponent } from './home/homes/coordinador/home-coordinador';
 import { ProjectComponent } from './-esstu/project';
 import { ProjectEstudianteComponent } from './project-estudiante/project-estudiante';
 import { StudentRegisterComponent } from './register/student-register/student-register';
