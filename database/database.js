@@ -152,10 +152,11 @@ async function initDatabase() {
     await client.query(`
       CREATE TABLE entregas (
           id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-          proyecto_id BIGINT REFERENCES proyectos(id),
+          usuario_id BIGINT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
           archivo TEXT NOT NULL,
-          version INT NOT NULL,
-          fecha_entrega TIMESTAMPTZ DEFAULT NOW()
+          carpeta TEXT,
+          version INTEGER DEFAULT 1,
+          fecha_subida TIMESTAMP DEFAULT NOW()
       )
     `);
     console.log('✓ Tabla entregas creada');

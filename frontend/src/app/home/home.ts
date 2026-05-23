@@ -166,7 +166,7 @@ export class HomeComponent {
   }
 
   private isApprovedProject(project: Proyecto): boolean {
-    return this.approvedStates.has(project.estado.toUpperCase());
+    return this.approvedStates.has((project.estado ?? '').toUpperCase());
   }
 
   goToLogin(): void {

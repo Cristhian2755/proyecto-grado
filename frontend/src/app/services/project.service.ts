@@ -23,6 +23,13 @@ export interface Proyecto {
   fecha_revision?: string;
 }
 
+export type CreateProjectPayload = {
+  titulo: string;
+  problema: string;
+  justificacion: string;
+  objetivos: string;
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -63,7 +70,7 @@ export class ProjectService {
   }
 
   // Crear nuevo proyecto
-  createProject(project: Omit<Proyecto, 'id' | 'estudiante_nombre' | 'estudiante_email' | 'rol'>): Observable<{ data: Proyecto }> {
+  createProject(project: CreateProjectPayload): Observable<{ data: Proyecto }> {
     return this.http.post<{ data: Proyecto }>(`${this.apiUrl}`, project, this.getAuthOptions());
   }
 

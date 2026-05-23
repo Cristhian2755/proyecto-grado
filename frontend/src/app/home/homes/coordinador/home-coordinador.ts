@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -44,14 +44,17 @@ type AssistantCard = {
   styleUrl: './home-coordinador.scss'
 })
 export class HomeCoordinadorComponent {
-  private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly projectService = inject(ProjectService);
+  private readonly http = inject(HttpClient);
 
   readonly displayName: string;
   readonly userInitials: string;
   readonly users = signal<UserRow[]>([]);
+  readonly estudiantes = computed(() =>
+    this.users().filter((user) => (user.rol || '').toLowerCase() === 'estudiante')
+  );
   readonly docentes = signal<UserRow[]>([]);
   readonly docenteAssignments = signal<AssignmentRow[]>([]);
   readonly projects = signal<Proyecto[]>([]);
@@ -107,6 +110,8 @@ export class HomeCoordinadorComponent {
   ];
 
   readonly selectedFile = signal<string>(this.fileTypes[0]);
+  readonly entregas = signal<any[]>([]);
+  readonly selectedCarpeta = signal<string>(this.fileTypes[0]);
   readonly selectedStudent = signal<UserRow | null>(null);
   readonly selectedDocente = signal<UserRow | null>(null);
   selectedStudentForRole: number | null = null;
@@ -290,6 +295,35 @@ export class HomeCoordinadorComponent {
     this.displayName = this.getDisplayName(user);
     this.userInitials = this.buildInitials(this.displayName);
     this.loadDashboardData();
+  }
+
+  verDocumento(entrega: any): void {
+    const url = entrega?.url_descarga;
+    if (url) window.open(url, '_blank');
+  }
+
+  loadEntregasByCarpeta(carpeta: string): void {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.loading.set(true);
+    this.http.get<{ data: any[] }>(`/api/entregas/carpeta/${encodeURIComponent(carpeta)}`, { headers })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => {
+          const rows = res?.data ?? [];
+          if (rows.length > 0) {
+            this.entregas.set(rows);
+            return;
+          }
+
+          this.http.get<{ data: any[] }>(`/api/entregas/scan/carpeta/${encodeURIComponent(carpeta)}`, { headers }).subscribe({
+            next: (scanRes) => this.entregas.set(scanRes?.data ?? []),
+            error: () => this.entregas.set([])
+          });
+        },
+        error: () => this.entregas.set([])
+      });
   }
 
   goToHome(path: string): void {

@@ -121,7 +121,7 @@ export class HomeAdministradorComponent {
     this.email = user.email;
     this.password = '';
     this.rol = user.rol.toLowerCase();
-    this.subrol = this.rol === 'docente' ? this.subrol : '';
+    this.subrol = this.rol === 'docente' ? (user.subroles?.[0] ?? '') : '';
     this.carreraId = user.carrera_id ? String(user.carrera_id) : '';
     this.error.set('');
     this.success.set('');

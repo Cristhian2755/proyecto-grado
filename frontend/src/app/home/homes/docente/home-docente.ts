@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
@@ -16,6 +17,7 @@ import { ProjectService, Proyecto } from '../../../services/project.service';
 export class HomeDocenteComponent {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  private readonly http = inject(HttpClient);
   private readonly projectService = inject(ProjectService);
 
   readonly displayName: string;
@@ -26,12 +28,45 @@ export class HomeDocenteComponent {
   /** Modal state */
   readonly selectedProject = signal<Proyecto | null>(null);
   readonly showModal = signal(false);
+  readonly entregas = signal<any[]>([]);
+  readonly carpetaOptions = ['propuesta', 'cronograma', 'informe semana 6', 'anexos', 'asesoria', 'informe final'];
+  readonly selectedCarpeta = signal<string>(this.carpetaOptions[0]);
 
   constructor() {
     const user = this.auth.getStoredUser();
     this.displayName = this.getDisplayName(user);
     this.userInitials = this.buildInitials(this.displayName);
     this.loadAssignedProjects();
+  }
+
+  verDocumento(entrega: any): void {
+    const url = entrega?.url_descarga;
+    if (url) window.open(url, '_blank');
+  }
+
+  loadEntregasByCarpeta(carpeta: string): void {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.loading.set(true);
+    this.http.get<{ data: any[] }>(`/api/entregas/carpeta/${encodeURIComponent(carpeta)}`, { headers })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => {
+          const rows = res?.data ?? [];
+          if (rows.length > 0) {
+            this.entregas.set(rows);
+            return;
+          }
+
+          // Fallback: scan filesystem
+          this.http.get<{ data: any[] }>(`/api/entregas/scan/carpeta/${encodeURIComponent(carpeta)}`, { headers }).subscribe({
+            next: (scanRes) => this.entregas.set(scanRes?.data ?? []),
+            error: () => this.entregas.set([])
+          });
+        },
+        error: () => this.entregas.set([])
+      });
   }
 
   goToHome(path: string): void {

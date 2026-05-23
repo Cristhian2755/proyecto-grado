@@ -30,16 +30,10 @@ for (const folderName of new Set(folderAliases.values())) {
   ensureFolder(folderName);
 }
 
+const { randomUUID } = require('crypto');
+
 const storage = multer.diskStorage({
   destination: (req, _file, cb) => {
-    // Logear cuerpo para depuración (ver si multer recibe campos antes del archivo)
-    try {
-      console.log('[uploadMiddleware] req.body keys:', Object.keys(req.body || {}));
-      console.log('[uploadMiddleware] carpeta raw:', req.body?.carpeta);
-    } catch (e) {
-      console.log('[uploadMiddleware] error leyendo req.body:', e && e.message);
-    }
-
     // Preferir campo en body (multipart) pero aceptar query param como respaldo
     const rawFolderSource = (typeof req.body?.carpeta === "string" && req.body.carpeta) || req.query?.carpeta || "propuesta";
     const rawFolder = typeof rawFolderSource === "string" ? rawFolderSource.toLowerCase().trim() : "propuesta";
@@ -47,15 +41,8 @@ const storage = multer.diskStorage({
     cb(null, ensureFolder(folderName));
   },
   filename: (req, file, cb) => {
-    console.log('[uploadMiddleware] generando filename, proyecto_id:', req.body && req.body.proyecto_id);
-    const ext = path.extname(file.originalname);
-    const safeBase = path
-      .basename(file.originalname, ext)
-      .replace(/[^a-zA-Z0-9-_]/g, "_")
-      .slice(0, 50);
-    const proyectoId = req.body.proyecto_id || "sin_proyecto";
-    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    cb(null, `${safeBase}-p${proyectoId}-${unique}${ext}`);
+    const uniqueName = `${req.user.id}-${Date.now()}-${path.basename(file.originalname)}`;
+    cb(null, uniqueName);
   }
 });
 

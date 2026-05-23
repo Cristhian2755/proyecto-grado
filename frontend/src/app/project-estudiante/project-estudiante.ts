@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { AuthService } from '../services/auth.service';
-import { ProjectService, Proyecto } from '../services/project.service';
 
 type EntregaRow = {
   id: number;
@@ -37,23 +36,20 @@ export class ProjectEstudianteComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly auth = inject(AuthService);
   private readonly http = inject(HttpClient);
-  private readonly projectService = inject(ProjectService);
 
   readonly displayName: string;
   readonly userInitials: string;
-  readonly project = signal<Proyecto | null>(null);
   readonly entregas = signal<EntregaRow[]>([]);
-  readonly showProjectForm = signal(false);
-  readonly editingProject = signal(false);
   readonly loading = signal(false);
   readonly error = signal('');
   readonly success = signal('');
   readonly selectedFolder = signal('propuesta');
 
-  titulo = '';
-  problema = '';
-  objetivos = '';
-  justificacion = '';
+  readonly previewTitle = signal('');
+  readonly previewHtml = signal('');
+  readonly previewLoading = signal(false);
+  readonly previewError = signal('');
+
   selectedFiles: File[] = [];
 
   constructor() {
@@ -62,140 +58,31 @@ export class ProjectEstudianteComponent {
     this.userInitials = this.buildInitials(this.displayName);
     this.route.queryParamMap.subscribe((params) => {
       const carpeta = params.get('carpeta') || 'propuesta';
-      this.selectedFolder.set(carpeta);
+      this.selectedFolder.set(this.normalizeFolder(carpeta));
+      this.loadEntregasByCarpeta(this.selectedFolder());
     });
-    this.loadProject();
   }
 
   goToHome(path: string): void {
     this.router.navigate([path]);
   }
 
-  onFolderChange(value: string): void {
-    this.selectedFolder.set(this.normalizeFolder(value));
-  }
-
   logout(): void {
     this.auth.logout();
-  }
-
-  loadProject(): void {
-    this.loading.set(true);
-    this.error.set('');
-    this.success.set('');
-
-    this.projectService
-      .getMyProjects()
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (response) => {
-          const rows = response?.data ?? [];
-          const myProject = rows.length > 0 ? rows[0] : null;
-          this.project.set(myProject);
-
-          if (myProject) {
-            this.showProjectForm.set(false);
-            this.loadEntregas(myProject.id);
-          } else {
-            this.entregas.set([]);
-            this.showProjectForm.set(true);
-            this.editingProject.set(false);
-          }
-        },
-        error: (err: any) => {
-          this.error.set(err?.error?.message ?? 'No se pudo cargar tu proyecto.');
-        }
-      });
-  }
-
-  crearProyecto(): void {
-    this.editingProject.set(false);
-    this.showProjectForm.set(true);
-    this.titulo = '';
-    this.problema = '';
-    this.objetivos = '';
-    this.justificacion = '';
-    this.error.set('');
-    this.success.set('');
-  }
-
-  editarProyecto(): void {
-    const current = this.project();
-    if (!current) {
-      return;
-    }
-
-    this.editingProject.set(true);
-    this.showProjectForm.set(true);
-    this.titulo = current.titulo || '';
-    this.problema = current.problema || '';
-    this.objetivos = current.objetivos || '';
-    this.justificacion = current.justificacion || '';
-    this.error.set('');
-    this.success.set('');
-  }
-
-  cancelarFormulario(): void {
-    this.showProjectForm.set(false);
-    this.error.set('');
-  }
-
-  guardarProyecto(): void {
-    if (!this.titulo.trim()) {
-      this.error.set('Completa el titulo del proyecto.');
-      return;
-    }
-
-    const current = this.project();
-    const problemaValue = this.problema.trim() || current?.problema?.trim() || 'Pendiente de definir en documento adjunto.';
-    const objetivosValue = this.objetivos.trim() || current?.objetivos?.trim() || 'Pendiente de definir en documento adjunto.';
-    const justificacionValue = this.justificacion.trim() || current?.justificacion?.trim() || problemaValue;
-
-    const payload: any = {
-      titulo: this.titulo.trim(),
-      problema: problemaValue,
-      objetivos: objetivosValue,
-      justificacion: justificacionValue
-    };
-
-    this.loading.set(true);
-    this.error.set('');
-    this.success.set('');
-
-    const request$ = this.editingProject() && current
-      ? this.projectService.updateProject(current.id, payload)
-      : this.projectService.createProject(payload);
-
-    request$.pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: (response: any) => {
-        this.success.set(this.editingProject() ? 'Proyecto actualizado correctamente.' : 'Proyecto creado correctamente.');
-        const savedProject = response?.data as Proyecto | undefined;
-        if (savedProject) {
-          this.project.set(savedProject);
-          this.loadEntregas(savedProject.id);
-        }
-        this.showProjectForm.set(false);
-        this.editingProject.set(false);
-        this.loadProject();
-      },
-      error: (err: any) => {
-        this.error.set(err?.error?.message ?? 'No se pudo guardar el proyecto.');
-      }
-    });
   }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedFiles = input.files ? Array.from(input.files) : [];
+
+    if (this.selectedFiles.length > 0) {
+      void this.previewSelectedFile(this.selectedFiles[0]);
+    } else {
+      this.clearPreview();
+    }
   }
 
   subirEntrega(): void {
-    const current = this.project();
-    if (!current) {
-      this.error.set('Debes crear un proyecto antes de subir entregas.');
-      return;
-    }
-
     if (this.selectedFiles.length === 0) {
       this.error.set('Selecciona uno o varios archivos antes de subir la entrega.');
       return;
@@ -214,7 +101,6 @@ export class ProjectEstudianteComponent {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     const uploads = this.selectedFiles.map((file) => {
       const formData = new FormData();
-      formData.append('proyecto_id', String(current.id));
       formData.append('carpeta', this.selectedFolder());
       formData.append('archivo', file);
       const url = `/api/entregas/upload?carpeta=${encodeURIComponent(this.selectedFolder())}`;
@@ -228,7 +114,7 @@ export class ProjectEstudianteComponent {
           const total = responses.length;
           this.success.set(`${total} archivo(s) subidos correctamente.`);
           this.selectedFiles = [];
-          this.loadEntregas(current.id);
+          this.loadEntregasByCarpeta(this.selectedFolder());
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo subir la entrega.');
@@ -236,16 +122,37 @@ export class ProjectEstudianteComponent {
       });
   }
 
-  loadEntregas(projectId: number): void {
+  loadEntregasByCarpeta(carpeta: string): void {
     const token = localStorage.getItem('token');
     if (!token) {
       return;
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.get<{ data: EntregaRow[] }>(`/api/entregas/proyecto/${projectId}`, { headers }).subscribe({
+    this.http.get<{ data: EntregaRow[] }>(`/api/entregas/carpeta/${encodeURIComponent(carpeta)}`, { headers }).subscribe({
       next: (response) => {
-        this.entregas.set(response?.data ?? []);
+        const rows = response?.data ?? [];
+        if (rows.length > 0) {
+          this.entregas.set(rows);
+          return;
+        }
+
+        // Si la DB no tiene registros, hacer fallback al escaneo del filesystem
+        this.http.get<{ data: any[] }>(`/api/entregas/scan/carpeta/${encodeURIComponent(carpeta)}`, { headers }).subscribe({
+          next: (scanRes) => {
+            this.entregas.set(scanRes?.data?.map((r) => ({
+              id: 0,
+              archivo: r.archivo,
+              fecha_entrega: r.fecha_entrega,
+              version: 1,
+              url_descarga: r.url_descarga,
+              nombre_original: r.nombre_original
+            })) ?? []);
+          },
+          error: () => {
+            this.entregas.set([]);
+          }
+        });
       },
       error: () => {
         this.entregas.set([]);
@@ -259,6 +166,103 @@ export class ProjectEstudianteComponent {
     if (url) {
       window.open(url, '_blank');
     }
+  }
+
+  private async previewSelectedFile(file: File): Promise<void> {
+    this.previewTitle.set(file.name);
+    this.previewLoading.set(true);
+    this.previewError.set('');
+    this.previewHtml.set('');
+
+    try {
+      const extension = this.getFileExtension(file.name);
+      if (extension === 'pdf') {
+        await this.readPDF(file);
+      } else if (extension === 'docx' || extension === 'doc') {
+        await this.readDOCX(file);
+      } else if (extension === 'xlsx' || extension === 'xls') {
+        await this.readXLSX(file);
+      } else {
+        this.previewError.set('Formato no soportado para vista previa.');
+      }
+    } catch (error) {
+      console.error('[project-estudiante] preview error', error);
+      this.previewError.set('No se pudo generar la vista previa del archivo.');
+    } finally {
+      this.previewLoading.set(false);
+    }
+  }
+
+  private async readPDF(file: File): Promise<void> {
+    const pdfjsLib: any = await import('pdfjs-dist/build/pdf');
+    const pdfjsWorker: any = await import('pdfjs-dist/build/pdf.worker.entry');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker?.default ?? pdfjsWorker;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+    let finalText = '';
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items.map((item: any) => item.str).join(' ');
+
+      finalText += `\n\n--- Página ${pageNum} ---\n\n${pageText}`;
+    }
+
+    this.previewHtml.set(`<pre>${this.escapeHtml(finalText.trim())}</pre>`);
+  }
+
+  private async readDOCX(file: File): Promise<void> {
+    const mammoth: any = await import('mammoth');
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    this.previewHtml.set(`<pre>${this.escapeHtml(result.value)}</pre>`);
+  }
+
+  private async readXLSX(file: File): Promise<void> {
+    const XLSX: any = await import('xlsx');
+    const arrayBuffer = await file.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+    let html = '';
+    workbook.SheetNames.forEach((sheetName: string) => {
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      html += `<h4>Hoja: ${this.escapeHtml(sheetName)}</h4>`;
+      html += '<table>';
+      jsonData.forEach((row: any[]) => {
+        html += '<tr>';
+        row.forEach((cell) => {
+          html += `<td>${this.escapeHtml(cell ?? '')}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</table><br/>';
+    });
+
+    this.previewHtml.set(html);
+  }
+
+  private clearPreview(): void {
+    this.previewTitle.set('');
+    this.previewHtml.set('');
+    this.previewError.set('');
+    this.previewLoading.set(false);
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  private getFileExtension(filename: string): string {
+    return filename.split('.').pop()?.toLowerCase() || '';
   }
 
   private getDisplayName(user: Record<string, unknown> | null): string {

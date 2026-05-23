@@ -12,8 +12,8 @@
         <div class="avatar">{{ userInitials }}</div>
         <span>{{ displayName }}</span>
       </div>
-      <button class="btn-logout" type="button" (click)="logout()">
-        Salir
+      <button class="btn-logout" type="button" (click)="goToHome('/home-estudiante')">
+        Atrás
       </button>
     </div>
   </header>
@@ -34,77 +34,24 @@
       <div class="alert success">{{ success() }}</div>
     }
 
-    @if (showProjectForm()) {
-      <form class="project-form" (ngSubmit)="guardarProyecto()">
-        <h3>{{ editingProject() ? 'Editar proyecto' : 'Crear nuevo proyecto' }}</h3>
-
-        <label>
-          Titulo del proyecto
-          <input type="text" name="titulo" [(ngModel)]="titulo" required />
-        </label>
-
-        <div class="upload-row">
-          <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="onFileSelected($event)" />
-          <button class="btn upload" type="button" (click)="subirEntrega()" [disabled]="!project()">
-            Subir archivo a docs
-          </button>
-        </div>
-        <div class="actions">
-          <button class="btn primary" type="submit">{{ editingProject() ? 'Actualizar proyecto' : 'Guardar proyecto' }}</button>
-          <button class="btn secondary" type="button" (click)="cancelarFormulario()">Cancelar</button>
-        </div>
-      </form>
-    }
-
-    <!-- PROYECTO -->
-    @if (project()) {
-      <div class="project-card">
-
-        <h2>{{ project()?.titulo }}</h2>
-
-        <p><strong>Problema:</strong></p>
-        <p>{{ project()?.problema }}</p>
-
-        <p><strong>Objetivos:</strong></p>
-        <p>{{ project()?.objetivos }}</p>
-
-        <div class="actions">
-          <button class="btn primary" (click)="editarProyecto()">
-            Editar proyecto
-          </button>
-
-          @if (entregas().length > 0) {
-            <button class="btn secondary" (click)="verDocumento()">
-              Ver ultimo documento
-            </button>
-          }
-        </div>
-
+    <div class="upload-row upload-row--stacked">
+      <div class="folder-selector folder-selector--readonly">
+        <span>Carpeta destino</span>
+        <strong>{{ selectedFolder() }}</strong>
       </div>
 
-      <!-- ENTREGAS -->
+      <div class="file-selector">
+        <span>Archivo</span>
+        <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="onFileSelected($event)" />
+        <button class="btn upload" type="button" (click)="subirEntrega()">
+          Subir archivo
+        </button>
+      </div>
+    </div>
+
+    @if (entregas().length > 0) {
       <div class="entregas-section">
         <h3>Mis entregas</h3>
-
-        <div class="upload-row upload-row--stacked">
-          <label class="folder-selector">
-            <span>Carpeta destino</span>
-            <select [value]="selectedFolder()" (change)="onFolderChange(($any($event.target)).value)">
-              @for (option of folderOptions; track option.value) {
-                <option [value]="option.value">{{ option.label }}</option>
-              }
-            </select>
-          </label>
-
-          <label class="file-selector">
-            <span>Archivo</span>
-            <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="onFileSelected($event)" />
-          </label>
-
-          <button class="btn upload" type="button" (click)="subirEntrega()">
-            Subir nueva entrega
-          </button>
-        </div>
 
         <ul class="entregas-list">
           @for (entrega of entregas(); track entrega.id) {
@@ -118,17 +65,11 @@
           }
         </ul>
       </div>
-
     }
 
-    <!-- SI NO TIENE PROYECTO -->
-    @if (!project() && !loading() && !showProjectForm()) {
+    @if (entregas().length === 0 && !loading()) {
       <div class="empty-state">
-        <p>No tienes un proyecto registrado</p>
-
-        <button class="btn primary" type="button" (click)="crearProyecto()">
-          Crear proyecto
-        </button>
+        <p>No hay entregas en esta carpeta. Selecciona un archivo para ver y subir.</p>
       </div>
     }
 

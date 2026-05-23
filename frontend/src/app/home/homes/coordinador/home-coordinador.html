@@ -2,7 +2,7 @@
   <header class="top-navbar">
     <div class="navbar-brand">
       <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
-      <h1>Panel del Coordinador</h1>
+      <h1>Coordinador</h1>
     </div>
 
     <nav class="nav-menu" aria-label="Navegacion principal">
@@ -30,6 +30,20 @@
               {{ f }}
             </button>
           </div>
+          <div class="carpeta-viewer">
+            <label>Carpeta</label>
+            <select [(ngModel)]="selectedCarpeta">
+              <option *ngFor="let f of fileTypes" [value]="f">{{ f }}</option>
+            </select>
+            <button class="btn" (click)="loadEntregasByCarpeta(selectedCarpeta())">Ver archivos</button>
+            <ul class="entregas-list">
+              <li *ngFor="let e of entregas()">
+                <span>{{ e.nombre_original || e.archivo }}</span>
+                <small>{{ e.fecha_entrega | date:'short' }}</small>
+                <button class="btn-link" (click)="verDocumento(e)">Ver</button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -38,7 +52,7 @@
       <div class="panel students-panel glass-panel">
         <h4>Estudiantes</h4>
         <div class="students-list">
-          <button *ngFor="let u of users().filter(x => x.rol?.toLowerCase() === 'estudiante')" class="student-item" (click)="selectStudent(u)">
+            <button *ngFor="let u of estudiantes()" class="student-item" (click)="selectStudent(u)">
             {{ u.nombre }}
           </button>
         </div>
@@ -85,7 +99,7 @@
                     <label>Estudiante</label>
                     <select [(ngModel)]="selectedStudentForRole" name="selectedStudentForRole">
                       <option [ngValue]="null">-- Selecciona --</option>
-                      <option *ngFor="let u of users().filter(x => x.rol?.toLowerCase() === 'estudiante')" [ngValue]="u.id">
+                        <option *ngFor="let u of estudiantes()" [ngValue]="u.id">
                         {{ u.nombre }}
                       </option>
                     </select>
