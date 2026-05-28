@@ -1,5 +1,4 @@
 const Entrega = require("../models/Entrega");
-const Project = require("../models/Project");
 const fs = require('fs');
 const path = require('path');
 
@@ -57,28 +56,7 @@ exports.getEntregasByUsuario = async (req, res) => {
   }
 };
 
-exports.getEntregasByProyecto = async (req, res) => {
-  try {
-    const { proyecto_id } = req.params;
-    const project = await Project.findById(proyecto_id);
 
-    if (!project) {
-      return res.status(404).json({ message: 'Proyecto no encontrado' });
-    }
-
-    const entregas = await Entrega.findByUsuario(project.estudiante_id);
-
-    return res.json({
-      data: entregas.map((item) => ({
-        ...item,
-        url_descarga: `/${item.archivo}`
-      }))
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Error al listar entregas", error: error.message });
-  }
-};
 
 exports.getEntregasByCarpeta = async (req, res) => {
   try {

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { ProjectService, Proyecto } from '../../../services/project.service';
+import { DocumentChatbotComponent } from '../../../shared/document-chatbot/document-chatbot';
 
 type UserRow = {
   id: number;
@@ -39,9 +40,9 @@ type AssistantCard = {
 @Component({
   selector: 'app-home-coordinador',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DocumentChatbotComponent],
   templateUrl: './home-coordinador.html',
-  styleUrl: './home-coordinador.scss'
+  styleUrl: './home-coordinador.scss',
 })
 export class HomeCoordinadorComponent {
   private readonly router = inject(Router);
@@ -53,7 +54,7 @@ export class HomeCoordinadorComponent {
   readonly userInitials: string;
   readonly users = signal<UserRow[]>([]);
   readonly estudiantes = computed(() =>
-    this.users().filter((user) => (user.rol || '').toLowerCase() === 'estudiante')
+    this.users().filter((user) => (user.rol || '').toLowerCase() === 'estudiante'),
   );
   readonly docentes = signal<UserRow[]>([]);
   readonly docenteAssignments = signal<AssignmentRow[]>([]);
@@ -65,7 +66,7 @@ export class HomeCoordinadorComponent {
     { icon: '📁', label: 'Proyectos Activos', value: '' },
     { icon: '👥', label: 'Alumnos Registrados', value: '' },
     { icon: '📋', label: 'Asignaciones Pendientes', value: '15 docentes' },
-    { icon: '📊', label: 'Indicador de Avance Promedio', value: '72%' }
+    { icon: '📊', label: 'Indicador de Avance Promedio', value: '72%' },
   ];
 
   readonly quickActions: QuickAction[] = [
@@ -73,31 +74,31 @@ export class HomeCoordinadorComponent {
     { label: 'Cronogramas', ghost: true, action: () => this.goToProjects() },
     { label: 'Informes', ghost: true, action: () => this.goToProjects() },
     { label: 'Anexos', ghost: true, action: () => this.goToProjects() },
-    { label: 'Asesorias', action: () => this.goToProjects() }
+    { label: 'Asesorias', action: () => this.goToProjects() },
   ];
 
   readonly assistantCards: AssistantCard[] = [
     {
       title: 'Chatbot IA',
       body: 'Hola, he analizado los proyectos. Recomiendo a Dr. Morales como asesor.',
-      bullets: ['Perfil especializado en IA', 'Publicaciones recientes', 'Disponibilidad actual']
+      bullets: ['Perfil especializado en IA', 'Publicaciones recientes', 'Disponibilidad actual'],
     },
     {
       title: 'Asesor recomendado',
       body: 'Estudiante X (Tema IA): Dr. Morales',
       bullets: ['Perfil Docente: IA', 'Publicaciones Recientes'],
-      button: 'Recomendaciones'
+      button: 'Recomendaciones',
     },
     {
       title: 'Sugerencia de Jurado',
       body: 'Proyecto de Redes',
-      button: 'Sugerencia'
+      button: 'Sugerencia',
     },
     {
       title: 'Alertas del Asistente',
       body: '"Docente Y tiene sobrecarga - 5 asesorias"',
-      muted: true
-    }
+      muted: true,
+    },
   ];
 
   readonly fileTypes = [
@@ -106,7 +107,7 @@ export class HomeCoordinadorComponent {
     'informe semana 6',
     'anexos',
     'asesorias',
-    'informe final'
+    'informe final',
   ];
 
   readonly selectedFile = signal<string>(this.fileTypes[0]);
@@ -114,6 +115,7 @@ export class HomeCoordinadorComponent {
   readonly selectedCarpeta = signal<string>(this.fileTypes[0]);
   readonly selectedStudent = signal<UserRow | null>(null);
   readonly selectedDocente = signal<UserRow | null>(null);
+  readonly selectedEntrega = signal<any | null>(null);
   selectedStudentForRole: number | null = null;
   roleType: 'asesor' | 'jurado' = 'asesor';
 
@@ -161,15 +163,18 @@ export class HomeCoordinadorComponent {
     this.error.set('');
     this.message.set('');
 
-    this.http.get<{ data: AssignmentRow[] }>(`/api/auth/users/${docenteId}/assignments`, { headers })
+    this.http
+      .get<{ data: AssignmentRow[] }>(`/api/auth/users/${docenteId}/assignments`, { headers })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
           this.docenteAssignments.set(response?.data ?? []);
         },
         error: (err: any) => {
-          this.error.set(err?.error?.message ?? 'No se pudieron cargar las asignaciones del docente.');
-        }
+          this.error.set(
+            err?.error?.message ?? 'No se pudieron cargar las asignaciones del docente.',
+          );
+        },
       });
   }
 
@@ -197,11 +202,13 @@ export class HomeCoordinadorComponent {
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.post<{ message: string }>(
-      `/api/auth/users/${docente.id}/assignments`,
-      { studentId, role: this.roleType },
-      { headers }
-    ).pipe(finalize(() => this.loading.set(false)))
+    this.http
+      .post<{ message: string }>(
+        `/api/auth/users/${docente.id}/assignments`,
+        { studentId, role: this.roleType },
+        { headers },
+      )
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (res) => {
           this.message.set(res?.message ?? 'Asignación guardada correctamente.');
@@ -213,7 +220,7 @@ export class HomeCoordinadorComponent {
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo asignar el estudiante.');
           this.message.set('');
-        }
+        },
       });
   }
 
@@ -241,10 +248,11 @@ export class HomeCoordinadorComponent {
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.delete<{ message: string }>(
-      `/api/auth/users/${docente.id}/assignments/${studentId}`,
-      { headers }
-    ).pipe(finalize(() => this.loading.set(false)))
+    this.http
+      .delete<{ message: string }>(`/api/auth/users/${docente.id}/assignments/${studentId}`, {
+        headers,
+      })
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (res) => {
           this.message.set(res?.message ?? 'Asignación eliminada correctamente.');
@@ -256,7 +264,7 @@ export class HomeCoordinadorComponent {
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo eliminar la asignación.');
           this.message.set('');
-        }
+        },
       });
   }
 
@@ -299,6 +307,7 @@ export class HomeCoordinadorComponent {
 
   verDocumento(entrega: any): void {
     const url = entrega?.url_descarga;
+    this.selectedEntrega.set(entrega ?? null);
     if (url) window.open(url, '_blank');
   }
 
@@ -307,22 +316,38 @@ export class HomeCoordinadorComponent {
     if (!token) return;
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.loading.set(true);
-    this.http.get<{ data: any[] }>(`/api/entregas/carpeta/${encodeURIComponent(carpeta)}`, { headers })
+    this.http
+      .get<{ data: any[] }>(`/api/entregas/carpeta/${encodeURIComponent(carpeta)}`, { headers })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (res) => {
           const rows = res?.data ?? [];
           if (rows.length > 0) {
             this.entregas.set(rows);
+            this.selectedEntrega.set(rows[0] ?? null);
             return;
           }
 
-          this.http.get<{ data: any[] }>(`/api/entregas/scan/carpeta/${encodeURIComponent(carpeta)}`, { headers }).subscribe({
-            next: (scanRes) => this.entregas.set(scanRes?.data ?? []),
-            error: () => this.entregas.set([])
-          });
+          this.http
+            .get<{
+              data: any[];
+            }>(`/api/entregas/scan/carpeta/${encodeURIComponent(carpeta)}`, { headers })
+            .subscribe({
+              next: (scanRes) => {
+                const rowsFromScan = scanRes?.data ?? [];
+                this.entregas.set(rowsFromScan);
+                this.selectedEntrega.set(rowsFromScan[0] ?? null);
+              },
+              error: () => {
+                this.entregas.set([]);
+                this.selectedEntrega.set(null);
+              },
+            });
         },
-        error: () => this.entregas.set([])
+        error: () => {
+          this.entregas.set([]);
+          this.selectedEntrega.set(null);
+        },
       });
   }
 
@@ -369,11 +394,13 @@ export class HomeCoordinadorComponent {
         next: (response) => {
           this.users.set(response?.data ?? []);
           // also extract docentes for the docentes panel
-          this.docentes.set((response?.data ?? []).filter((u) => (u.rol || '').toLowerCase() === 'docente'));
+          this.docentes.set(
+            (response?.data ?? []).filter((u) => (u.rol || '').toLowerCase() === 'docente'),
+          );
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los usuarios.');
-        }
+        },
       });
   }
 
@@ -381,14 +408,17 @@ export class HomeCoordinadorComponent {
     this.loading.set(true);
     this.error.set('');
 
-    this.projectService.getAllProjects().pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: (response) => {
-        this.projects.set(response?.data ?? []);
-      },
-      error: (err: any) => {
-        this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
-      }
-    });
+    this.projectService
+      .getAllProjects()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.projects.set(response?.data ?? []);
+        },
+        error: (err: any) => {
+          this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
+        },
+      });
   }
 
   switchTab(tab: 'dashboard' | 'usuarios' | 'proyectos'): void {
@@ -414,7 +444,9 @@ export class HomeCoordinadorComponent {
 
   private getDisplayName(user: Record<string, unknown> | null): string {
     const values = [user?.['nombre'], user?.['name'], user?.['fullName'], user?.['email']];
-    const firstValid = values.find((value) => typeof value === 'string' && value.trim().length > 0) as string | undefined;
+    const firstValid = values.find(
+      (value) => typeof value === 'string' && value.trim().length > 0,
+    ) as string | undefined;
     return firstValid?.trim() || 'Coordinador';
   }
 

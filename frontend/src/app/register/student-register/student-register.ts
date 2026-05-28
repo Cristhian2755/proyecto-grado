@@ -26,7 +26,7 @@ type CarreraRow = {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './student-register.html',
-  styleUrl: './student-register.scss'
+  styleUrl: './student-register.scss',
 })
 export class StudentRegisterComponent implements OnInit {
   private readonly http = inject(HttpClient);
@@ -65,16 +65,14 @@ export class StudentRegisterComponent implements OnInit {
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http
-      .get<{ data: CarreraRow[] }>('/api/auth/carreras', { headers })
-      .subscribe({
-        next: (response) => {
-          this.carreras.set(response?.data ?? []);
-        },
-        error: (err: any) => {
-          this.error.set(err?.error?.message ?? 'No se pudieron cargar los programas.');
-        }
-      });
+    this.http.get<{ data: CarreraRow[] }>('/api/auth/carreras', { headers }).subscribe({
+      next: (response) => {
+        this.carreras.set(response?.data ?? []);
+      },
+      error: (err: any) => {
+        this.error.set(err?.error?.message ?? 'No se pudieron cargar los programas.');
+      },
+    });
   }
 
   loadStudents(): void {
@@ -88,7 +86,8 @@ export class StudentRegisterComponent implements OnInit {
     this.error.set('');
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.get<{ data: StudentRow[] }>('/api/auth/users?rol=estudiante', { headers })
+    this.http
+      .get<{ data: StudentRow[] }>('/api/auth/users?rol=estudiante', { headers })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
@@ -96,7 +95,7 @@ export class StudentRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los estudiantes.');
-        }
+        },
       });
   }
 
@@ -179,13 +178,18 @@ export class StudentRegisterComponent implements OnInit {
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.post<{ message: string; data: StudentRow }>('/api/auth/register', {
-      nombre: this.nombre,
-      email: this.email,
-      password: this.password,
-      rol: 'estudiante',
-      carrera_id: selectedCarreraId
-    }, { headers })
+    this.http
+      .post<{ message: string; data: StudentRow }>(
+        '/api/auth/register',
+        {
+          nombre: this.nombre,
+          email: this.email,
+          password: this.password,
+          rol: 'estudiante',
+          carrera_id: selectedCarreraId,
+        },
+        { headers },
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
@@ -195,7 +199,7 @@ export class StudentRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo registrar al estudiante.');
-        }
+        },
       });
   }
 
@@ -228,14 +232,19 @@ export class StudentRegisterComponent implements OnInit {
     const payload: any = {
       nombre: this.nombre,
       email: this.email,
-      carrera_id: selectedCarreraId
+      carrera_id: selectedCarreraId,
     };
     if (this.password) {
       payload.password = this.password;
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.put<{ message: string; data: StudentRow }>(`/api/auth/users/${this.editingStudentId}`, payload, { headers })
+    this.http
+      .put<{ message: string; data: StudentRow }>(
+        `/api/auth/users/${this.editingStudentId}`,
+        payload,
+        { headers },
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
@@ -245,7 +254,7 @@ export class StudentRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo actualizar al estudiante.');
-        }
+        },
       });
   }
 
@@ -265,7 +274,8 @@ export class StudentRegisterComponent implements OnInit {
     this.success.set('');
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.delete<{ message: string }>(`/api/auth/users/${student.id}`, { headers })
+    this.http
+      .delete<{ message: string }>(`/api/auth/users/${student.id}`, { headers })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
@@ -277,7 +287,7 @@ export class StudentRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo eliminar al estudiante.');
-        }
+        },
       });
   }
 }

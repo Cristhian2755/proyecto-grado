@@ -1,0 +1,22 @@
+<div class="chatbot">
+  <div class="header">
+    <label for="role">Rol:</label>
+    <select id="role" [(ngModel)]="rol">
+      <option value="estudiante">Estudiante</option>
+      <option value="docente">Docente</option>
+      <option value="coordinador">Coordinador</option>
+      <option value="biblioteca">Biblioteca</option>
+    </select>
+  </div>
+
+  <div class="messages">
+    <div *ngFor="let m of historial" [class.user]="m.role === 'user'" [class.model]="m.role === 'model'">
+      <div class="bubble">{{ m.parts[0].text }}</div>
+    </div>
+  </div>
+
+  <div class="composer">
+    <textarea [(ngModel)]="nuevoMensaje" placeholder="Ingrese su consulta académica..."></textarea>
+    <button (click)="enviar()" [disabled]="cargando">{{ cargando ? 'Procesando...' : 'Consultar' }}</button>
+  </div>
+</div>

@@ -6,13 +6,14 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { ProjectService, Proyecto } from '../../../services/project.service';
+import { DocumentChatbotComponent } from '../../../shared/document-chatbot/document-chatbot';
 
 @Component({
   selector: 'app-home-docente',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DocumentChatbotComponent],
   templateUrl: './home-docente.html',
-  styleUrl: './home-docente.scss'
+  styleUrl: './home-docente.scss',
 })
 export class HomeDocenteComponent {
   private readonly router = inject(Router);
@@ -29,7 +30,15 @@ export class HomeDocenteComponent {
   readonly selectedProject = signal<Proyecto | null>(null);
   readonly showModal = signal(false);
   readonly entregas = signal<any[]>([]);
-  readonly carpetaOptions = ['propuesta', 'cronograma', 'informe semana 6', 'anexos', 'asesoria', 'informe final'];
+  readonly selectedEntrega = signal<any | null>(null);
+  readonly carpetaOptions = [
+    'propuesta',
+    'cronograma',
+    'informe semana 6',
+    'anexos',
+    'asesoria',
+    'informe final',
+  ];
   readonly selectedCarpeta = signal<string>(this.carpetaOptions[0]);
 
   constructor() {
@@ -41,6 +50,7 @@ export class HomeDocenteComponent {
 
   verDocumento(entrega: any): void {
     const url = entrega?.url_descarga;
+    this.selectedEntrega.set(entrega ?? null);
     if (url) window.open(url, '_blank');
   }
 
@@ -49,23 +59,39 @@ export class HomeDocenteComponent {
     if (!token) return;
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.loading.set(true);
-    this.http.get<{ data: any[] }>(`/api/entregas/carpeta/${encodeURIComponent(carpeta)}`, { headers })
+    this.http
+      .get<{ data: any[] }>(`/api/entregas/carpeta/${encodeURIComponent(carpeta)}`, { headers })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (res) => {
           const rows = res?.data ?? [];
           if (rows.length > 0) {
             this.entregas.set(rows);
+            this.selectedEntrega.set(rows[0] ?? null);
             return;
           }
 
           // Fallback: scan filesystem
-          this.http.get<{ data: any[] }>(`/api/entregas/scan/carpeta/${encodeURIComponent(carpeta)}`, { headers }).subscribe({
-            next: (scanRes) => this.entregas.set(scanRes?.data ?? []),
-            error: () => this.entregas.set([])
-          });
+          this.http
+            .get<{
+              data: any[];
+            }>(`/api/entregas/scan/carpeta/${encodeURIComponent(carpeta)}`, { headers })
+            .subscribe({
+              next: (scanRes) => {
+                const rowsFromScan = scanRes?.data ?? [];
+                this.entregas.set(rowsFromScan);
+                this.selectedEntrega.set(rowsFromScan[0] ?? null);
+              },
+              error: () => {
+                this.entregas.set([]);
+                this.selectedEntrega.set(null);
+              },
+            });
         },
-        error: () => this.entregas.set([])
+        error: () => {
+          this.entregas.set([]);
+          this.selectedEntrega.set(null);
+        },
       });
   }
 
@@ -81,14 +107,17 @@ export class HomeDocenteComponent {
     this.loading.set(true);
     this.error.set('');
 
-    this.projectService.getMyAssignedProjects().pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: (response) => {
-        this.assignedProjects.set(response?.data ?? []);
-      },
-      error: (err: any) => {
-        this.error.set(err?.error?.message ?? 'No se pudieron cargar tus proyectos asignados.');
-      }
-    });
+    this.projectService
+      .getMyAssignedProjects()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.assignedProjects.set(response?.data ?? []);
+        },
+        error: (err: any) => {
+          this.error.set(err?.error?.message ?? 'No se pudieron cargar tus proyectos asignados.');
+        },
+      });
   }
 
   /** Modal actions */
@@ -112,7 +141,7 @@ export class HomeDocenteComponent {
       },
       error: (err: any) => {
         this.error.set(err?.error?.message ?? 'Error al guardar observación');
-      }
+      },
     });
   }
 
@@ -126,13 +155,15 @@ export class HomeDocenteComponent {
       },
       error: (err: any) => {
         this.error.set(err?.error?.message ?? 'Error al cambiar estado');
-      }
+      },
     });
   }
 
   private getDisplayName(user: Record<string, unknown> | null): string {
     const values = [user?.['nombre'], user?.['name'], user?.['fullName'], user?.['email']];
-    const firstValid = values.find((value) => typeof value === 'string' && value.trim().length > 0) as string | undefined;
+    const firstValid = values.find(
+      (value) => typeof value === 'string' && value.trim().length > 0,
+    ) as string | undefined;
     return firstValid?.trim() || 'Docente';
   }
 

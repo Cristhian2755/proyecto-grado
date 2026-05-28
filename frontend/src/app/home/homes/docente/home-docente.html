@@ -56,7 +56,11 @@
     </div>
 
     <div class="panel viewer-large">
-      <div class="viewer-empty"></div>
+      <app-document-chatbot
+        [roleLabel]="'Docente'"
+        [documentUrl]="selectedEntrega()?.url_descarga || ''"
+        [documentName]="selectedEntrega()?.nombre_original || selectedEntrega()?.archivo || selectedCarpeta()"
+      />
     </div>
 
     <div class="panel progress-box">

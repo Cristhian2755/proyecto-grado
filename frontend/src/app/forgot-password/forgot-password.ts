@@ -9,7 +9,7 @@ import { finalize } from 'rxjs';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './forgot-password.html',
-  styleUrl: './forgot-password.scss'
+  styleUrl: './forgot-password.scss',
 })
 export class ForgotPasswordComponent {
   private http = inject(HttpClient);
@@ -30,16 +30,21 @@ export class ForgotPasswordComponent {
     this.error.set('');
     this.success.set('');
 
-    this.http.post<any>('/api/auth/forgot-password', {
-      email: this.email
-    }).pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: (response: any) => {
-        this.submitted.set(true);
-        this.success.set(response.message ?? 'Revisa tu correo electrónico para restaurar tu contraseña.');
-      },
-      error: (err: any) => {
-        this.error.set(err?.error?.message ?? 'Error al procesar la solicitud.');
-      }
-    });
+    this.http
+      .post<any>('/api/auth/forgot-password', {
+        email: this.email,
+      })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response: any) => {
+          this.submitted.set(true);
+          this.success.set(
+            response.message ?? 'Revisa tu correo electrónico para restaurar tu contraseña.',
+          );
+        },
+        error: (err: any) => {
+          this.error.set(err?.error?.message ?? 'Error al procesar la solicitud.');
+        },
+      });
   }
 }

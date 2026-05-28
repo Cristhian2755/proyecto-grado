@@ -10,7 +10,7 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.scss'
+  styleUrl: './login.scss',
 })
 export class LoginComponent {
   email = '';
@@ -22,7 +22,7 @@ export class LoginComponent {
   constructor(
     private readonly http: HttpClient,
     private readonly router: Router,
-    private readonly auth: AuthService
+    private readonly auth: AuthService,
   ) {}
 
   onSubmit(): void {
@@ -36,20 +36,23 @@ export class LoginComponent {
     this.error.set('');
     this.success.set('');
 
-    this.http.post<any>('/api/auth/login', {
-      email: this.email,
-      password: this.password
-    }).pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: (response) => {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        this.success.set('Inicio de sesión correcto.');
-        const targetRoute = this.auth.getHomeRouteByRole(response?.data?.user?.rol ?? null);
-        this.router.navigate([targetRoute]);
-      },
-      error: (err) => {
-        this.error.set(err?.error?.message ?? 'No se pudo iniciar sesión.');
-      }
-    });
+    this.http
+      .post<any>('/api/auth/login', {
+        email: this.email,
+        password: this.password,
+      })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response) => {
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          this.success.set('Inicio de sesión correcto.');
+          const targetRoute = this.auth.getHomeRouteByRole(response?.data?.user?.rol ?? null);
+          this.router.navigate([targetRoute]);
+        },
+        error: (err) => {
+          this.error.set(err?.error?.message ?? 'No se pudo iniciar sesión.');
+        },
+      });
   }
 }

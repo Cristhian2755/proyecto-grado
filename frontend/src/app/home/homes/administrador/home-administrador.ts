@@ -28,7 +28,7 @@ type CarreraRow = {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './home-administrador.html',
-  styleUrl: './home-administrador.scss'
+  styleUrl: './home-administrador.scss',
 })
 export class HomeAdministradorComponent {
   private readonly http = inject(HttpClient);
@@ -46,7 +46,9 @@ export class HomeAdministradorComponent {
   readonly error = signal('');
   readonly success = signal('');
   readonly activeTab = signal<'usuarios' | 'proyectos'>('usuarios');
-  readonly searchPlaceholder = computed(() => (this.activeTab() === 'usuarios' ? 'usuarios' : 'proyectos'));
+  readonly searchPlaceholder = computed(() =>
+    this.activeTab() === 'usuarios' ? 'usuarios' : 'proyectos',
+  );
   readonly filteredUsers = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
     if (!query) {
@@ -71,7 +73,7 @@ export class HomeAdministradorComponent {
         project.estudiante_nombre,
         project.linea_tematica,
         project.estado,
-        project.estudiante_email
+        project.estudiante_email,
       ]
         .join(' ')
         .toLowerCase();
@@ -90,7 +92,14 @@ export class HomeAdministradorComponent {
   carreraId = '';
   editingUserId: number | null = null;
 
-  readonly allowedRoles = ['administrador', 'coordinador', 'estudiante', 'docente', 'asesor', 'jurado'];
+  readonly allowedRoles = [
+    'administrador',
+    'coordinador',
+    'estudiante',
+    'docente',
+    'asesor',
+    'jurado',
+  ];
   readonly roleOptions = ['estudiante', 'docente', 'coordinador', 'administrador'];
   readonly subroleOptions = ['asesor', 'jurado'];
 
@@ -184,7 +193,7 @@ export class HomeAdministradorComponent {
         nombre: this.nombre,
         email: this.email,
         rol: this.rol,
-        carrera_id: selectedCarreraId
+        carrera_id: selectedCarreraId,
       };
       // Solo envía contraseña si no está vacía
       if (this.password) {
@@ -204,7 +213,7 @@ export class HomeAdministradorComponent {
       email: this.email,
       password: this.password,
       rol: this.rol,
-      carrera_id: selectedCarreraId
+      carrera_id: selectedCarreraId,
     };
     if (this.rol === 'docente') {
       payload.subroles = this.subrol ? [this.subrol] : [];
@@ -225,16 +234,14 @@ export class HomeAdministradorComponent {
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http
-      .get<{ data: CarreraRow[] }>('/api/auth/carreras', { headers })
-      .subscribe({
-        next: (response) => {
-          this.carreras.set(response?.data ?? []);
-        },
-        error: (err: any) => {
-          this.error.set(err?.error?.message ?? 'No se pudieron cargar los programas.');
-        }
-      });
+    this.http.get<{ data: CarreraRow[] }>('/api/auth/carreras', { headers }).subscribe({
+      next: (response) => {
+        this.carreras.set(response?.data ?? []);
+      },
+      error: (err: any) => {
+        this.error.set(err?.error?.message ?? 'No se pudieron cargar los programas.');
+      },
+    });
   }
 
   loadUsers(): void {
@@ -257,13 +264,13 @@ export class HomeAdministradorComponent {
             (response?.data ?? []).map((user) => ({
               ...user,
               carrera_nombre: user.carrera_nombre ?? 'Sin programa',
-              subroles: user.subroles ?? []
-            }))
+              subroles: user.subroles ?? [],
+            })),
           );
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los usuarios.');
-        }
+        },
       });
   }
 
@@ -283,17 +290,23 @@ export class HomeAdministradorComponent {
               estudiante_nombre: project.estudiante_nombre || 'Sin asignar',
               linea_tematica: project.linea_tematica || 'No especificada',
               estudiante_email: project.estudiante_email || '-',
-              estado: project.estado || 'Pendiente'
-            }))
+              estado: project.estado || 'Pendiente',
+            })),
           );
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
-        }
+        },
       });
   }
 
-  createUser(payload: { nombre: string; email: string; password: string; rol: string; carrera_id: number | null }): void {
+  createUser(payload: {
+    nombre: string;
+    email: string;
+    password: string;
+    rol: string;
+    carrera_id: number | null;
+  }): void {
     const token = localStorage.getItem('token');
     if (!token) {
       this.error.set('No hay sesión activa.');
@@ -316,11 +329,20 @@ export class HomeAdministradorComponent {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo crear el usuario.');
-        }
+        },
       });
   }
 
-  updateUser(id: number, payload: { nombre: string; email: string; rol: string; carrera_id: number | null; password?: string }): void {
+  updateUser(
+    id: number,
+    payload: {
+      nombre: string;
+      email: string;
+      rol: string;
+      carrera_id: number | null;
+      password?: string;
+    },
+  ): void {
     const token = localStorage.getItem('token');
     if (!token) {
       this.error.set('No hay sesión activa.');
@@ -343,7 +365,7 @@ export class HomeAdministradorComponent {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo actualizar el usuario.');
-        }
+        },
       });
   }
 
@@ -376,7 +398,7 @@ export class HomeAdministradorComponent {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo eliminar el usuario.');
-        }
+        },
       });
   }
 
@@ -397,7 +419,11 @@ export class HomeAdministradorComponent {
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.http
-      .put<{ message: string; data: UserRow }>(`/api/auth/users/${user.id}/role`, { rol: role }, { headers })
+      .put<{ message: string; data: UserRow }>(
+        `/api/auth/users/${user.id}/role`,
+        { rol: role },
+        { headers },
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
@@ -406,13 +432,15 @@ export class HomeAdministradorComponent {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo actualizar el rol.');
-        }
+        },
       });
   }
 
   private getDisplayName(user: Record<string, unknown> | null): string {
     const values = [user?.['nombre'], user?.['name'], user?.['fullName'], user?.['email']];
-    const firstValid = values.find((value) => typeof value === 'string' && value.trim().length > 0) as string | undefined;
+    const firstValid = values.find(
+      (value) => typeof value === 'string' && value.trim().length > 0,
+    ) as string | undefined;
     return firstValid?.trim() || 'Administrador';
   }
 

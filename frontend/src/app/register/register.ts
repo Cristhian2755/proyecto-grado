@@ -9,7 +9,7 @@ import { finalize } from 'rxjs';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.scss'
+  styleUrl: './register.scss',
 })
 export class RegisterComponent {
   private http = inject(HttpClient);
@@ -45,18 +45,21 @@ export class RegisterComponent {
     this.error.set('');
     this.success.set('');
 
-    this.http.post<any>('/api/auth/register', {
-      nombre: this.nombre,
-      email: this.email,
-      password: this.password
-    }).pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: (response: any) => {
-        this.success.set('Registro exitoso. Redirigiendo...');
-        setTimeout(() => this.router.navigate(['/login']), 2000);
-      },
-      error: (err: any) => {
-        this.error.set(err?.error?.message ?? 'Error al registrarse.');
-      }
-    });
+    this.http
+      .post<any>('/api/auth/register', {
+        nombre: this.nombre,
+        email: this.email,
+        password: this.password,
+      })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response: any) => {
+          this.success.set('Registro exitoso. Redirigiendo...');
+          setTimeout(() => this.router.navigate(['/login']), 2000);
+        },
+        error: (err: any) => {
+          this.error.set(err?.error?.message ?? 'Error al registrarse.');
+        },
+      });
   }
 }

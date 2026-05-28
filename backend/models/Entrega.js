@@ -51,15 +51,8 @@ class Entrega {
   }
 
   static async findByProyecto(proyecto_id) {
-    const projectQuery = 'SELECT estudiante_id FROM proyectos WHERE id = $1';
-    const projectResult = await pool.query(projectQuery, [proyecto_id]);
-    const project = projectResult.rows[0];
-
-    if (!project) {
-      return [];
-    }
-
-    return this.findByUsuario(project.estudiante_id);
+    // La tabla 'proyectos' fue eliminada; esta función ya no es aplicable.
+    return [];
   }
 
   static async findByCarpeta(carpeta) {

@@ -436,7 +436,7 @@ td {
 }
 
 .file-item .file-button.active {
-  background: linear-gradient(180deg,#d96b6b,#b93b3b);
+  background: linear-gradient(180deg, #d96b6b, #b93b3b);
   color: #fff;
 }
 
@@ -492,7 +492,9 @@ td {
   font-weight: 700;
 }
 
-.student-item:hover { transform: translateY(-2px); }
+.student-item:hover {
+  transform: translateY(-2px);
+}
 
 .right-column .viewer-panel {
   border-radius: 28px;
@@ -502,7 +504,10 @@ td {
   min-height: 420px;
 }
 
-.viewer-panel h4 { margin: 0 0 12px 0; font-weight: 800; }
+.viewer-panel h4 {
+  margin: 0 0 12px 0;
+  font-weight: 800;
+}
 
 .viewer-content .document-placeholder {
   border-radius: 14px;
@@ -513,7 +518,7 @@ td {
   justify-content: center;
   color: #9aa0a0;
   font-weight: 700;
-  border: 6px solid rgba(0,0,0,0.03);
+  border: 6px solid rgba(0, 0, 0, 0.03);
 }
 
 /* CRUD para asignación de estudiantes a docentes */
@@ -731,10 +736,18 @@ td {
   overflow: hidden;
 }
 
-.progress-track .segment { height: 100%; }
-.progress-track .segment.pending { background: #f59e0b; }
-.progress-track .segment.approved { background: #10b981; }
-.progress-track .segment.failed { background: #ef4444; }
+.progress-track .segment {
+  height: 100%;
+}
+.progress-track .segment.pending {
+  background: #f59e0b;
+}
+.progress-track .segment.approved {
+  background: #10b981;
+}
+.progress-track .segment.failed {
+  background: #ef4444;
+}
 
 .legend {
   display: flex;
@@ -743,24 +756,65 @@ td {
   margin-top: 12px;
 }
 
-.legend-item { display:flex; gap:8px; align-items:center; font-weight:700; }
-.legend .dot { width:18px; height:18px; border-radius:6px; display:inline-block; }
-.legend .dot.pending { background:#f59e0b }
-.legend .dot.approved { background:#10b981 }
-.legend .dot.failed { background:#ef4444 }
+.legend-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 700;
+}
+.legend .dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  display: inline-block;
+}
+.legend .dot.pending {
+  background: #f59e0b;
+}
+.legend .dot.approved {
+  background: #10b981;
+}
+.legend .dot.failed {
+  background: #ef4444;
+}
 
 /* Botones grandes de estado bajo la barra (pendientes/aprobados/reprobados) */
-.progress-panel .state-buttons { display:flex; gap:12px; margin-top:14px; }
-.state-buttons .state-btn { flex:1; padding:12px; border-radius:12px; font-weight:800; color:#fff; border:0; }
-.state-btn.pending { background: #f59e0b }
-.state-btn.approved { background: #10b981 }
-.state-btn.failed { background: #ef4444 }
+.progress-panel .state-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+.state-buttons .state-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  color: #fff;
+  border: 0;
+}
+.state-btn.pending {
+  background: #f59e0b;
+}
+.state-btn.approved {
+  background: #10b981;
+}
+.state-btn.failed {
+  background: #ef4444;
+}
 
 /* Ajustes responsivos */
 @media (max-width: 980px) {
-  .dashboard-layout { grid-template-columns: 1fr; }
-  .left-column, .middle-column, .right-column { width: 100%; }
-  .viewer-content .document-placeholder { height: 260px; }
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+  .left-column,
+  .middle-column,
+  .right-column {
+    width: 100%;
+  }
+  .viewer-content .document-placeholder {
+    height: 260px;
+  }
 }
 
 .ia-card li {

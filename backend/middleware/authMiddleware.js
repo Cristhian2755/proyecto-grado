@@ -3,6 +3,11 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
   try {
+    // Permitir pruebas locales sin token cuando ALLOW_AI_TESTING=true
+    if (process.env.ALLOW_AI_TESTING === 'true') {
+      req.user = { id: 0, rol: 'estudiante' };
+      return next();
+    }
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.replace("Bearer ", "");
 

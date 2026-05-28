@@ -18,11 +18,13 @@
     <div class="left-column">
       <div class="panel files-panel card-shell">
         <div class="panel-inner">
-          <div *ngFor="let f of fileTypes" class="file-item">
-            <button class="file-button" [class.active]="selectedFile() === f" (click)="selectFile(f)">
-              {{ f }}
-            </button>
-          </div>
+          @for (f of fileTypes; track f) {
+            <div class="file-item">
+              <button class="file-button" [class.active]="selectedFile() === f" (click)="selectFile(f)">
+                {{ f }}
+              </button>
+            </div>
+          }
         </div>
       </div>
     </div>
@@ -30,16 +32,64 @@
     <div class="main-column">
       <div class="panel viewer-panel card-shell">
         <div class="viewer-content">
-          <div class="viewer-actions viewer-actions--top">
-            <button class="btn-primary" type="button" (click)="goToUpload()">Subir archivo</button>
+          <div class="viewer-header">
+            <div>
+              <p class="viewer-kicker">Carpeta seleccionada</p>
+              <h2>{{ selectedFile() }}</h2>
+            </div>
+            @if (!selectedEntrega()) {
+              <button class="btn-primary" type="button" (click)="openFilePicker()">
+                Subir documento
+              </button>
+            }
           </div>
 
-          <p *ngIf="myProjects().length === 0">Aún no hay proyectos o archivos. Sube tu primer archivo.</p>
-          <div *ngIf="myProjects().length > 0">
-            <p><strong>Mi Proyecto:</strong> {{ myProjects()[0]?.titulo || 'Sin proyecto' }}</p>
-            <p><strong>Archivo:</strong> {{ selectedFile() }}</p>
-            <div class="document-placeholder">Vista previa del archivo</div>
-          </div>
+          <input
+            id="student-upload-input"
+            type="file"
+            hidden
+            accept=".pdf,.doc,.docx,.xls,.xlsx"
+            (change)="onUploadDocumento($event)"
+          />
+
+          @if (error()) {
+            <div class="status-banner error">{{ error() }}</div>
+          }
+
+          @if (message()) {
+            <div class="status-banner success">{{ message() }}</div>
+          }
+
+          @if (loading()) {
+            <div class="status-banner info">Cargando documentos...</div>
+          }
+
+          @if (entregas().length > 0) {
+            <div class="document-viewer">
+              <div class="document-placeholder document-preview">
+                <div class="document-content">
+                  @if (previewUrlSafe()) {
+                    <iframe class="doc-frame" title="Documento PDF" [src]="previewUrlSafe()"></iframe>
+                  } @else if (previewHtml()) {
+                    <iframe class="doc-frame" title="Vista del documento" sandbox [srcdoc]="previewHtml()"></iframe>
+                  } @else {
+                    <div class="empty-preview">No es posible mostrar el documento seleccionado.</div>
+                  }
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="document-placeholder empty-folder">
+              <p>No hay documento cargado para esta carpeta.</p>
+              <p>Cuando el coordinador habilite esta entrega, podrás subir el archivo respectivo.</p>
+            </div>
+          }
+
+          <app-document-chatbot
+            [roleLabel]="'Estudiante'"
+            [documentUrl]="selectedEntrega()?.url_descarga || ''"
+            [documentName]="selectedEntrega()?.nombre_original || selectedEntrega()?.archivo || selectedFile()"
+          />
         </div>
       </div>
 

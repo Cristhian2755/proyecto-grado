@@ -150,16 +150,16 @@
   min-height: 40px;
   padding: 0 14px;
   border-radius: 999px;
-  background: linear-gradient(90deg,#ffffff,#f1f5f9);
+  background: linear-gradient(90deg, #ffffff, #f1f5f9);
   color: #0f172a;
   font-weight: 700;
-  border: 1px solid rgba(15,23,42,0.06);
-  box-shadow: 0 8px 20px rgba(15,23,42,0.06);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
 
 .educational-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(15,23,42,0.12);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
 }
 
 .menu-button span {
@@ -190,7 +190,10 @@
 .suggestion-chip {
   border: 0;
   cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
 }
 
 .search-action,

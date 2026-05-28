@@ -51,7 +51,6 @@
             [required]="!editingUserId"
             placeholder="contraseña"
           />
-          <button class="save-button" type="submit" [disabled]="loading()">GUARDAR</button>
 
           <select name="rol" [(ngModel)]="rol" (ngModelChange)="onRoleChange($event)" required>
             <option value="" disabled selected>rol</option>
@@ -77,6 +76,7 @@
             <option [value]="carrera.id">{{ carrera.nombre }}</option>
             }
           </select>
+          <button class="save-button" type="submit" [disabled]="loading()">GUARDAR</button>
         </form>
       </div>
     </section>

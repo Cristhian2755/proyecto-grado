@@ -2,19 +2,19 @@
 
 html,
 body {
-	width: 100%;
-	min-height: 100%;
-	margin: 0;
-	padding: 0;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-	overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 app-root {
-	display: block;
-	min-height: 100dvh;
+  display: block;
+  min-height: 100dvh;
 }
 
 .navbar-brand {
@@ -46,7 +46,7 @@ app-root {
 .top-navbar .btn-logout {
   background: #cfeefd !important; /* azul claro */
   color: #044f6b !important; /* texto azul oscuro */
-  border-color: rgba(4,79,107,0.12) !important;
+  border-color: rgba(4, 79, 107, 0.12) !important;
 }
 
 .top-navbar .nav-item:hover,

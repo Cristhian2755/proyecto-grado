@@ -15,7 +15,7 @@ type ProjectListRow = Proyecto & {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './project.html',
-  styleUrl: './project.scss'
+  styleUrl: './project.scss',
 })
 export class ProjectComponent {
   private readonly router = inject(Router);
@@ -57,19 +57,21 @@ export class ProjectComponent {
             rows.map((project) => ({
               ...project,
               asesor_nombre: project.asesor_nombre ?? 'Por asignar',
-              jurados_nombres: project.jurados_nombres ?? ['Por asignar']
-            }))
+              jurados_nombres: project.jurados_nombres ?? ['Por asignar'],
+            })),
           );
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
-        }
+        },
       });
   }
 
   private getDisplayName(user: Record<string, unknown> | null): string {
     const values = [user?.['nombre'], user?.['name'], user?.['fullName'], user?.['email']];
-    const firstValid = values.find((value) => typeof value === 'string' && value.trim().length > 0) as string | undefined;
+    const firstValid = values.find(
+      (value) => typeof value === 'string' && value.trim().length > 0,
+    ) as string | undefined;
     return firstValid?.trim() || 'Coordinador';
   }
 

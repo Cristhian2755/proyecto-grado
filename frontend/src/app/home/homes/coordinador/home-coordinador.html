@@ -128,6 +128,12 @@
             <p><strong>Archivo:</strong> {{ selectedFile() }}</p>
             <div class="document-placeholder">Contenido del documento (vista previa)</div>
           </div>
+
+          <app-document-chatbot
+            [roleLabel]="'Coordinador'"
+            [documentUrl]="selectedEntrega()?.url_descarga || ''"
+            [documentName]="selectedEntrega()?.nombre_original || selectedEntrega()?.archivo || selectedFile()"
+          />
         </div>
       </div>
 

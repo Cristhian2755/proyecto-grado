@@ -8,7 +8,9 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('../assets/fondo.png') center/cover no-repeat;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)),
+    url('../assets/fondo.png') center/cover no-repeat;
 }
 
 .card {
@@ -18,7 +20,7 @@
   border-radius: 20px;
   padding: 28px;
   box-shadow: 0 14px 35px rgba(16, 47, 91, 0.08);
-  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
 .badge {

@@ -94,24 +94,7 @@
         </div>
 
         <div class="chat-window">
-          <div class="chat-log">
-            @for (message of chatMessages; track $index) {
-              <article class="chat-message" [class.user]="message.kind === 'user'" [class.assistant]="message.kind === 'assistant'">
-                <p>{{ message.text }}</p>
-              </article>
-            }
-          </div>
-
-          <div class="chat-form">
-            <input
-              type="text"
-              [(ngModel)]="userInput"
-              placeholder="Buscar por IA, salud, redes, web, etc."
-              (keyup.enter)="sendMessage()"
-              aria-label="Consulta al asistente IA"
-            />
-            <button type="button" class="send-btn" (click)="sendMessage()">Enviar</button>
-          </div>
+          <app-chatbot></app-chatbot>
         </div>
 
         <div class="suggestion-cluster">

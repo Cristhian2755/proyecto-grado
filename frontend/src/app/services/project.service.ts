@@ -31,7 +31,7 @@ export type CreateProjectPayload = {
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProjectService {
   private apiUrl = '/api/projects';
@@ -45,7 +45,7 @@ export class ProjectService {
     }
 
     return {
-      headers: new HttpHeaders({ Authorization: `Bearer ${token}` })
+      headers: new HttpHeaders({ Authorization: `Bearer ${token}` }),
     };
   }
 
@@ -61,7 +61,10 @@ export class ProjectService {
 
   // Obtener proyectos asignados a un docente (como revisor)
   getMyAssignedProjects(): Observable<{ data: Proyecto[] }> {
-    return this.http.get<{ data: Proyecto[] }>(`${this.apiUrl}/my-assigned-projects`, this.getAuthOptions());
+    return this.http.get<{ data: Proyecto[] }>(
+      `${this.apiUrl}/my-assigned-projects`,
+      this.getAuthOptions(),
+    );
   }
 
   // Obtener proyecto por ID
@@ -76,7 +79,11 @@ export class ProjectService {
 
   // Actualizar proyecto
   updateProject(id: number, updates: Partial<Proyecto>): Observable<{ data: Proyecto }> {
-    return this.http.put<{ data: Proyecto }>(`${this.apiUrl}/${id}`, updates, this.getAuthOptions());
+    return this.http.put<{ data: Proyecto }>(
+      `${this.apiUrl}/${id}`,
+      updates,
+      this.getAuthOptions(),
+    );
   }
 
   // Eliminar proyecto

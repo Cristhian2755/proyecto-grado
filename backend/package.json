@@ -10,6 +10,10 @@
   "author": "Cristhian2755",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "mammoth": "^1.6.0",
+    "pdf-parse": "^1.1.1",
+    "xlsx": "^0.18.5",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^16.6.1",

@@ -1,0 +1,39 @@
+<section class="document-chatbot">
+  <header class="chat-header">
+    <div>
+      <p class="chat-kicker">Chatbot IA</p>
+      <h4>{{ roleLabel }}</h4>
+    </div>
+    <span class="document-pill">{{ documentName || 'Sin documento' }}</span>
+  </header>
+
+  <p class="chat-description">
+    Analiza el documento seleccionado y responde consultas con tono formal, técnico e institucional.
+  </p>
+
+  <div class="chat-log" role="log" aria-live="polite">
+    @for (message of messages(); track $index) {
+      <article class="chat-message" [class.user]="message.kind === 'user'" [class.assistant]="message.kind === 'assistant'">
+        <p>{{ message.text }}</p>
+      </article>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="chat-error">{{ error() }}</div>
+  }
+
+  <div class="chat-form">
+    <input
+      type="text"
+      [(ngModel)]="userInput"
+      [disabled]="loading()"
+      [placeholder]="documentUrl ? 'Ingrese una consulta sobre este documento...' : 'Seleccione un documento primero'"
+      (keyup.enter)="sendMessage()"
+      aria-label="Consulta al chatbot IA"
+    />
+    <button type="button" class="send-btn" [disabled]="loading() || !documentUrl" (click)="sendMessage()">
+      {{ loading() ? 'Procesando...' : 'Consultar' }}
+    </button>
+  </div>
+</section>

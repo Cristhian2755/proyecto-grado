@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private normalizeRole(role: string): string {
@@ -18,7 +18,12 @@ export class AuthService {
     if (normalized.includes('administrador')) return 'administrador';
     if (normalized.includes('coordinador')) return 'coordinador';
     if (normalized.includes('estudiante')) return 'estudiante';
-    if (normalized.includes('docente') || normalized.includes('asesor') || normalized.includes('jurado')) return 'docente';
+    if (
+      normalized.includes('docente') ||
+      normalized.includes('asesor') ||
+      normalized.includes('jurado')
+    )
+      return 'docente';
 
     return normalized;
   }

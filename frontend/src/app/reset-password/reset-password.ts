@@ -10,7 +10,7 @@ import { finalize } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './reset-password.html',
-  styleUrl: './reset-password.scss'
+  styleUrl: './reset-password.scss',
 })
 export class ResetPasswordComponent implements OnInit {
   private http = inject(HttpClient);
@@ -26,7 +26,7 @@ export class ResetPasswordComponent implements OnInit {
   tokenChecked = signal(false);
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.token = params['token'] || '';
       if (this.token) {
         this.verifyToken();
@@ -38,17 +38,16 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   verifyToken(): void {
-    this.http.get<any>(`/api/auth/verify-token?token=${this.token}`)
-      .subscribe({
-        next: () => {
-          this.validToken.set(true);
-          this.tokenChecked.set(true);
-        },
-        error: () => {
-          this.tokenChecked.set(true);
-          this.error.set('El enlace ha expirado o no es válido.');
-        }
-      });
+    this.http.get<any>(`/api/auth/verify-token?token=${this.token}`).subscribe({
+      next: () => {
+        this.validToken.set(true);
+        this.tokenChecked.set(true);
+      },
+      error: () => {
+        this.tokenChecked.set(true);
+        this.error.set('El enlace ha expirado o no es válido.');
+      },
+    });
   }
 
   onSubmit(): void {
@@ -74,17 +73,20 @@ export class ResetPasswordComponent implements OnInit {
     this.error.set('');
     this.success.set('');
 
-    this.http.post<any>('/api/auth/reset-password', {
-      token: this.token,
-      password: this.password
-    }).pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: (response: any) => {
-        this.success.set('Contraseña actualizada. Redirigiendo al login...');
-        setTimeout(() => this.router.navigate(['/login']), 2000);
-      },
-      error: (err: any) => {
-        this.error.set(err?.error?.message ?? 'Error al cambiar la contraseña.');
-      }
-    });
+    this.http
+      .post<any>('/api/auth/reset-password', {
+        token: this.token,
+        password: this.password,
+      })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response: any) => {
+          this.success.set('Contraseña actualizada. Redirigiendo al login...');
+          setTimeout(() => this.router.navigate(['/login']), 2000);
+        },
+        error: (err: any) => {
+          this.error.set(err?.error?.message ?? 'Error al cambiar la contraseña.');
+        },
+      });
   }
 }

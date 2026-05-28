@@ -1,0 +1,45 @@
+.chatbot {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+  max-width: 560px;
+}
+
+.header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.messages {
+  max-height: 300px;
+  overflow: auto;
+  margin-bottom: 8px;
+}
+
+.bubble {
+  padding: 8px 10px;
+  margin: 6px 0;
+  border-radius: 6px;
+  background: #f1f1f1;
+}
+
+.user .bubble {
+  background: #d1e7ff;
+  text-align: right;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+}
+
+textarea {
+  flex: 1;
+  min-height: 48px;
+}
+
+button {
+  padding: 8px 12px;
+}

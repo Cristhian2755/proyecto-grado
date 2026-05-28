@@ -25,7 +25,7 @@ type DocenteRow = BaseDocenteRow & {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './docente-register.html',
-  styleUrl: './docente-register.scss'
+  styleUrl: './docente-register.scss',
 })
 export class DocenteRegisterComponent implements OnInit {
   private readonly http = inject(HttpClient);
@@ -77,7 +77,7 @@ export class DocenteRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los programas.');
-        }
+        },
       });
   }
 
@@ -118,14 +118,19 @@ export class DocenteRegisterComponent implements OnInit {
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.get<{ data: Array<{ id: number; carrera_id?: number | null; carrera_nombre?: string | null }> }>('/api/auth/users?rol=coordinador', { headers })
+    this.http
+      .get<{
+        data: Array<{ id: number; carrera_id?: number | null; carrera_nombre?: string | null }>;
+      }>('/api/auth/users?rol=coordinador', { headers })
       .pipe(
         map((response) => response?.data?.find((user) => user.id === currentUserId) ?? null),
-        catchError(() => of(null))
+        catchError(() => of(null)),
       )
       .subscribe((coordinator) => {
         const programName = coordinator?.carrera_nombre?.trim();
-        this.coordinatorProgramName.set(programName || storedCareerName || 'Programa del coordinador');
+        this.coordinatorProgramName.set(
+          programName || storedCareerName || 'Programa del coordinador',
+        );
         this.coordinatorCareerId.set(coordinator?.carrera_id ?? storedCareerId ?? null);
       });
   }
@@ -141,7 +146,8 @@ export class DocenteRegisterComponent implements OnInit {
     this.error.set('');
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.get<{ data: BaseDocenteRow[] }>('/api/auth/users?rol=docente', { headers })
+    this.http
+      .get<{ data: BaseDocenteRow[] }>('/api/auth/users?rol=docente', { headers })
       .pipe(
         switchMap((response) => {
           const docentesBase = response?.data ?? [];
@@ -152,29 +158,31 @@ export class DocenteRegisterComponent implements OnInit {
 
           const subrolesRequests = docentesBase.map((docente) =>
             this.http
-              .get<{ data: { subroles: string[] } }>(`/api/auth/users/${docente.id}/subroles`, { headers })
+              .get<{
+                data: { subroles: string[] };
+              }>(`/api/auth/users/${docente.id}/subroles`, { headers })
               .pipe(
                 map((subrolesResponse) => {
                   const subroles = subrolesResponse?.data?.subroles ?? [];
                   return {
                     ...docente,
                     esAsesor: subroles.includes('asesor'),
-                    esJurado: subroles.includes('jurado')
+                    esJurado: subroles.includes('jurado'),
                   };
                 }),
                 catchError(() =>
                   of({
                     ...docente,
                     esAsesor: false,
-                    esJurado: false
-                  })
-                )
-              )
+                    esJurado: false,
+                  }),
+                ),
+              ),
           );
 
           return forkJoin(subrolesRequests);
         }),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
       )
       .subscribe({
         next: (docentes) => {
@@ -182,7 +190,7 @@ export class DocenteRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los docentes.');
-        }
+        },
       });
   }
 
@@ -268,7 +276,9 @@ export class DocenteRegisterComponent implements OnInit {
 
     const subroles = this.buildSubroles();
     // prefer selected carrera, fallback to coordinator career
-    const selectedCarreraRaw = this.carreraId || (this.coordinatorCareerId() !== null ? String(this.coordinatorCareerId()) : '');
+    const selectedCarreraRaw =
+      this.carreraId ||
+      (this.coordinatorCareerId() !== null ? String(this.coordinatorCareerId()) : '');
     if (!selectedCarreraRaw) {
       this.loading.set(false);
       this.error.set('Selecciona un programa.');
@@ -282,14 +292,19 @@ export class DocenteRegisterComponent implements OnInit {
       return;
     }
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.post<{ message: string; data: BaseDocenteRow }>('/api/auth/users', {
-      nombre: this.nombre,
-      email: this.email,
-      password: this.password,
-      rol: 'docente',
-      subroles,
-      carrera_id: selectedCarreraId
-    }, { headers })
+    this.http
+      .post<{ message: string; data: BaseDocenteRow }>(
+        '/api/auth/users',
+        {
+          nombre: this.nombre,
+          email: this.email,
+          password: this.password,
+          rol: 'docente',
+          subroles,
+          carrera_id: selectedCarreraId,
+        },
+        { headers },
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
@@ -299,7 +314,7 @@ export class DocenteRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo registrar al docente.');
-        }
+        },
       });
   }
 
@@ -317,7 +332,9 @@ export class DocenteRegisterComponent implements OnInit {
     this.success.set('');
 
     const subroles = this.buildSubroles();
-    const selectedCarreraRaw = this.carreraId || (this.coordinatorCareerId() !== null ? String(this.coordinatorCareerId()) : '');
+    const selectedCarreraRaw =
+      this.carreraId ||
+      (this.coordinatorCareerId() !== null ? String(this.coordinatorCareerId()) : '');
     if (!selectedCarreraRaw) {
       this.loading.set(false);
       this.error.set('Selecciona un programa.');
@@ -336,7 +353,7 @@ export class DocenteRegisterComponent implements OnInit {
       email: this.email,
       rol: 'docente',
       subroles,
-      carrera_id: selectedCarreraId
+      carrera_id: selectedCarreraId,
     };
 
     if (this.password) {
@@ -344,7 +361,12 @@ export class DocenteRegisterComponent implements OnInit {
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.put<{ message: string; data: BaseDocenteRow }>(`/api/auth/users/${this.editingDocenteId}`, payload, { headers })
+    this.http
+      .put<{ message: string; data: BaseDocenteRow }>(
+        `/api/auth/users/${this.editingDocenteId}`,
+        payload,
+        { headers },
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
@@ -354,7 +376,7 @@ export class DocenteRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo actualizar al docente.');
-        }
+        },
       });
   }
 
@@ -374,7 +396,8 @@ export class DocenteRegisterComponent implements OnInit {
     this.success.set('');
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.delete<{ message: string }>(`/api/auth/users/${docente.id}`, { headers })
+    this.http
+      .delete<{ message: string }>(`/api/auth/users/${docente.id}`, { headers })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
@@ -386,7 +409,7 @@ export class DocenteRegisterComponent implements OnInit {
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudo eliminar al docente.');
-        }
+        },
       });
   }
 }
