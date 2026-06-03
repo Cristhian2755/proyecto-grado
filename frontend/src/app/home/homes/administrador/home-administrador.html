@@ -1,170 +1,167 @@
 <main class="admin-page">
-    <header class="admin-topbar">
-        <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
+  <header class="admin-topbar">
+    <img class="brand-logo" src="/assets/logo_iser.png" alt="ISER" />
 
-        <div class="topbar-search" role="search" aria-label="Buscar usuarios">
-            <input
-                type="text"
-                name="search"
+    <div class="topbar-search" role="search" aria-label="Buscar usuarios">
+      <input
+        type="text"
+        name="search"
         [ngModel]="searchQuery()"
         (ngModelChange)="searchQuery.set($event)"
         [placeholder]="searchPlaceholder()"
         [attr.aria-label]="'Buscar ' + searchPlaceholder()"
-            />
-            <button class="search-button" type="button" (click)="clearSearch()" aria-label="Limpiar búsqueda">
-                <span class="search-icon">⌕</span>
-            </button>
-        </div>
-        <nav class="nav-menu" aria-label="Navegacion principal">
+      />
+      <button class="search-button" type="button" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+        <span class="search-icon">⌕</span>
+      </button>
+    </div>
+
+    <nav class="nav-menu" aria-label="Navegacion principal">
       <button type="button" class="tab-btn" [class.active]="activeTab() === 'usuarios'" (click)="switchTab('usuarios')"> Gestión de Usuarios </button>
       <button type="button" class="btn-outline" [class.active]="activeTab() === 'proyectos'" (click)="switchTab('proyectos')"> Proyectos </button>
-        </nav>
+    </nav>
 
-        <div class="navbar-right">
-            <div class="user-profile">
-                <div class="avatar">{{ userInitials }}</div>
-                <span>{{ displayName }}</span>
-            </div>
-            <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
-        </div>
-    </header>
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="avatar">{{ userInitials }}</div>
+        <span>{{ displayName }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Cerrar sesion">Salir</button>
+    </div>
+  </header>
 
 
   <section class="admin-content">
     <p class="error-message" *ngIf="error()">{{ error() }}</p>
     <p class="success-message" *ngIf="success()">{{ success() }}</p>
 
-    @if (activeTab() === 'usuarios') {
-    <section class="card-section">
-      <div class="section-heading">
-        <h2>Datos</h2>
-      </div>
-
-      <div class="data-card">
-        <form class="data-grid" (ngSubmit)="submitForm()" #userForm="ngForm" novalidate>
-          <input type="text" name="nombre" [(ngModel)]="nombre" placeholder="nombre" required />
-          <input type="email" name="email" [(ngModel)]="email" placeholder="correo" required />
-          <input
-            type="password"
-            name="password"
-            [(ngModel)]="password"
-            [required]="!editingUserId"
-            placeholder="contraseña"
-          />
-
-          <select name="rol" [(ngModel)]="rol" (ngModelChange)="onRoleChange($event)" required>
-            <option value="" disabled selected>rol</option>
-            @for (role of roleOptions; track role) {
-            <option [value]="role">{{ role }}</option>
-            }
-          </select>
-
-          @if (rol === 'docente') {
-          <select name="subrol" [(ngModel)]="subrol" required>
-            <option value="" disabled selected>sub rol</option>
-            @for (subrole of subroleOptions; track subrole) {
-            <option [value]="subrole">{{ subrole }}</option>
-            }
-          </select>
-          } @else {
-          <input type="text" name="subrol" [(ngModel)]="subrol" placeholder="sub rol" disabled />
-          }
-
-          <select name="carreraId" [(ngModel)]="carreraId">
-            <option value="">programa</option>
-            @for (carrera of carreras(); track carrera.id) {
-            <option [value]="carrera.id">{{ carrera.nombre }}</option>
-            }
-          </select>
-          <button class="save-button" type="submit" [disabled]="loading()">GUARDAR</button>
-        </form>
-      </div>
-    </section>
-
-    <section class="card-section users-section">
-      <div class="section-heading">
-        <h2>Usuarios</h2>
-      </div>
-
-      <div class="users-card">
-        @if (loading()) {
-        <p class="loading-message">Cargando usuarios...</p>
-        } @else if (filteredUsers().length === 0) {
-        <p class="empty-message">No hay usuarios para mostrar.</p>
-        } @else {
-        <div class="table-wrap">
-          <table class="users-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Contraseña</th>
-                <th>Rol</th>
-                <th>Sub Rol</th>
-                <th>Programa</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-          @for (user of filteredUsers(); track user.id) {
-            <tr>
-              <td>{{ user.nombre }}</td>
-              <td>{{ user.email }}</td>
-              <td>********</td>
-              <td>{{ user.rol }}</td>
-              <td>{{ (user.subroles && user.subroles.length) ? user.subroles.join(', ') : '-' }}</td>
-              <td>{{ user.carrera_nombre || 'Sin programa' }}</td>
-              <td class="table-actions">
-                <button class="edit-button" type="button" (click)="startEdit(user)">Editar</button>
-                <button class="delete-button" type="button" (click)="deleteUser(user)">Eliminar</button>
-              </td>
-            </tr>
-          }
-            </tbody>
-          </table>
+    <ng-container *ngIf="activeTab() === 'usuarios'; else proyectosBlock">
+      <section class="card-section">
+        <div class="section-heading">
+          <h2>Datos</h2>
         </div>
-        }
-      </div>
-    </section>
-    } @else {
-    <section class="card-section projects-section">
-      <div class="section-heading">
-        <h2>Proyectos</h2>
-      </div>
 
-      <div class="projects-card">
-        @if (projectLoading()) {
-        <p class="loading-message">Cargando proyectos...</p>
-        } @else if (filteredProjects().length === 0) {
-        <p class="empty-message">No hay proyectos para mostrar.</p>
-        } @else {
-        <div class="table-wrap">
-          <table class="projects-table">
-            <thead>
-              <tr>
-                <th>Título</th>
-                <th>Estudiante</th>
-                <th>Línea temática</th>
-                <th>Estado</th>
-                <th>Email estudiante</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (project of filteredProjects(); track project.id) {
-              <tr>
-                <td>{{ project.titulo }}</td>
-                <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
-                <td>{{ project.linea_tematica || 'No especificada' }}</td>
-                <td><span class="project-badge">{{ project.estado }}</span></td>
-                <td>{{ project.estudiante_email || '-' }}</td>
-              </tr>
-              }
-            </tbody>
-          </table>
+        <div class="data-card">
+          <form class="data-grid" (ngSubmit)="submitForm()" #userForm="ngForm" novalidate>
+            <input type="text" name="nombre" [(ngModel)]="nombre" placeholder="nombre" required />
+            <input type="email" name="email" [(ngModel)]="email" placeholder="correo" required />
+            <input
+              type="password"
+              name="password"
+              [(ngModel)]="password"
+              [required]="!editingUserId"
+              placeholder="contraseña"
+            />
+
+            <select name="rol" [(ngModel)]="rol" (ngModelChange)="onRoleChange($event)" required>
+              <option value="" disabled selected>rol</option>
+              <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
+            </select>
+
+            <ng-container *ngIf="rol === 'docente'; else noSubrole">
+              <select name="subrol" [(ngModel)]="subrol" required>
+                <option value="" disabled selected>sub rol</option>
+                <option *ngFor="let subrole of subroleOptions" [value]="subrole">{{ subrole }}</option>
+              </select>
+            </ng-container>
+            <ng-template #noSubrole>
+              <input type="text" name="subrol" [(ngModel)]="subrol" placeholder="sub rol" disabled />
+            </ng-template>
+
+            <select name="carreraId" [(ngModel)]="carreraId">
+              <option value="">programa</option>
+              <option *ngFor="let carrera of carreras()" [value]="carrera.id">{{ carrera.nombre }}</option>
+            </select>
+            <button class="save-button" type="submit" [disabled]="loading()">GUARDAR</button>
+          </form>
         </div>
-        }
-      </div>
-    </section>
-    }
+      </section>
+
+      <section class="card-section users-section">
+        <div class="section-heading">
+          <h2>Usuarios</h2>
+        </div>
+
+        <div class="users-card">
+          <p class="loading-message" *ngIf="loading()">Cargando usuarios...</p>
+          <p class="empty-message" *ngIf="!loading() && filteredUsers().length === 0">No hay usuarios para mostrar.</p>
+
+          <div class="table-wrap" *ngIf="!loading() && filteredUsers().length > 0">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>Contraseña</th>
+                  <th>Rol</th>
+                  <th>Sub Rol</th>
+                  <th>Programa</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of filteredUsers()">
+                  <td>{{ user.nombre }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>********</td>
+                  <td>{{ user.rol }}</td>
+                  <td>{{ (user.subroles && user.subroles.length) ? user.subroles.join(', ') : '-' }}</td>
+                  <td>{{ user.carrera_nombre || 'Sin programa' }}</td>
+                  <td class="table-actions">
+                    <button class="edit-button" type="button" (click)="startEdit(user)">Editar</button>
+                    <button class="delete-button" type="button" (click)="deleteUser(user)">Eliminar</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </ng-container>
+
+    <ng-template #proyectosBlock>
+      <section class="card-section projects-section">
+        <div class="section-heading">
+          <h2>Proyectos</h2>
+        </div>
+
+        <div class="projects-card">
+          <p class="loading-message" *ngIf="projectLoading()">Cargando proyectos...</p>
+          <p class="empty-message" *ngIf="!projectLoading() && filteredProjects().length === 0">No hay proyectos para mostrar.</p>
+
+          <div class="table-wrap" *ngIf="!projectLoading() && filteredProjects().length > 0">
+            <table class="projects-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Estudiante</th>
+                  <th>Línea temática</th>
+                  <th>Estado</th>
+                  <th>Email estudiante</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let project of filteredProjects()">
+                  <td>{{ project.titulo }}</td>
+                  <td>{{ project.estudiante_nombre || 'Sin asignar' }}</td>
+                  <td>{{ project.linea_tematica || 'No especificada' }}</td>
+                  <td><span class="project-badge">{{ project.estado }}</span></td>
+                  <td>{{ project.estudiante_email || '-' }}</td>
+                  <td class="table-actions">
+                    <ng-container *ngIf="project['fuente'] === 'biblioteca'">
+                      <button class="import-button" type="button" (click)="importFromBiblioteca(project['documentName'] || '')">Importar</button>
+                      <button class="delete-button" type="button" (click)="deleteBibliotecaFile(project['documentName'] || '')">Eliminar archivo</button>
+                    </ng-container>
+                    <ng-container *ngIf="project['fuente'] !== 'biblioteca'">
+                      <button class="delete-button" type="button" (click)="deleteProject(project.id)">Eliminar</button>
+                    </ng-container>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </ng-template>
   </section>
 </main>

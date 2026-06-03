@@ -7,10 +7,10 @@
     <div class="top-search" aria-label="Buscador de proyectos">
       <input
         type="text"
-        placeholder="Search"
+        placeholder="Buscar por título, autor o tema"
         [(ngModel)]="searchQuery"
         (input)="filterProjects()"
-        aria-label="Buscar proyectos aprobados"
+        aria-label="Buscar documentos aprobados"
       />
       <button type="button" class="search-action" (click)="filterProjects()">Buscar</button>
     </div>
@@ -26,10 +26,59 @@
       <div class="catalog-header">
         <div>
           <p class="section-label">Catálogo de Proyectos</p>
+          <h2>Proyectos aprobados en PDF</h2>
         </div>
       </div>
 
-      @if (selectedProject) {
+      @if (catalogLoading) {
+        <article class="empty-state">
+          <h3>Cargando proyectos aprobados</h3>
+          <p>Estamos preparando el catálogo de la biblioteca. Esto puede tardar unos segundos.</p>
+        </article>
+      } @else if (readingMode && selectedProject) {
+        <div class="reader-layout">
+          <header class="reader-header">
+            <div>
+              <p class="section-label">Modo lectura</p>
+              <h3>{{ selectedProject.titulo }}</h3>
+              <p class="reader-meta">{{ selectedProject.estudiante_nombre }} · {{ selectedProject.linea_tematica }}</p>
+            </div>
+
+            <div class="reader-actions">
+              <button type="button" class="ghost-btn" (click)="backToCatalog()">Volver a buscar otros proyectos</button>
+              <button type="button" class="primary-btn" (click)="downloadDocument()">Descargar PDF</button>
+            </div>
+          </header>
+
+          <div class="reader-content">
+            <div class="document-frame">
+              @if (documentReaderUrl) {
+                <iframe
+                  [src]="documentReaderUrl"
+                  [title]="selectedProject.documentName || selectedProject.titulo"
+                  loading="lazy"
+                ></iframe>
+              } @else {
+                <article class="empty-state">
+                  <h3>No hay un documento disponible</h3>
+                  <p>Este proyecto todavía no tiene una ruta válida para visualizarlo en pantalla.</p>
+                </article>
+              }
+            </div>
+
+            <aside class="reader-summary">
+              <p class="section-label">Resumen</p>
+              <h4>Datos del proyecto</h4>
+              <ul>
+                <li><strong>Autor:</strong> {{ selectedProject.estudiante_nombre }}</li>
+                <li><strong>Tema:</strong> {{ selectedProject.linea_tematica }}</li>
+                <li><strong>Estado:</strong> {{ selectedProject.estado }}</li>
+                <li><strong>Archivo:</strong> {{ selectedProject.documentName }}</li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      } @else if (selectedProject) {
         <div class="featured-reader">
           <article class="featured-card">
             <div class="featured-top">
@@ -42,7 +91,7 @@
             <p class="featured-text">{{ selectedProblem || selectedProject.problema }}</p>
 
             <div class="featured-actions">
-              <button type="button" class="ghost-btn" (click)="viewDetails()">Ver detalle</button>
+              <button type="button" class="ghost-btn" (click)="openReader()">Leer Documento</button>
               <button type="button" class="primary-btn" (click)="downloadDocument()">Descargar documento</button>
             </div>
           </article>
@@ -57,14 +106,19 @@
             </ul>
           </article>
         </div>
-      } @else {
+      } @else if (filteredProjects.length === 0) {
         <article class="empty-state">
           <h3>No hay proyectos para mostrar</h3>
           <p>Prueba con otro término de búsqueda o revisa más tarde cuando haya proyectos aprobados.</p>
         </article>
+      } @else {
+        <article class="empty-state">
+          <h3>Selecciona un proyecto</h3>
+          <p>Los proyectos aprobados están listos en el catálogo. Elige uno de la lista para ver su detalle.</p>
+        </article>
       }
 
-      @if (filteredProjects.length !== 0) {
+      @if (!catalogLoading && filteredProjects.length !== 0 && !readingMode) {
         <div class="project-grid">
           @for (project of filteredProjects; track project.id) {
             <button
@@ -90,19 +144,17 @@
       <aside class="assistant-panel">
         <div class="assistant-header">
           <p class="section-label">Asistente IA</p>
-          <p>Escribe que es lo que estas buscando y te sugero los proyectos aprobados.</p>
+          <p>Puede consultar un proyecto seleccionado o preguntar por un tema para recibir sugerencias del catálogo.</p>
         </div>
 
         <div class="chat-window">
-          <app-chatbot></app-chatbot>
+          <app-chatbot
+            [documentUrl]="selectedProject?.documentUrl ?? ''"
+            [documentName]="selectedProject?.documentName ?? selectedProject?.titulo ?? ''"
+            (suggestedProjectSelected)="selectSuggestedProject($event)"
+          ></app-chatbot>
         </div>
 
-        <div class="suggestion-cluster">
-          <button type="button" class="suggestion-chip" (click)="suggestQuery('inteligencia artificial')">IA</button>
-          <button type="button" class="suggestion-chip" (click)="suggestQuery('redes')">Redes</button>
-          <button type="button" class="suggestion-chip" (click)="suggestQuery('medicina')">Salud</button>
-          <button type="button" class="suggestion-chip" (click)="suggestQuery('arquitectura')">Arquitectura</button>
-        </div>
       </aside>
     </section>
   </section>

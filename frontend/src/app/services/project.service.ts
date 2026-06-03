@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Proyecto {
-  id: number;
+  id: number | string;
   titulo: string;
   problema: string;
   justificacion: string;
@@ -21,6 +21,9 @@ export interface Proyecto {
   comentario?: string;
   aprobado?: boolean;
   fecha_revision?: string;
+  // Fuente opcional (ej. 'biblioteca') y nombre de documento cuando aplique
+  fuente?: string;
+  documentName?: string;
 }
 
 export type CreateProjectPayload = {
@@ -68,7 +71,7 @@ export class ProjectService {
   }
 
   // Obtener proyecto por ID
-  getProjectById(id: number): Observable<{ data: Proyecto }> {
+  getProjectById(id: number | string): Observable<{ data: Proyecto }> {
     return this.http.get<{ data: Proyecto }>(`${this.apiUrl}/${id}`, this.getAuthOptions());
   }
 
@@ -78,16 +81,12 @@ export class ProjectService {
   }
 
   // Actualizar proyecto
-  updateProject(id: number, updates: Partial<Proyecto>): Observable<{ data: Proyecto }> {
-    return this.http.put<{ data: Proyecto }>(
-      `${this.apiUrl}/${id}`,
-      updates,
-      this.getAuthOptions(),
-    );
+  updateProject(id: number | string, updates: Partial<Proyecto>): Observable<{ data: Proyecto }> {
+    return this.http.put<{ data: Proyecto }>(`${this.apiUrl}/${id}`, updates, this.getAuthOptions());
   }
 
   // Eliminar proyecto
-  deleteProject(id: number): Observable<{ message: string }> {
+  deleteProject(id: number | string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`, this.getAuthOptions());
   }
 }

@@ -11,4 +11,11 @@
     "changeOrigin": true,
     "logLevel": "info"
   }
+
+  ,"/docs": {
+    "target": "http://localhost:5001",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+  }
 }

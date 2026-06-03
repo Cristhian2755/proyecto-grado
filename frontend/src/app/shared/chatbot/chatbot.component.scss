@@ -1,45 +1,165 @@
+:host {
+  display: block;
+}
+
 .chatbot {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 12px;
-  max-width: 560px;
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: 20px;
+  padding: 1rem;
+  background: linear-gradient(180deg, rgba(240, 253, 250, 0.96), rgba(255, 255, 255, 0.96));
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
 }
 
 .header {
   display: flex;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.kicker {
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.header h3 {
+  margin: 0.25rem 0 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.document-badge {
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 8px;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.1);
+  color: #115e59;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.description {
+  margin: 0.75rem 0 1rem;
+  color: #475569;
+  font-size: 0.92rem;
 }
 
 .messages {
-  max-height: 300px;
+  display: grid;
+  gap: 0.75rem;
+  max-height: 280px;
   overflow: auto;
-  margin-bottom: 8px;
+  padding-right: 0.25rem;
 }
 
-.bubble {
-  padding: 8px 10px;
-  margin: 6px 0;
-  border-radius: 6px;
-  background: #f1f1f1;
+.message {
+  padding: 0.85rem 0.95rem;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.28);
 }
 
-.user .bubble {
-  background: #d1e7ff;
-  text-align: right;
+.message.user {
+  background: rgba(15, 118, 110, 0.1);
+  border-color: rgba(15, 118, 110, 0.16);
+}
+
+.message p {
+  margin: 0;
+  white-space: pre-wrap;
+  color: #0f172a;
+  line-height: 1.5;
+}
+
+.error-box {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
+  font-weight: 600;
 }
 
 .composer {
+  margin-top: 1rem;
   display: flex;
-  gap: 8px;
+  gap: 0.75rem;
 }
 
-textarea {
+.composer textarea {
   flex: 1;
-  min-height: 48px;
+  min-width: 0;
+  min-height: 54px;
+  border: 1px solid rgba(148, 163, 184, 0.38);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  outline: none;
+  resize: vertical;
 }
 
-button {
-  padding: 8px 12px;
+.composer textarea:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.composer button {
+  border: none;
+  border-radius: 14px;
+  padding: 0.85rem 1.1rem;
+  background: linear-gradient(135deg, #0f766e, #115e59);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.suggested-projects {
+  margin-top: 1rem;
+}
+
+.suggested-label {
+  margin: 0 0 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0f766e;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.suggested-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.suggested-project {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+}
+
+.suggested-project strong {
+  color: #0f172a;
+  font-size: 0.94rem;
+}
+
+.suggested-project span {
+  color: #475569;
+  font-size: 0.84rem;
 }

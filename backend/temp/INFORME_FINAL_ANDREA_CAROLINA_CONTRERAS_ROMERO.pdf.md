@@ -1,0 +1,2859 @@
+APLICACIÓN DE LA NORMA ANSI/TIA-606-C PARA LA GESTIÓN Y
+DOCUMENTACIÓN DE LA INFRAESTRUCTURA DE
+TELECOMUNICACIONES DE LA RED CORPORATIVA EMPOPAMPLONA
+S.A. E.S.P.
+ESTUDIANTE:
+ANDREA CAROLINA CONTRERAS ROMERO
+CODIGO: 1.050.919.278
+Informe final para optar al Título de Tecnólogo en Gestión de Redes y Sistemas
+Teleinformáticas
+Asesor de trabajo de grado
+ANA CAROLINA MINORTA CABEZA
+Ingeniera en Telecomunicaciones
+Msc(c). Controles Industriales
+Asesor Empresarial Vconexión
+ALVARO SNEYDER HERNANDEZ SALAZAR
+Instituto Superior de Educación Rural
+Facultad de Ingenierías e Informática
+Tecnología en Gestión de Redes y Sistemas Teleinformáticas
+Pamplona, Norte De Santander
+2025
+1
+
+DEDICATORIA
+A mi madre, Fanny Romero Sicua, por ser el motor de mi vida y el ejemplo más
+grande de amor, entrega y fortaleza. Mamá, gracias por enseñarme con tu dedicación que
+los sueños se alcanzan con esfuerzo, constancia y fe. Gracias por tus palabras de aliento en
+los momentos difíciles, por tu apoyo incondicional y por nunca dejarme rendir. Este logro
+es tan tuyo como el mío, porque en cada paso que di estuvo presente tu amor, tu sacrificio
+y confianza en mí.
+A mis hermanos, Sofia Contreras Romero y Sebastián Castillo Romero, por ser mi
+compañía, mi motivación y mi alegría constante. Gracias por estar a mi lado con su cariño,
+compañía, mi motivación y mi alegría constante. Gracias por estar a mi lado con su cariño,
+por sus sonrisas, por su apoyo en silencio y por recordarme que siempre vale la pena seguir
+adelante. Cada logro, cada meta alcanzada, lleva también una parte de ustedes.
+Este trabajo representa no solo mi esfuerzo, sino también el de mi familia, que con
+amor, paciente y comprensión me ha acompañado en cada etapa de este camino. A ellos les
+dedico este logro con todo mi corazón, como una muestra eterna de agradecimientos y amor.
+2
+
+AGRADECIMIENTOS
+En primer lugar, le agradezco profundamente a Dios por haberme concedido la vida,
+la fortaleza y la sabiduría necesarias para superar cada reto que se presentó en este camino.
+Gracias por darme la fe para continuar cuando las fuerzas parecían agotarse, por iluminar
+mi mente en los momentos de incertidumbre y por acompañarme en cada paso de este
+proceso.
+A mis profesores, por su valiosa enseñanza, dedicación y acompañamiento a lo largo
+de mi formación académica. En especial, a mi asesora y docente Ana Carolina Minorta,
+cuya orientación, compromiso y apoyo constante fueron fundamentales tanto en mi
+aprendizaje como en la elaboración de este trabajo…
+3
+
+TABLA DE CONTENIDO
+RESUMEN .................................................................................................................... 12
+ABSTRACT .................................................................................................................. 13
+1. INTRODUCCIÓN .................................................................................................... 14
+2. PLANTEAMIENTO DEL PROBLEMA ................................................................. 15
+3. JUSTIFICACIÓN ..................................................................................................... 16
+4. OBJETIVOS ............................................................................................................. 17
+A. Objetivo general .......................................................................................... 17
+B. Objetivos específicos .................................................................................. 17
+5. MARCO TEÓRICO ................................................................................................. 18
+5.1 ANTECEDENTES ...................................................................................... 21
+5.2 MARCO CONTEXTUAL ............................................................................ 23
+5.3. MARCO CONCEPTUAL ........................................................................... 26
+5.4. MARCO LEGAL ....................................................................................... 36
+6. METODOLOGÍA ..................................................................................................... 38
+7. RESULTADOS ......................................................................................................... 45
+8. DISCUSIÓN ............................................................................................................ 132
+9. CONCLUSIONES .................................................................................................. 133
+10. RECOMENDACIONES ....................................................................................... 134
+11. REFERENCIAS .................................................................................................... 135
+4
+
+LISTA DE TABLAS
+TABLA I. COORDENADAS ................................................................................. 25
+TABLA II. INFORMACION TECNICA DEL RACK DE GABINETE ..................... 53
+TABLA III. INFORMACION TECNICA DEL ROUTER MIRKOTIC ...................... 53
+TABLA IV. INFORMACION TECNICA DE LA REGLETA DE ENERGIA PDU .... 54
+TABLA V. INFORMACION TECNICA DEL SWITCH TP-LINK ............................ 54
+TABLA VI. INFORMACION TECNICA DEL PATCH PANEL ............................... 55
+TABLA VII. INFORMACION TECNICA DEL SWITCH (BASELINE).................... 55
+TABLA VIII . INFORMACION TECNICA DEL THINSERVER ............................. 56
+TABLA IX. INFORMACION TECNICA DE LA CAJA DE RED ............................ 57
+TABLA X. INFORMACION TECNICA DEL GESTOR DE CABLES .................... 57
+TABLA XI. INFORMACION TECNICA DEL ROUTER INALAMBRICO ............... 58
+TABLA XII. INFORMACION TECNICA DEL SWITCH DE RED ETHERNET ...... 58
+TABLA XIII. INFORMACION TECNICA DEL EXTENSOR WIFI/AP.................... 59
+Tabla XIV. Cuadricula de localización del rack ................................................... 72
+TABLA XV. TABLA DE COIDGOS DE COLORES SEGUN LA NORMATIVA .... 73
+TABLA XVI. ETIQUETAS DE LOS PUNTOS DE RED DE LA EMPRESA
+EMPOPAMPLONA .............................................................................................. 75
+TABLA XVII. PRUEBA DE CONECTIVIDAD GESTIÓN COMERCIAL ............... 77
+TABLA XVIII. PRUEBA DE CONECTIVIDAD ATENCIÓN AL CLIENTE ............. 78
+TABLA XIX.. PRUEBA DE CONECTIVIDAD GERENCIA ................................... 79
+TABLA XX. PRUEBA DE CONECTIVIDAD TALENTO HUMANO ...................... 80
+TABLA XXI. PRUEBA DE CONECTIVIDAD DE CONTROL INTERNO .............. 82
+TABLA XXII. PRUEBA DE CONECTIVIDAD DE FACTURACIÓN ...................... 83
+TABLA XXIII. PRUEBA DE CONECTIVIDAD DE CONTABILIDAD .................... 83
+TABLA XXIV . PRUEBA DE CONECTIVIDAD DE OBRAS ................................. 84
+Tabla XXV.TABLA DE ABREVIATURAS DE EQUIPOS DEL RACK .................. 86
+TABLA XXVI. ETIQUETAS PARA LOS PUERTOS DE LA MIKROTIK ............... 90
+TABLA XXVII. ETIQUETAS DE LOS PUERTOS DEL SWITCH TL-SG3428 #1 . 91
+TABLA XXVIII . ETIQUETAS PARA LOS PUERTOS DEL PATCH PANEL DE 48
+PUERTOS ........................................................................................................... 91
+5
+
+TABLA XXIX. ETIQUETAS PARA LOS PUERTOS DEL SWITCH TL-SG3428 #2
+............................................................................................................................ 92
+TABLA XXX . ETIQUETAS PARA LOS PUERTOS DEL PATCH PANEL DE 16
+PUERTOS ........................................................................................................... 93
+TABLA XXXI . ETIQUETAS PARA LOS PUERTOS DE SWITCH 3COM
+BASELINE ........................................................................................................... 93
+6
+
+LISTA DE FIGURAS
+Fig. 1 Ubicación del Departamento Norte de Santander con Respecto a Colombia
+............................................................................................................................ 24
+Fig. 2 Ubicación de Pamplona en Norte de Santander ....................................... 25
+Fig. 3 Ubicación Empopamplona S.A. E.S.P. ...................................................... 26
+Fig. 4 Topologia de red ....................................................................................... 27
+Fig. 5 Red local ................................................................................................... 28
+Fig. 6 Dispositivo Router ..................................................................................... 28
+Fig. 7 Dispositivo Switch ..................................................................................... 28
+Fig. 8Dispositivo Acces Point .............................................................................. 29
+Fig. 9 Dispositivo Modem .................................................................................... 29
+Fig. 10 .Rack de gabinete ................................................................................... 31
+Fig. 11 Sistema de gestión de cables.................................................................. 31
+Fig. 12 Cable par trenzado .................................................................................. 32
+Fig. 13 Cable par trenzado apantallado .............................................................. 33
+Fig. 14 Cable de par trenzado apantallado (STP) ............................................... 33
+Fig. 15 Cable coaxial ........................................................................................... 34
+Fig. 16 Cable de fibra óptica ............................................................................... 34
+Fig. 17 Etiquetado ............................................................................................... 35
+Fig. 18 Metodología WBS ................................................................................... 39
+Fig. 19 Desglose del objetivo 1 y sus actividades ............................................... 40
+Fig. 20 Desglose del objetivo 2 y sus actividades ............................................... 41
+Fig. 21 Desglose del objetivo 3 y sus actividades ............................................... 43
+Fig. 22 Rack de telecomunicaciones ................................................................... 46
+Fig. 23 Router Mikrotic ........................................................................................ 46
+Fig. 24 Regleta de energía .................................................................................. 47
+Fig. 25 Switch #1 ................................................................................................. 47
+Fig. 26 Switch #2 ................................................................................................. 47
+Fig. 27 Patch panel #1 ........................................................................................ 47
+Fig. 28 Patch panel #2 ........................................................................................ 48
+7
+
+Fig. 29 Switch #3 ................................................................................................. 48
+Fig. 30 Servidor ................................................................................................... 48
+Fig. 31 Caja de fibra óptica ................................................................................. 49
+Fig. 32 Gestor de cables #1 ................................................................................ 49
+Fig. 33 Gestor de cables #2 ................................................................................ 49
+Fig. 34 Gestor de cables #3 ................................................................................ 50
+Fig. 35 Router inalambrico .................................................................................. 50
+Fig. 36 Switch de red 1 ........................................................................................ 51
+Fig. 37 Switch de red 2 ........................................................................................ 51
+Fig. 38 Extensores de WIFI ................................................................................. 52
+Fig. 39 Cableado ................................................................................................. 52
+Fig. 40 Plano físico de la infraestructura ............................................................. 61
+Fig. 41 Trazado de muros y divisores ................................................................. 62
+Fig. 42 Asignación de puertas y ventanas ........................................................... 63
+Fig. 43 Asignación de nombres a las Áreas ........................................................ 64
+Fig. 44 Integración de elementos de red y telecomunicaciones .......................... 65
+Fig. 45 Convenciones de la infraestructura de telecomunicaciones .................... 66
+Fig. 46 Plano de la infraestructura de telecomunicaciones ................................. 67
+Fig. 47 Convenciones de telecomunicaciones en plano lógico ........................... 68
+Fig. 48. Plano lógico de red ................................................................................. 69
+Fig. 49 Identificación de los espacios de telecomunicaciones ............................ 70
+Fig. 50 Diseño del punto de red doble................................................................. 71
+Fig. 51 Diseño del punto de red simple ............................................................... 71
+Fig. 52 Formato de etiqueta de identificadores para puntos de red .................... 74
+Fig. 53 Formato de etiquetado para paneles de conexión .................................. 87
+Fig. 54 Etiqueta del rack ...................................................................................... 88
+Fig. 55 Etiqueta de la MikroTik ............................................................................ 88
+Fig. 56 Estructura general para los puertos ........................................................ 90
+Fig. 57Formato para el etiquetado de los Patch cords ........................................ 95
+Fig. 58 Etiqueta de Patch Cord #1 ...................................................................... 95
+Fig. 59 Etiqueta de Patch Cord #2 ...................................................................... 96
+Fig. 60 Formato de etiquetas de cables de conexión .......................................... 97
+8
+
+Fig. 61 86-conexión #1 ........................................................................................ 98
+Fig. 62 Conexión #2 ............................................................................................ 98
+Fig. 63 Etiquetado del equipo MikroTik ............................................................ 101
+Fig. 64 Etiquetado para el equipo de la PDU .................................................... 101
+Fig. 65 Etiquetado del Switch #1 ....................................................................... 102
+Fig. 66 Etiquetado del Switch #1 ....................................................................... 102
+Fig. 67Etiquetado del elemento Gestor de cable s#1 ........................................ 102
+Fig. 68 Etiquetado para el equipo Patch panel #1 ............................................. 103
+Fig. 69 Etiquetado para el equipo Patch panel .................................................. 103
+Fig. 70 Etiquetado para el Gestor de cables intermedio.................................... 104
+Fig. 71 73 Etiquetado del equipo Switch #2 ...................................................... 104
+Fig. 72 Etiquetado para el Patch panel #2 ........................................................ 104
+Fig. 73 Etiquetado para el Gestor de cables inferior ......................................... 105
+Fig. 74 Etiquetado del Switch #3 ....................................................................... 105
+Fig. 75 Etiquetado para el equipo PDU #2 ........................................................ 105
+Fig. 76 Etiquetado para el servidor.................................................................... 106
+Fig. 77 Etiquetado para la caja de fibra óptica .................................................. 106
+Fig. 78 Distribución del Área de Gestión comercial ........................................... 107
+Fig. 79 Distribución del Área de Servicio al cliente............................................ 108
+Fig. 80 Distribución del área de Talento Humano ............................................. 109
+Fig. 81 Distribución del área de Tesorería ........................................................ 110
+Fig. 82 Distribución del área de Gerencia ......................................................... 111
+Fig. 83 Etiquetado del área de Control interno .................................................. 112
+Fig. 84 Etiquetado del área de Bienes y Servicios ............................................ 113
+Fig. 85 Etiquetado en el área de Facturación .................................................... 114
+Fig. 86 Etiquetado en el área de Contabilidad ................................................. 115
+Fig. 87 Etiquetado en el área de Obras............................................................. 116
+Fig. 88 Etiquetado en el área de Planeación ..................................................... 117
+Fig. 89 Etiquetado en el área de Archivo .......................................................... 118
+Fig. 90 Reemplazo de los Patch cords Existentes ............................................ 119
+Fig. 91 Organización del cableado .................................................................... 120
+Fig. 92 Organización del cableado .................................................................... 120
+9
+
+Fig. 93 Organización del cableado .................................................................... 121
+Fig. 94 Organización del cableado .................................................................... 121
+Fig. 95 Peinado del cableado ............................................................................ 122
+Fig. 96 Peinado del cableado ............................................................................ 123
+Fig. 97 Peinado del cableado ............................................................................ 123
+Fig. 98 Ubicación en los gestores de cables ..................................................... 124
+Fig. 99 Ubicación en los gestores de cables ..................................................... 124
+Fig. 100 Ubicación en los gestores de cables ................................................... 125
+Fig. 101 Etiquetado ........................................................................................... 126
+Fig. 102 Etiquetado ........................................................................................... 126
+Fig. 103 Etiquetado ........................................................................................... 127
+Fig. 104 Etiquetado final .................................................................................... 128
+10
+
+SIGLAS, ACRÓNIMOS Y ABREVIATURAS
+ANSI/TIA-606-C: Es una norma que especifica la administración para las infraestructuras
+de telecomunicación. Para la administración y la identificación de sistemas de cableado
+estructurado. [1]
+MinTIC: Ministerio de Tecnologías de la Información y las Comunicaciones de Colombia.
+[2]
+TIA: Telecommunications Industry Association (Asociación de la Industria de las
+Telecomunicaciones). [3]
+EIA/TIA-568: La norma TIA/EIA-568 define los estándares de sistemas de cableado
+estructurado para edificios comerciales y para la interconexión de edificios en entornos
+universitarios. [4]
+ISO/IEC 11801: es una norma internacional que especifica los sistemas de cableado de
+telecomunicaciones de propósito general (cableado estructurado). [5]
+LAN: Local Area Network (Red de Área Local). [6]
+IoT: Internet of Things (Internet de las Cosas). [7]
+WAP: Wireless Access Point (Punto de Acceso Inalámbrico). [8]
+UPS: Uninterruptible Power Supply (Sistema de Alimentación Ininterrumpida). [9]
+11
+
+RESUMEN
+El presente trabajo de grado tuvo como propósito fortalecer la infraestructura
+tecnológica de EMPOPAMPLONA S.A. E.S.P., mediante el desarrollo de actividades de
+diagnóstico, mantenimiento y organización del sistema de red y del cableado estructurado.
+Este proyecto buscó garantizar la eficiencia operativa de los equipos de cómputo y de los
+dispositivos de comunicación, optimizando la conectividad interna y asegurando la
+estabilidad de los servicios tecnológicos utilizados por la entidad.
+Para alcanzar este objetivo, se implementaron estrategias de mantenimiento
+preventivo y correctivo orientadas a mejorar el rendimiento del hardware y del software
+institucional. Asimismo, se aplicó la norma ANSI/TIA-606-C, la cual establece directrices
+estandarizadas para la identificación y el etiquetado de la infraestructura de red. La
+adopción de este estándar permitió lograr una red más organizada, con mayor trazabilidad
+y facilidad para su administración técnica [10].
+El enfoque metodológico del proyecto se fundamenta en el análisis de la situación
+actual de la red, la detección de puntos críticos y la ejecución de acciones técnicas que
+garanticen la continuidad operativa de los servicios. A través de la implementación de
+buenas prácticas en gestión de redes y cableado estructurado, se busca mejorar la eficiencia
+del sistema y reducir las interrupciones que afecten la productividad institucional.
+En síntesis, esta propuesta no solo abordó la parte técnica del mantenimiento, sino
+que promovió una visión integral de modernización y sostenibilidad tecnológica. De esta
+manera, EMPOPAMPLONA S.A. E.S.P. pudo disponer de una infraestructura más
+confiable, documentada y alineada con los estándares internacionales en la gestión de redes
+de datos.
+12
+
+ABSTRACT
+The purpose of this undergraduate thesis was to strengthen the technological
+infrastructure of EMPOPAMPLONA S.A. E.S.P. by developing diagnostic, maintenance,
+and organizational activities for the network system and structured cabling. This project
+aimed to guarantee the operational efficiency of computer equipment and communication
+devices, optimizing internal connectivity and ensuring the stability of the technological
+services used by the entity.
+To achieve this objective, preventive and corrective maintenance strategies were
+implemented to improve the performance of the institutional hardware and software.
+Additionally, the ANSI/TIA-606-C standard was applied, which establishes standardized
+guidelines for the identification and labeling of network infrastructure. Adopting this
+standard resulted in a more organized network with greater traceability and ease of technical
+administration [10].
+The project's methodological approach is based on analyzing the current state of the
+network, identifying critical points, and implementing technical actions to guarantee the
+operational continuity of services. Through the implementation of best practices in network
+management and structured cabling, the aim is to improve system efficiency and reduce
+disruptions that affect institutional productivity.
+In short, this proposal not only addressed the technical aspects of maintenance but
+also promoted a comprehensive vision of modernization and technological sustainability.
+As a result, EMPOPAMPLONA S.A. E.S.P. was able to establish a more reliable and well-
+documented infrastructure, aligned with international standards for data network
+management.
+13
+
+1. INTRODUCCIÓN
+En el contexto actual, las organizaciones que prestan servicios públicos dependieron
+ampliamente de la confiabilidad y disponibilidad de sus infraestructuras tecnológicas. Una
+red corporativa organizada, segura y documentada se convirtió en un elemento esencial para
+asegurar la continuidad de los procesos administrativos, operativos y de atención al usuario.
+En este marco, EMPOPAMPLONA S.A. E.S.P. enfrentó la necesidad de
+modernizar su infraestructura de telecomunicaciones con el fin de adoptar buenas prácticas
+internacionales y mejorar la eficiencia de sus operaciones [11]. El diagnóstico preliminar
+realizado en la sede principal evidenció diversas problemáticas que afectaban la gestión de
+la red: desorden en el cableado, rotulación inexistente, ausencia de un inventario de equipos,
+documentación desactualizada y dificultades para la trazabilidad de los puntos de red. Estas
+condiciones generaron fallas recurrentes, tiempos prolongados de mantenimiento y una
+limitada capacidad de escalabilidad tecnológica.
+Cada uno de estos problemas orientó los objetivos del proyecto. El desorden
+documental y la falta de trazabilidad motivaron la aplicación de la norma ANSI/TIA-606-
+C, cuyo propósito fue estandarizar el etiquetado y la identificación de la infraestructura. La
+carencia de un cableado estructurado organizado condujo a la implementación de un
+proceso de normalización y reorganización física. Finalmente, las fallas operativas y la baja
+eficiencia impulsaron la certificación de los puntos de red y la actualización del inventario
+técnico.
+Esta propuesta se concibió como una estrategia integral para optimizar la calidad
+del servicio, reducir el tiempo de respuesta ante incidentes, fortalecer la continuidad del
+negocio y proyectar la infraestructura tecnológica hacia futuras necesidades institucionales.
+14
+
+2. PLANTEAMIENTO DEL PROBLEMA
+EMPOPAMPLONA S.A. E.S.P., empresa encargada de la prestación de los
+servicios públicos de acueducto y alcantarillado en el municipio de Pamplona, Norte de
+Santander, dependió directamente de su infraestructura tecnológica para el desarrollo de los
+procesos administrativos, operativos y de atención al usuario. Sin embargo, durante el
+diagnóstico realizado a las instalaciones se evidenció que la red de datos presentó diversas
+falencias que afectaron su desempeño y confiabilidad [12].
+El cableado estructurado de la entidad no contó con una organización ni
+documentación adecuada. Se observaron puntos de red sin identificar, paneles de conexión
+desordenados y ausencia de un sistema estandarizado de etiquetado que permitiera la
+trazabilidad y la administración eficiente de los enlaces. Esta situación generó dificultades
+para ejecutar mantenimientos preventivos o correctivos, incrementó los tiempos de
+respuesta ante fallas y limitó la capacidad de expansión o modernización de la
+infraestructura tecnológica.
+Adicionalmente, la falta de aplicación de normas técnicas en la gestión de la red,
+como la ANSI/TIA-606-C —la cual regula la identificación y el etiquetado de los sistemas
+de cableado estructurado—, contribuyó a la desorganización y a la falta de control de los
+elementos que conformaban la red de datos. Esta carencia de estandarización comprometió
+la estabilidad de los servicios tecnológicos utilizados por las diferentes áreas de la empresa,
+afectando la eficiencia operativa y la continuidad de los procesos institucionales.
+Por lo tanto, se hizo necesario desarrollar un proyecto que permitiera organizar,
+documentar y normalizar la red de datos de EMPOPAMPLONA S.A. E.S.P., aplicando la
+norma ANSI/TIA-606-C como lineamiento principal. Con ello se buscó optimizar la
+administración técnica de la infraestructura, mejorar el rendimiento del sistema, reducir las
+fallas de conectividad y fortalecer la capacidad tecnológica de la entidad
+15
+
+3. JUSTIFICACIÓN
+La infraestructura tecnológica de una organización constituyó un elemento clave
+para el desarrollo eficiente de sus procesos administrativos, operativos y de comunicación.
+En EMPOPAMPLONA S.A. E.S.P., la red de datos cumplió un papel fundamental al
+interconectar los equipos y sistemas que soportaron la gestión institucional. Sin embargo,
+el diagnóstico realizado evidenció desorden en el cableado estructurado, ausencia de un
+sistema de etiquetado estandarizado y falta de documentación técnica, factores que
+dificultaron las labores de mantenimiento y administración de la red.
+La aplicación de la norma ANSI/TIA-606-C se presentó como una solución técnica
+efectiva, dado que estableció directrices claras para la identificación, el etiquetado y la
+documentación del cableado estructurado. Su implementación permitió mejorar la
+trazabilidad de los puntos de red, optimizar la organización del sistema y reducir los tiempos
+de respuesta ante fallas o requerimientos técnicos. Además, fomentó la adopción de buenas
+prácticas en la gestión de redes, garantizando la continuidad operativa y la eficiencia de los
+servicios tecnológicos.
+Desde una perspectiva profesional, este proyecto cobró relevancia al contribuir al
+fortalecimiento de la infraestructura tecnológica de la empresa, mejorando su capacidad de
+soporte y su preparación frente a futuras expansiones o modernizaciones. Asimismo, desde
+el ámbito académico, promovió la aplicación práctica de los conocimientos adquiridos en
+el área de redes y telecomunicaciones, integrando teoría, normas técnicas y experiencia de
+campo. En consecuencia, el desarrollo de esta propuesta no solo benefició a
+EMPOPAMPLONA S.A. E.S.P., sino que también aportó a la construcción de un modelo
+técnico replicable en otras entidades que buscaran mejorar la gestión y organización de su
+red de datos bajo estándares internacionales.
+16
+
+4. OBJETIVOS
+A. Objetivo general
+Implementar la norma ANSI/TIA-606-C para la gestión de la infraestructura de
+telecomunicaciones de la sede principal de EMPOPAMPLONA S.A. E.S.P., con el fin de
+mejorar el uso y eficiencia de la red corporativa.
+B. Objetivos específicos
+ Realizar el levantamiento y registro detallado de la infraestructura de red y de los
+activos tecnológicos existentes, identificando su ubicación, estado y características
+técnicas.
+ Diseñar la documentación técnica según la norma ANSI/TIA-606-C, para garantizar
+la estandarización, organización y mantenimiento eficiente de la infraestructura de
+red.
+ Aplicar el sistema de etiquetado estandarizado conforme a la norma ANSI/TIA-606-
+C, evidenciando su aplicación para optimizar la administración y el mantenimiento
+de la red corporativa.
+17
+
+5. MARCO TEÓRICO
+Este proyecto se fundamenta en principios técnicos y normativos que permiten
+analizar, estructurar y optimizar las infraestructuras de red dentro de las organizaciones. A
+continuación, se exponen los conceptos teóricos más relevantes que sustentan el desarrollo
+de este trabajo.
+El mantenimiento de las infraestructuras tecnológicas resulta un componente
+esencial en las entidades del sector público, ya que asegura la continuidad de los servicios
+institucionales, protege los datos corporativos y mantiene el rendimiento adecuado de los
+sistemas informáticos. La aplicación de estrategias de mantenimiento preventivo y
+correctivo, tanto en los componentes de hardware como en los de software, es indispensable
+para conservar los equipos operativos, evitar fallos inesperados y prolongar su tiempo de
+vida útil [10].
+De igual manera, una gestión adecuada de las redes de datos garantiza conectividad
+estable, segura y eficiente. Entre las prácticas más recomendadas se encuentran la revisión
+periódica del cableado estructurado, la comprobación de conectores, paneles de parcheo,
+switches, routers y demás dispositivos asociados a la red. Estas acciones contribuyen
+directamente a disminuir interrupciones en los servicios digitales y a mejorar la
+disponibilidad tecnológica de la organización [10].
+Topologia de red
+La topología de red hace referencia a la forma en que se organizan y conectan los
+dispositivos, equipos y medios de transmisión dentro de una infraestructura de
+comunicaciones. Cada tipo de topología como la en bus, anillo, malla o estrella presenta
+ventajas y limitaciones relacionadas con el rendimiento, la tolerancia a fallos y la facilidad
+de gestión dentro del sistema.
+En el caso de EMPOPAMPLONA S.A. E.S.P., la red implementada corresponde a
+una topología en estrella, donde todos los equipos terminales se conectan a un dispositivo
+central, como un switch o router principal, encargado de administrar y distribuir el tráfico
+18
+
+de datos entre los diferentes puntos de la red. Esta configuración se adopta comúnmente en
+entornos empresariales y de servicios públicos por su estructura organizada, fácil
+administración y capacidad de expansión sin afectar el resto de la infraestructura.
+La topología en estrella ofrece la ventaja de que, ante una falla en un enlace o
+dispositivo final, el resto de la red continúa operando de manera normal. Sin embargo, el
+nodo central constituye un punto crítico, ya que una falla en este elemento podría
+interrumpir la conectividad general. Por ello, en el diseño y mantenimiento de la red de
+EMPOPAMPLONA se prioriza la gestión adecuada de los equipos centrales, apoyada en
+sistemas de identificación, etiquetado estructurado y planos técnicos basados en la norma
+ANSI/TIA-606-C, con el fin de garantizar la continuidad del servicio y una mejor
+administración de los recursos tecnológicos.
+Red de datos
+Una red de datos se define como el conjunto de infraestructuras y dispositivos
+interconectados que permiten la transmisión y el intercambio de información entre distintos
+puntos de una organización. Estas redes operan bajo el principio de conmutación de
+paquetes, lo que optimiza el envío y recepción de datos de forma eficiente y segura.
+En el caso de EMPOPAMPLONA S.A. E.S.P., la red implementada corresponde
+principalmente a una red de área local (LAN), ya que interconecta los equipos de cómputo,
+servidores, switches y dispositivos de comunicación dentro de las instalaciones de la
+empresa. Esta infraestructura facilita la gestión administrativa, el acceso compartido a los
+recursos tecnológicos y la comunicación interna entre las diferentes dependencias.
+El diseño y mantenimiento de esta red son esenciales para garantizar la operatividad
+continua, la seguridad de la información y la eficiencia en los procesos internos, por lo que
+resulta indispensable aplicar normas técnicas de cableado estructurado y etiquetado
+conforme a estándares internacionales como la ANSI/TIA-606-C, que permiten mantener
+una infraestructura organizada, documentada y escalable.
+19
+
+Dispositivos de red
+Los dispositivos de red son componentes esenciales que permiten la interconexión,
+gestión y comunicación entre los distintos equipos dentro de una infraestructura
+tecnológica. Entre los más comunes se encuentran los routers, encargados de dirigir el
+tráfico de datos entre diferentes redes; los switches, que distribuyen la información dentro
+de una misma red local (LAN); y los patch panels, que organizan las conexiones físicas
+entre los distintos puntos de red.
+En EMPOPAMPLONA S.A. E.S.P., estos dispositivos cumplen un papel clave en
+la operación diaria, ya que garantizan la continuidad del servicio, la eficiencia en la
+transmisión de datos y la administración centralizada del sistema. Su mantenimiento
+adecuado y correcta configuración son aspectos fundamentales para asegurar el rendimiento
+y la estabilidad de la red institucional.
+Norma ANSI/TIA-606-C
+La norma ANSI/TIA-606-C es un estándar internacional que establece un sistema
+de administración para infraestructuras de telecomunicaciones dentro de edificios
+(incluyendo establecimientos comerciales, industriales, residenciales y centros de datos) y
+entre edificios. Su objetivo principal es mantener la trazabilidad precisa de la
+infraestructura, optimizar las labores de mantenimiento y facilitar la detección de fallos.
+Con esta norma se obtiene:
+ Un sistema estandarizado de identificación para cada punto de conexión.
+ Optimización en la administración de los recursos de la infraestructura de red
+ Acelerar la detección y corrección e fallos en el sistema.
+La adopción de esta norma en instituciones públicas ayuda a optimizar la identificación
+y el seguimiento rápidos de los cables cuando surgen problemas o cuando se requiere un
+traslado, una adición o un cambio.
+20
+
+Etiquetado
+El etiquetado de cables es un proceso fundamental en la administración de redes, ya
+que permite identificar de forma clara los componentes del sistema, como cables, puertos,
+racks y equipos activos. Su correcta implementación mejora la organización, facilita el
+mantenimiento y agiliza la detección de fallos.
+Las normas ANSI/TIA-606-C establecen los lineamientos para realizar un
+etiquetado uniforme y estandarizado, garantizando una gestión eficiente de la
+infraestructura. En EMPOPAMPLONA S.A. E.S.P., este procedimiento es esencial para
+mantener la trazabilidad de la red y optimizar las labores técnicas, contribuyendo a un
+servicio más ordenado y confiable.
+AutoCAD
+Para el diseño de la infraestructura de red de la empresa se utilizó el software AutoCAD,
+una herramienta fundamental que permitió realizar planos precisos, organizados y con la
+simbología adecuada para la representación técnica del cableado estructurado. El uso de
+este software fue necesario para garantizar un diseño detallado y profesional, facilitando la
+planificación, distribución y visualización del trazado de la red, así como la correcta
+ubicación de los puntos de conexión y demás componentes esenciales de la infraestructura.
+5.1 ANTECEDENTES
+En los últimos años, la administración eficiente de las infraestructuras tecnológicas
+ha adquirido gran relevancia en las organizaciones públicas y privadas, debido a la creciente
+dependencia de los sistemas de información para el desarrollo de sus procesos internos [11].
+La correcta organización del cableado estructurado, el mantenimiento de los equipos de
+comunicación y la documentación técnica son factores esenciales para garantizar la
+continuidad operativa y la seguridad de los datos.
+Históricamente, muchas redes corporativas fueron instaladas sin un sistema
+estandarizado de identificación o registro, lo que dificultaba la trazabilidad de los
+21
+
+componentes y la detección de fallas. Ante esta necesidad, la Telecommunications Industry
+Association (TIA) desarrolló la norma ANSI/TIA-606, cuyo propósito es establecer un
+esquema de administración para la infraestructura de telecomunicaciones, facilitando la
+identificación y el control de todos los elementos que conforman una red [12]. Su versión
+más reciente, la ANSI/TIA-606-C, publicada en 2023, introduce actualizaciones sobre la
+codificación, etiquetado y registro digital de los componentes de red, adaptándose a las
+nuevas tecnologías de conectividad [13].
+La implementación de esta norma ha demostrado ser un elemento clave en la
+optimización del mantenimiento técnico, la reducción de tiempos de diagnóstico y la mejora
+en la documentación de redes.
+…A nivel nacional
+En Colombia, la transformación digital impulsada por el Ministerio de Tecnologías
+de la Información y las Comunicaciones (MinTIC) ha fomentado la modernización de las
+infraestructuras tecnológicas en instituciones públicas y privadas. La adopción de
+estándares internacionales, como las normas ANSI/TIA, EIA/TIA-568 y ISO/IEC 11801,
+ha permitido la mejora de la interoperabilidad y el rendimiento de las redes de datos,
+garantizando su funcionamiento bajo parámetros técnicos globales [14] .
+…A nivel local
+En el municipio de Pamplona, Norte de Santander, los procesos de modernización
+tecnológica se han convertido en una necesidad para las entidades locales que dependen de
+la conectividad para la prestación de sus servicios [15]. Sin embargo, muchas instituciones
+aún presentan deficiencias en la organización de sus redes internas, como cableado
+desordenado, falta de etiquetado estandarizado y ausencia de documentación técnica.
+En este contexto, EMPOPAMPLONA S.A. E.S.P., empresa encargada de los
+servicios públicos de acueducto y alcantarillado, enfrenta limitaciones similares. Su
+infraestructura de red, aunque funcional, carece de un sistema formal de identificación y
+trazabilidad, lo que complica las labores de soporte técnico y mantenimiento. Por ello, la
+22
+
+implementación de la norma ANSI/TIA-606-C se plantea como una solución técnica para
+optimizar la administración de la red, mejorar la eficiencia operativa y garantizar la
+continuidad del servicio tecnológico dentro de la entidad [16].
+5.2 MARCO CONTEXTUAL
+EMPOPAMPLONA S.A. E.S.P. (Empresa de Servicios Públicos), ubicada en el
+departamento de Norte de Santander, es la entidad encargada de la gestión, administración
+y prestación de los servicios públicos de acueducto y alcantarillado en la ciudad. Su labor
+se orienta al suministro de agua potable de calidad y al adecuado tratamiento de las aguas
+residuales, contribuyendo al bienestar, la salud y el desarrollo sostenible de la comunidad
+pamplonesa [17].
+La entidad desempeña un papel fundamental en el fortalecimiento del desarrollo social,
+ambiental y económico del municipio, garantizando la continuidad, cobertura y eficiencia
+en la prestación de los servicios públicos esenciales. Asimismo, promueve el uso
+responsable de los recursos naturales y la implementación de procesos tecnológicos que
+mejoren la operación, la atención al usuario y la gestión institucional [16].
+A. Pamplona, Norte de Santander
+Como se aprecia en la Figura 1, Pamplona es un municipio colombiano ubicado en el
+departamento de Norte de Santander, reconocido por su importante legado histórico,
+cultural y religioso. En el pasado fue capital de la antigua Provincia de Pamplona, y
+actualmente se destaca por su desarrollo en sectores como la educación, el turismo religioso,
+la gastronomía y la agricultura, los cuales constituyen los principales ejes de su economía
+local. Por su relevancia eclesiástica, recibe el nombre de “Ciudad Mitrada”, al ser sede de
+la Arquidiócesis de Nueva Pamplona, la primera diócesis católica del nororiente
+colombiano. Según proyecciones demográficas, para el año 2025 el municipio contará con
+aproximadamente 76.983 habitantes, lo que lo posiciona como uno de los centros
+poblacionales más importantes del departamento [18].
+23
+
+En la Figura 2 Se observa la ubicación geográfica de Pamplona, localizada sobre la
+Cordillera Oriental de los Andes colombianos, a una altitud cercana a los 2.200 metros
+sobre el nivel del mar. Su extensión territorial es de 1.176 km² y presenta una temperatura
+promedio de 14 °C. Limita al norte con Pamplonita, al sur con Cácota y Chitagá, al oriente
+con Labateca, y al occidente con Cucutilla. Asimismo, cuenta con una posición estratégica
+al estar conectada mediante vías nacionales con las ciudades de Cúcuta, Bucaramanga,
+Bogotá y Arauca, lo que facilita el intercambio comercial, educativo y cultural dentro del
+oriente colombiano [18].
+Fig. 1 Ubicación del Departamento Norte de Santander con Respecto a Colombia
+24
+
+Fig. 2 Ubicación de Pamplona en Norte de Santander
+
+A continuación, en la TABLA I se mostrarán las coordenadas de la alcaldía de Pamplona
+Norte de Santander y en la Fig. 3, Se muestra la ubicación geográfica de esta:
+
+TABLA I. COORDENADAS
+|                    |     |             |              |
+| ------------------ | --- | ----------- | ------------ |
+| UBICACIÓN          |     | LATITUD     | LONGITUD     |
+|                    |     |             |              |
+| EMPOPAMPLONA S.A.  |     | 7°22’35” N  | 72°38’50” W  |
+E.S.P
+
+25
+
+Fig. 3 Ubicación Empopamplona S.A. E.S.P.
+5.3. MARCO CONCEPTUAL
+El presente marco conceptual tiene como propósito definir los principales términos
+técnicos que sustentan el desarrollo del proyecto de mejora de la infraestructura de red en
+EMPOPAMPLONA S.A. E.S.P. A través de estos conceptos se busca facilitar la
+comprensión de los componentes físicos, lógicos y estructurales que conforman una red de
+datos, así como los elementos que intervienen en su administración y mantenimiento.
+Topologia de red: En la Fig.4 Se muestra una topologia de red lo cual se refiere a la
+forma en que los nodos y las conexiones se organizan física y lógicamente en una red. Las
+redes constan de una serie de enlaces y nodos. Una topología de red describe cómo se
+organizan estos componentes entre sí y cómo se mueven los datos a través de la red. Para
+este proyecto, en EMPOPAMPLONA S.A. E.S.P., se implementa una topología en estrella
+26
+
+extendida, donde los dispositivos se conectan a través de switches enlazados a un router
+principal, garantizando una comunicación centralizada y eficiente [19].
+Fig. 4 Topologia de red
+Red local: En la Fig.5 Se muestra una red de área local (LAN) es un grupo de
+computadoras y periféricos conectados entre sí dentro de un área geográfica definida, como
+un edificio de oficinas o un campus. Los dispositivos se conectan a un servidor mediante
+una línea de comunicación común o una conexión inalámbrica. Una LAN incluye diversos
+componentes de red, como cables, conmutadores , enrutadores , cortafuegos,
+balanceadores de carga y puntos de acceso inalámbricos (WAP). Puede conectarse a una
+amplia gama de dispositivos de red, como ordenadores de sobremesa y portátiles,
+impresoras y dispositivos del Internet de las Cosas ( IoT ) [20].
+27
+
+Fig. 5 Red local
+TIPOS COMUNES DE DISPOSITIVOS DE RED
+Router: En la Fig.6 Se observa un dispositivo llamado Router, lo cual es el equipo
+central en una red que determina la ruta óptima para el tráfico de datos entre diferentes
+redes. Es esencial para conectar redes locales con redes más amplias, como internet [21].
+Fig. 6 Dispositivo Router
+Switch: En la Fig.7 Se muestra un Switch, que se encarga de conectar múltiples
+dispositivos en una red local. Permite la comunicación eficiente dentro de la red al dirigir
+los datos solo al dispositivo de destino específico en lugar de a todos los dispositivos
+conectados [22].
+Fig. 7 Dispositivo Switch
+28
+
+Access point (punto de acceso): En la Fig.8 Se ilustra un Access point que es el
+encargado de proporcionar conectividad inalámbrica a dispositivos en una red. Facilita la
+conexión de dispositivos, como ordenadores portátiles teléfonos, a la red sin la necesidad
+de cables [23].
+Fig. 8Dispositivo Acces Point
+Modem: En la Fig.9 Se muestra un Modem el cual es el encargado de convertir las
+señales digitales de una red en señales analógicas, que pueden transmitirse a través de líneas
+telefónicas o de cable, y viceversa. Es esencial para la conexión a internet [24].
+Fig. 9 Dispositivo Modem
+FUNCIONES ESENCIALES DE LOS DISPOSITIVOS DE RED
+29
+
+ Enrutamiento: Los routers dirigen el tráfico de datos a través de la red, eligiendo la
+ruta más eficiente para la entrega de paquetes de datos.
+ Conmutación: Los switches facilitan la comunicación dentro de una red local al
+dirigir los datos solo al dispositivo de destino, mejorando la eficiencia de la red.
+ Conectividad inalámbrica: Los puntos de acceso permiten la conectividad
+inalámbrica, facilitando la movilidad de dispositivos dentro de la red.
+ Seguridad: Los firewalls protegen la red al filtrar y controlar el tráfico, previniendo
+accesos no autorizados y ataques.
+ Acceso a internet: Los módems son esenciales para establecer la conexión a internet,
+convirtiendo las señales digitales en analógicas y viceversa [25]
+Rack: Un rack de servidores es un gabinete especializado diseñado para alojar equipos
+informáticos. Proporciona un entorno seguro y organizado para servidores, sistemas UPS,
+conmutadores y otros dispositivos informáticos. Los racks para servidores vienen en una
+variedad de tamaños y configuraciones, desde pequeñas unidades de escritorio hasta
+grandes modelos de suelo. En este artículo, analizaremos los diferentes tipos de rack y cómo
+encontrar el rack ideal para sus necesidades [26].
+Los racks de gabinetes: En la FIg.10 Se muestra un rack de gabinete completamente
+cerrados con puertas y paneles laterales con cerradura. Ofrecen mayor seguridad y
+protección para los equipos y son ideales para centros de datos o áreas donde la seguridad
+física es una prioridad. Se Características principales: seguro, premontado [26].
+30
+
+Fig. 10 .Rack de gabinete
+Sistema de gestión de cables: En la Fig.11 Muestra un sistema de gestión de cables
+el cual organiza y enruta cables eléctricos u ópticos de manera ordenada. Incluye varios
+productos como bandejas, conductos, bridas y etiquetas. El propósito es evitar enredos,
+proteger los cables contra daños, mejorar la seguridad al reducir los riesgos de tropiezos,
+mejorar el flujo de aire para refrigeración y facilitar el mantenimiento y la resolución de
+problemas [27].
+Fig. 11 Sistema de gestión de cables
+BENEFICIOS DE UN CABLEADO ORGANIZADO
+ Fácil mantenimiento: Al ser una red uniforme, las empresas encargadas de su
+mantenimiento tienden a realizar tareas muy sencillas para tenerlo todo bajo control,
+por lo que es una de las principales ventajas de cableado estructurado.
+31
+
+ Mayor rendimiento: Al ser una tecnología de vanguardia en el sector, su rendimiento
+y funcionamiento será siempre superior a la de otras alternativas, con una
+amortización y una vida útil prevista muy larga.
+ Seguridad: Precisamente por tratarse de un sistema relativamente nuevo, sus
+medidas de seguridad son muy fiables, con componentes testados para garantizar la
+tranquilidad de quienes lo manipulen.
+ Fácil gestión del sistema: En caso de movimiento de un usuario de su ubicación
+física, no necesitará reconfigurar su estación de red, por lo que el estado de la
+configuración de su equipo se conservará en perfecto estado
+ Cable de par trenzado sin apantallar (UTP): En la Fig.14 se muestra el tipo de cable
+de par trenzado sin apantallar, el cual es bastante utilizado. La categoría del cable
+determina qué cantidad de datos transmitirá y, por lo tanto, la calidad del cable será
+diferente. Existen distintas categorías del cable UTP que dependen de la tirantez:
+cuanto mayor sea esta tirantez mayor capacidad de transmisión de datos [28].
+Cable de par trenzado sin apantallar (UTP): En la Fig.12 Se muestra el tipo de cable de
+par trenzado sin apantallar, el cual es bastante utilizado. La categoría del cable
+determina qué cantidad de datos transmitirá y, por lo tanto, la calidad del cable será
+diferente. Existen distintas categorías del cable UTP que dependen de la tirantez: cuanto
+mayor sea esta tirantez mayor capacidad de transmisión de datos [29].
+Fig. 12 Cable par trenzado
+32
+
+Cable de par trenzado apantallado (FTP): En la Fig.13 Se muestra el tipo de cable
+de par trenzado apantallado, lo cual, a diferencia del UTP, no es susceptible a las
+interferencias eléctricas, ya que dispone de un apantallamiento lo que protege a nivel global
+(los 4 pares). Es un cable de calidad intermedia entre UTP y STP [30].
+Fig. 13 Cable par trenzado apantallado
+Cable de par trenzado apantallado (STP): En la Fig.14 Se muestra el tipo de cable
+par trenzado apantallado, a diferencia del UTP, no es susceptible a las interferencias
+eléctricas, ya que dispone de un apantallamiento que protege cada par de manera individual.
+Cuando decimos que un cable está apantallado es porque se encuentra recubierto por una
+capa conductora común que evita el acoplamiento de ruidos e interferencias. [31].
+Fig. 14 Cable de par trenzado apantallado (STP)
+Cable coaxial: En la FIg.15 Se evidencia el cable coaxial, lo cual es característico
+porque contiene un conductor de cobre en su interior. Este cobre está envuelto por una capa
+33
+
+aislante que lo separa de un apantallado metálico con forma de rejilla, que garantiza la
+resistencia a las interferencias eléctricas [32].
+Fig. 15 Cable coaxial
+Cable de fibra óptica: En la Fig.16 Se muestra un cable de fibra óptica, el cual sirve
+para transmitir señales desde mayores distancias que con cables de par trenzado o coaxiales.
+Se trata de un cable compuesto por un centro de cristal y que está rodeado de varias capas
+de material protector. Es ideal para entornos donde hay gran cantidad de interferencias
+eléctricas, porque el cable de fibra óptica transmite luz en vez de señales eléctricas [33].
+Fig. 16 Cable de fibra óptica
+ANSI/TIA-606-C: Es un estándar creado por la TIA que ayuda a organizar y
+documentar los sistemas de cableado en edificios y campus. Establece reglas para etiquetar
+y registrar todos los componentes (como cables, conectores y paneles) de manera clara y
+uniforme. Además, clasifica las instalaciones según su tamaño y complejidad, permitiendo
+una gestión más eficiente. Su objetivo es simplificar el mantenimiento, las actualizaciones
+y la solución de problemas, asegurando que la infraestructura de telecomunicaciones sea
+34
+
+fácil de entender y administrar. Es compatible con otras normas de cableado y mejora la
+eficiencia en la gestión de redes [34].
+ETIQUETADO: En la Fig.17 se muestra una etiqueta, la cual forma parte de un
+proceso esencial dentro de la administración del cableado estructurado. Este procedimiento
+consiste en asignar identificadores únicos a cada elemento de la red, como cables, puertos,
+paneles de parcheo y equipos activos. Su finalidad es mantener la trazabilidad precisa de la
+infraestructura, optimizar las labores de mantenimiento y facilitar la detección de fallos, al
+vincular directamente la información técnica documentada con los componentes físicos.
+Todo este proceso se realiza conforme a los lineamientos del estándar ANSI/TIA-606-C, el
+cual establece normas para garantizar la uniformidad y eficiencia en la gestión de redes
+[35].
+Fig. 17 Etiquetado
+AutoCAD: es una herramienta de software líder utilizada en los campos de
+arquitectura, ingeniería y construcción. Es un programa de Diseño Asistido por
+Computadora (CAD) que revolucionó el proceso de diseño al reemplazar el tradicional
+dibujo manual con archivos electrónicos. Con sus capacidades avanzadas, AutoCAD
+permite a los profesionales crear dibujos y modelos precisos en 2D y 3D [36].
+35
+
+5.4. MARCO LEGAL
+El desarrollo de este proyecto de práctica profesional se sustenta en la normativa
+vigente en Colombia que establece los lineamientos para la gestión, instalación y
+mantenimiento de infraestructuras tecnológicas en entidades del sector público [59].
+La fundamentación jurídica del estudio se organiza en función de los instrumentos
+normativos y técnicos aplicables, agrupados conforme a su relación con los objetivos
+específicos del proyecto:
+ Normativa general de tecnologías de la información
+ Regulaciones técnicas específicas
+ Directrices institucionales
+A. Legislación sobre mantenimiento y uso de tecnologías
+Ley 1341 de 2009: Esta ley establece los principios rectores para el acceso,
+implementación y adopción de las tecnologías de la información y las comunicaciones
+(TIC) en el ámbito nacional, resaltando la importancia de optimizar la operación de estos
+recursos mediante la ejecución de estrategias de mantenimiento tanto preventivo como
+correctivo, aplicables a los elementos de hardware, software y a la infraestructura de red
+que soporta los servicios públicos esenciales, garantizando así su disponibilidad,
+confiabilidad y continuidad operacional [37].
+Ley 1978 de 2019: La Ley establece un marco regulatorio innovador para el sector
+de las tecnologías de la información, consolidando la estructura institucional con el objetivo
+de impulsar el desarrollo de la infraestructura digital en Colombia. Reconoce el acceso a la
+conectividad como un derecho fundamental y requiere la adopción de prácticas de
+mantenimiento periódico y optimizado en las redes de datos de las entidades públicas,
+garantizando así la continuidad de su operación y la calidad del servicio.
+36
+
+B. Legislación sobre protección de la información
+Ley 1581 de 2012 Protección de datos personales: Esta norma define el marco
+legal para la gestión y protección de los datos personales en Colombia, destacando que un
+mantenimiento eficiente de los sistemas tecnológicos, tanto de hardware como de software,
+es esencial para asegurar la confidencialidad, integridad y seguridad de la información,
+cumpliendo estrictamente con los principios de custodia y protección de datos establecidos
+por la legislación [38].
+Decreto 1078 de 2015 Decreto Único Reglamentario del Sector TIC: este decreto
+consolida y reglamenta las disposiciones aplicables al uso de tecnologías de la información
+en organismos estatales, definiendo parámetros específicos para: la administración de
+infraestructuras tecnológicas, estándares de conectividad, protocolos de seguridad
+informática y estrategias de apropiación digital, conformando así un marco integral para la
+modernización tecnológica del sector público colombiano [39].
+C. Normativas técnicas aplicadas
+Norma ANSI/TIA-606-C: Se trata de la normativa más reciente para la organización
+y gestión de instalaciones de cableado de redes. Define un sistema estructurado para la
+identificación, etiquetado y registro de cada elemento mediante códigos claros y sencillos.
+Esto facilita las labores de mantenimiento, la detección de fallas y la actualización de la
+infraestructura de red.
+Al aplicar esta norma, se optimiza la instalación y resolución de problemas, se
+asegura el cumplimiento de los requerimientos técnicos y se mejora el control de la
+infraestructura al vincular los componentes físicos con su información técnica. Asimismo,
+permite ampliar la red de manera ordenada y simplifica su mantenimiento a largo plazo,
+reduciendo posibles errores o confusiones [40].
+37
+
+6. METODOLOGÍA
+La metodología fue estructurada en función de los objetivos propuestos, integrando
+un conjunto de etapas planificadas de manera estratégica para garantizar su cumplimiento.
+Como pilar central del proceso, se aplicó la Estructura de Desglose del Trabajo (EDT o
+WBS), una herramienta clave en la gestión de proyectos que permite dividir el trabajo en
+unidades más específicas y controlables. Este enfoque aseguró una planificación ordenada,
+una ejecución eficiente y un monitoreo continuo de cada una de las actividades
+desarrolladas durante el proyecto.
+¿Qué es WBS?
+La metodología WBS es una herramienta de gestión de proyectos utilizada para
+representar visualmente todas las tareas asociadas con un proyecto en una estructura
+jerárquica. El principal propósito de una WBS es desglosar los entregables del proyecto.
+Proporciona a los gestores de proyectos una base sólida para crear el cronograma del
+proyecto e identificar la mejor manera de alcanzar los objetivos del proyecto [41].
+A. ENFOQUE METODOLOGICO
+Este proyecto se orientó al fortalecimiento de la infraestructura tecnológica de
+EMPOPAMPLONA S.A. E.S.P., aplicando una metodología técnica y estructurada. El
+enfoque metodológico permitió realizar un análisis detallado del estado de los equipos, del
+sistema de cableado y de la red de datos, con el propósito de implementar acciones de
+mantenimiento preventivo y correctivo que optimizaran su funcionamiento. Asimismo,
+buscó garantizar una organización eficiente de los puntos de red mediante la aplicación de
+estándares internacionales como la norma ANSI/TIA-606-C.
+38
+
+Fig. 18 Metodología WBS
+La metodología aplicada en el proyecto permite evidenciar cómo cada una de sus
+fases responde de manera directa a los objetivos planteados y a las necesidades operativas
+de la empresa. Para su desarrollo se empleó la metodología WBS (Work Breakdown
+Structure), la cual permitió desglosar el proyecto en tareas organizadas y manejables,
+facilitando la planificación, ejecución y control de cada actividad. Gracias a este enfoque
+estructurado, se logró una mejora significativa en la infraestructura tecnológica,
+promoviendo una gestión más eficiente, estable y sostenible.
+Después de presentar el enfoque metodológico, el documento describió cada
+actividad realizada durante el proyecto, relacionándola con su respectivo objetivo y el
+propósito que buscó cumplir. Este desglose permitió mostrar de manera clara cómo las
+acciones ejecutadas respondieron a las necesidades identificadas y contribuyeron al
+mejoramiento de la red de datos de EMPOPAMPLONA S.A. E.S.P.
+39
+
+En la Fig.19 Se muestra el objetivo 1 y las actividades que se desarrollaran para dar
+cumplimiento a este:
+Fig. 19 Desglose del objetivo 1 y sus actividades
+Realizar el levantamiento y registro detallado de la infraestructura de red y de
+los activos tecnológicos existentes, identificando su ubicación, estado y características
+técnicas.
+Actividades:
+ Inspección física de equipos, racks y conexiones.
+Esta actividad tuvo como propósito realizar una revisión visual y física de
+todos los componentes de la infraestructura tecnológica, verificando el estado de los
+equipos, la organización del cableado y la correcta disposición de los racks y
+conexiones de red. De esta manera, se obtuvo una visión clara del estado de la
+infraestructura tecnológica y se establecieron las bases para futuras mejoras o
+mantenimientos preventivos.
+ Recolección de informacion técnica de los dispositivos
+Esta actividad tuvo como finalidad recopilar los datos técnicos de cada activo
+tecnológico, como marca, modelo, número de serie, ubicación y estado funcional.
+Esta información fue esencial para construir una base de datos confiable que
+40
+
+reflejara con precisión las características de la infraestructura existente. Asimismo,
+permitió establecer criterios de mantenimiento y actualización, garantizando una
+gestión más eficiente y organizada de los recursos tecnológicos.
+ Elaboración del inventario digital de activos tecnológicos
+El propósito de esta actividad es consolidar la información recolectada en un
+inventario digital estructurado que facilite el control, registro y seguimiento de los
+activos tecnológicos de la institución. Este inventario permitirá identificar de forma
+ágil los equipos, su ubicación y su estado operativo dentro de la red. Además,
+contribuirá a una mejor planificación en los procesos de mantenimiento, renovación
+y optimización de los recursos tecnológicos.
+En la Fig.20 Se muestra el objetivo 2 y las actividades que se desarrollaran para dar
+cumplimiento a este:
+Fig. 20 Desglose del objetivo 2 y sus actividades
+41
+
+Diseñar la documentación técnica según la norma ANSI/TIA-606-C, para
+garantizar la estandarización, organización y mantenimiento eficiente de la
+infraestructura de red.
+Actividades:
+ Diseño de diagramas físicos y lógicos, incorporando nomenclatura conforme a
+la norma ANSI/TIA-606-C.
+Esta actividad consistió en elaborar planos que representaron la
+infraestructura de red de la empresa. Esto incluyó tanto los diagramas físicos, que
+mostraban la ubicación real de los equipos (switches, routers, servidores, puntos de
+conexión, cableado, etc.), como los diagramas lógicos, que evidenciaban cómo se
+interconectaban los dispositivos y cómo fluía la información dentro de la red. Para
+su elaboración se utilizó software especializado, como AutoCAD, que permitió
+representar gráficamente cada elemento de manera clara y precisa. Además, se
+aplicó la norma ANSI/TIA-606-C, la cual estableció la nomenclatura estándar para
+identificar cables, puertos y equipos, garantizando que la documentación fuera
+uniforme, rastreable y profesional.
+ Elaboración de la matriz de correspondencia: registro en tabla de los puntos
+de red, codificación aplicada y su ubicación en planos y diagramas
+El propósito de esta actividad fue crear una matriz de correspondencia en
+Microsoft Excel, donde se registraron de manera estructurada todos los puntos de
+red identificados, junto con su respectiva codificación y ubicación en los planos
+elaborados. Esta herramienta digital permitió relacionar la información técnica con
+los diagramas realizados en AutoCAD, optimizando el control y la trazabilidad de
+los elementos documentados. De esta manera, se obtuvo una base de datos técnica
+42
+
+precisa que apoyó la gestión, la auditoría y el mantenimiento eficiente de la
+infraestructura de red.
+ Prueba de conectividad y verificación del funcionamiento de la infraestructura
+documentada.
+Esta actividad tuvo como finalidad realizar pruebas de conectividad en cada
+punto de red utilizando herramientas de diagnóstico y verificación de señal, con el
+objetivo de confirmar el correcto funcionamiento de las conexiones registradas.
+Durante este proceso se validaron la continuidad, la numeración y la
+correspondencia entre los planos elaborados en AutoCAD, la matriz en Excel y la
+infraestructura física existente. De esta manera, se garantizó que la documentación
+elaborada reflejara fielmente el estado real de la red y sirviera como referencia
+técnica para futuras intervenciones o mantenimientos.
+En la Fig.21 Se muestra el objetivo 3 y las actividades que se desarrollaran para dar
+cumplimiento a este:
+Fig. 21 Desglose del objetivo 3 y sus actividades
+43
+
+Aplicar el sistema de etiquetado estandarizado conforme a la norma
+ANSI/TIA-606-C, evidenciando su aplicación para optimizar la administración y el
+mantenimiento de la red corporativa.
+Actividades:
+ Diseño de etiquetas y codificación según la norma.
+Esta actividad tuvo como propósito diseñar las etiquetas de identificación
+siguiendo los lineamientos establecidos en la norma ANSI/TIA-606-C, asegurando
+la correcta codificación de cada punto de red, equipo y conexión. Durante el proceso
+se definieron los formatos, colores, nomenclaturas y tipos de etiquetas a utilizar, de
+acuerdo con los criterios de estandarización. De esta manera, se garantizó la
+trazabilidad y la fácil interpretación de la información dentro de la infraestructura
+de red.
+ Aplicación de etiquetas en racks, cables y equipos.
+Esta actividad tuvo como finalidad implementar el sistema de etiquetado
+diseñado, aplicando las etiquetas físicas en racks, paneles, cables y equipos de red.
+El proceso se llevó a cabo de forma ordenada y precisa para asegurar la
+correspondencia entre la codificación registrada en la documentación técnica y los
+elementos físicos instalados. Esto permitió una administración más eficiente de la
+red, facilitando las labores de mantenimiento, auditoría y diagnóstico de fallas.
+ Elaborar manual de documentación y procedimientos de gestión.
+El propósito de esta actividad fue desarrollar un manual técnico que
+describiera el procedimiento de etiquetado, la codificación aplicada y las directrices
+para futuras actualizaciones. El documento incluyó ejemplos de etiquetas, criterios
+de ubicación y un instructivo para la gestión del sistema de identificación de red.
+44
+
+De esta forma, se consolidó una guía de referencia institucional que estandarizó el
+proceso y garantizó la continuidad en la administración de la infraestructura
+tecnológica.
+7. RESULTADOS
+Esta parte del documento tiene como finalidad mostrar los resultados conseguidos
+en el proyecto, destacando su alineación con los objetivos previamente planteados. Se
+presenta un análisis detallado de las actividades desarrolladas y los avances obtenidos en
+cada una de ellas.
+Resultado del objetivo 1. Realizar el levantamiento y registro detallado de la
+infraestructura de red y de los activos tecnológicos existentes, identificando su
+ubicación, estado y características técnicas.
+Actividades desarrolladas
+ Inspección física de equipos, racks y conexiones.
+En esta fase se llevó a cabo la inspección física de la infraestructura de red, con el fin
+de documentar la organización actual de los equipos instalados en el rack principal. Esta
+etapa se enfocó en mostrar de manera visual cómo se encuentra distribuida la infraestructura
+y dejar un registro base para fases posteriores.
+ESPACIO DE TELECOMUNICACIONES-RACK PRINCIPAL
+Se verifico la existencia de un rack de gabinete, el cual alberga los principales equipos
+de red de la organización. Se realizó un recorrido visual para constatar la correcta
+instalación de los dispositivos y se registró la disposición física de cada uno dentro del
+gabinete.
+45
+
+Fig. 22 Rack de telecomunicaciones
+ROUTER MIKROTIK RB3011UIAS-RM
+Se identificó el dispositivo como el router principal de la red. encargado de centralizar
+la gestión del tráfico y facilitar la conexión entre los diferentes segmentos de la
+infraestructura. Se encuentra ubicado en la parte superior del rack, asegurando fácil acceso
+para monitoreo y mantenimiento.
+Fig. 23 Router Mikrotic
+46
+
+REGLETAS DE ENERGÍA-PDU QUEST (2 unidades)
+Fig. 24 Regleta de energía
+SWITCH TP-LINK TL-SG3428 (2 unidades)
+Cuenta con 2 switch TP-Link del rack, encargado de distribuir el tráfico de red hacia
+los distintos dispositivos conectados. Los cables de red están conectados y funcionando,
+pero todavía no se ha utilizado el organizador de cables para ordenarlos.
+Fig. 25 Switch #1
+Fig. 26 Switch #2
+PATCH PANEL – 48 PUERTOS
+Centraliza las conexiones de todas las áreas de la organización.
+Los cables están conectados y funcionales, aunque todavía no están organizados mediante
+los organizadores de cables.
+Fig. 27 Patch panel #1
+47
+
+PATCH PANEL – 16 PUERTOS
+Patch panel adicional para conexiones extra. Los cables están conectados, pero
+todavía no se encuentran organizados mediante los organizadores.
+Fig. 28 Patch panel #2
+SWITCH (BASELINE)
+Switch adicional utilizado para distribuir la red hacia equipos específicos o
+conexiones secundarias. Los cables están conectados y funcionales, aún sin organización
+en el rack.
+Fig. 29 Switch #3
+THINSERVER
+Servidor compacto que soporta aplicaciones o servicios internos de la organización.
+Conectado y funcional, pero los cables aún no están organizados con los accesorios
+disponibles.
+Fig. 30 Servidor
+48
+
+CAJA DE CONEXIÓN DE RED / MÓDULO DE EMPALME
+Se identificó la presencia de una caja de conexión de red, utilizada para unir,
+proteger y organizar los cables de red UTP y fibra óptica provenientes de distintas áreas y
+del proveedor de internet. En este caso, la fibra óptica del proveedor llega a la caja de
+empalme y se conecta directamente al router MikroTik RB3011UiAS-RM, permitiendo la
+entrada de la señal WAN al rack.
+Fig. 31 Caja de fibra óptica
+GESTOR DE CABLES (3 JUEGOS)
+El rack cuenta con tres juegos de organizadores de cables, instalados en posiciones
+estratégicas para mantener un recorrido limpio y ordenado del cableado proveniente de los
+switches y patch panels. Actualmente, los cables están conectados, pero no se encuentran
+canalizados a través de estos organizadores.
+Fig. 32 Gestor de cables #1
+Fig. 33 Gestor de cables #2
+49
+
+Fig. 34 Gestor de cables #3
+ROUTER INALÁMBRICO TP-LINK (4 equipos)
+El router inalámbrico permite distribuir la conexión a internet dentro de la empresa,
+ofreciendo acceso Wi-Fi a dispositivos como PCs, laptops y tablets, y facilitando la
+movilidad y conectividad segura en las instalaciones de la red.
+Fig. 35 Router inalambrico
+SWITCH DE RED ETHERNET
+Los switches de escritorio instalados en las diferentes oficinas cumplen un papel
+clave en la distribución de la red. Estos dispositivos permiten interconectar múltiples
+equipos finales (como computadores, impresoras y otros dispositivos de red) utilizando
+puertos RJ45.
+50
+
+Fig. 36 Switch de red 1
+Fig. 37 Switch de red 2
+FUNCIÓN DE LOS EXTENSORES WIFI/AP
+Los extensores inalámbricos (AP) instalados en las oficinas cumplen la función de
+ampliar la cobertura de la red WiFi principal hacia áreas donde la señal del router no llega
+con suficiente intensidad. Estos dispositivos reciben la señal de red, ya sea por cable
+Ethernet o de forma inalámbrica, y la retransmiten para garantizar conectividad en todos
+los espacios de trabajo.
+51
+
+Fig. 38 Extensores de WIFI
+CABLEADO
+Todos los dispositivos del rack están conectados utilizando cable UTP categoría
+5e/6 de color amarillo, lo que permite identificar visualmente el cableado de red dentro del
+gabinete.
+Actualmente, los cables están conectados y funcionales, aunque todavía no se encuentran
+canalizados a través de los organizadores de cables, por lo que no se observa un recorrido
+ordenado dentro del rack.
+Fig. 39 Cableado
+52
+
+ Recolección de informacion técnica de los dispositivos
+Con la información recolectada durante la inspección física, se procedió a organizar y
+clasificar los datos técnicos correspondientes a los equipos de telecomunicaciones
+identificados en las distintas áreas de EMPOPAMPLONA S.A. E.S.P. Se recopilaron las
+características específicas de cada dispositivo y detalles relevantes para su correcta
+identificación.
+TABLA II. INFORMACION TECNICA DEL RACK DE GABINETE
+RACK DE GABINETE
+ÍTEM DESCRIPCIÓN
+Tipo
+Gabinete cerrado de 19” (Server Cabinet Rack)
+Material Acero con recubrimiento negro
+Estructura
+Puertas frontales y traseras con cerradura, paneles laterales removibles
+Ventilación
+Rejillas laterales o paneles perforados
+Rieles de montaje Ajustables para diferentes profundidades de equipos
+Routers, switches, patch panels, regletas de energía, cables Ethernet
+Equipos instalados
+Cat5e/Cat6
+TABLA III. INFORMACION TECNICA DEL ROUTER MIRKOTIC
+ROUTER MIKROTIK RB3011UIAS-RM
+ÍTEM
+DESCRIPCIÓN
+Tipo de equipo
+Router de alto rendimiento para administración de red
+Puertos 10 puertos Ethernet (5 Gigabit + 5 normales)
+Conectividad adicional
+1 puerto SFP para enlaces de fibra óptica
+53
+
+CPU Dual-core 1 GHz
+Memoria RAM 1 GB
+Almacenamiento 128 MB NAND
+Sistema operativo RouterOS
+Administración central de la red, Enrutamiento, firewall, QoS, VPN y
+Funciones principales gestión de tráfico
+Montaje
+Compatible con rack 19” (con soporte adicional)
+TABLA IV. INFORMACION TECNICA DE LA REGLETA DE ENERGIA PDU
+REGLETA DE ENERGÍA-PDU QUEST
+DESCRIPCIÓN
+ÍTEM
+Tipo de equipo
+Regleta de energía / PDU (Power Distribution Unit)
+Distribuir energía eléctrica a todos los equipos del rack
+Función principal
+Número de tomas 8-10 tomas por unidad (dependiendo del modelo)
+Protección Incluye fusible o protección contra sobrecarga
+Montaje
+Compatible con rack de 19”
+TABLA V. INFORMACION TECNICA DEL SWITCH TP-LINK
+SWITCH TP-LINK TL-SG3428
+DESCRIPCIÓN
+ÍTEM
+Tipo de equipo
+Switch de red gestionable de capa 2
+Puertos
+24 puertos Gigabit RJ45 + 4 puertos SFP para fibra
+54
+
+Velocidad
+10/100/1000 Mbps (puertos RJ45)
+Funciones principales
+Gestión avanzada de VLANs, QoS, LAG
+Montaje
+filtrado de direcciones MAC, control de acceso
+TABLA VI. INFORMACION TECNICA DEL PATCH PANEL
+PATCH PANEL – 48 PUERTOS
+ÍTEM DESCRIPCIÓN
+Tipo de equipo Panel de parcheo para organización de conexiones de red
+48 puertos RJ45
+Puertos
+Velocidad 10/100/1000 Mbps (puertos RJ45)
+Funciones principales Centralizar y organizar las conexiones de los cables de red (Cat5e/Cat6)
+Facilitar mantenimiento y cambios de conexiones sin alterar el cableado
+Beneficios
+principal
+TABLA VII. INFORMACION TECNICA DEL SWITCH (BASELINE)
+SWITCH (BASELINE)
+DESCRIPCIÓN
+ÍTEM
+55
+
+Tipo de equipo Switch no gestionable / básico (Baseline)
+Puertos 8-24 puertos Ethernet (dependiendo del modelo)
+Velocidad 10/100/1000 Mbps (puertos RJ45)
+Funciones principales Conectar dispositivos finales (PCs, impresoras, cámaras) a la red
+Beneficio Transmisión de datos simple sin funciones avanzadas de gestión
+TABLA VIII . INFORMACION TECNICA DEL THINSERVER
+THINSERVER
+DESCRIPCIÓN
+ÍTEM
+Tipo de equipo Servidor compacto (ThinServer / servidor tipo rack o torre pequeña)
+• Alojar aplicaciones o servicios de la organización
+Funciones principales
+• Servir como nodo de almacenamiento o procesamiento de datos
+Procesador Generalmente Intel o AMD, según modelo
+Memoria RAM 4GB–32GB típico en ThinServers
+Almacenamiento Discos HDD o SSD, según necesidades de capacidad
+Conectividad Puertos Ethernet para integración a la red
+56
+
+TABLA IX. INFORMACION TECNICA DE LA CAJA DE RED
+CAJA DE CONEXIÓN DE RED / MÓDULO DE EMPALME
+DESCRIPCIÓN
+ÍTEM
+Tipo de equipo Caja de empalme para cables de red (Patch Box / Junction Box)
+Función principal Permitir empalmes o derivaciones de cables hacia diferentes puntos de la red
+Capacidad Dependiendo del modelo, suele albergar 8–24 cables
+Montaje Se puede instalar en pared, techo o cerca del rack
+TABLA X. INFORMACION TECNICA DEL GESTOR DE CABLES
+GESTOR DE CABLES
+DESCRIPCIÓN
+ÍTEM
+Tipo de equipo Accesorio de organización de rack
+Función Mantener los cables de red eléctricos organizados y ordenados para facilitar
+principal mantenimiento
+Ubicación Montado en el rack, horizontal o vertical según diseño
+Material
+Plástico o metal resistente
+57
+
+Beneficio Mejora flujo de aire y evita daños en los cables
+TABLA XI. INFORMACION TECNICA DEL ROUTER INALAMBRICO
+ROUTER INALÁMBRICO TP-LINK
+DESCRIPCIÓN
+ÍTEM
+Tipo de equipo Router inalámbrico de pequeño o mediano alcance
+Puertos
+5 puertos RJ45 para conexiones por cable, 1 puerto para alimentación eléctrica
+Funciones
+Distribuir señal de internet a PCs y dispositivos conectados por cable y Wi-Fi
+principales
+Beneficio
+Conecta dispositivos finales de la oficina sin necesidad de cableado adicional
+TABLA XII. INFORMACION TECNICA DEL SWITCH DE RED ETHERNET
+SWITCH DE RED ETHERNET
+DESCRIPCIÓN
+ÍTEM
+58
+
+Tipo de equipo
+Switch no gestionable (uso básico).
+Puertos
+6 puertos RJ45 Fast Ethernet (10/100 Mbps).
+Alimentación
+Entrada de corriente eléctrica mediante adaptador de energía.
+Interfaz
+Conexión automática auto MDI/MDIX, evitando el uso de cables cruzados.
+Indicadores LED Señalizan el estado de encendido, actividad y transmisión
+de datos por cada puerto
+Conectividad
+Puertos Ethernet para integración a la red
+Ubicación típica Oficinas, áreas de servicio al cliente, gerencia, entre otros
+puntos de red.
+Función destacada Distribuye la conexión a varios equipos sin degradar la
+señal, manteniendo la velocidad de transmisión en la LAN.
+TABLA XIII. INFORMACION TECNICA DEL EXTENSOR WIFI/AP
+EXTENSORES WIFI/AP
+DESCRIPCIÓN
+ÍTEM
+Tipo de equipo
+Extensor WiFi / Punto de Acceso inalámbrico
+Conectividad Compatible con redes WiFi 2.4 GHz y, en algunos modelos,
+con 5 GHz.
+Puertos
+1 puerto RJ45 Ethernet para conexión cableada (en modo AP).
+Alimentación Entrada de corriente eléctrica mediante adaptador directo a
+toma o puerto de energía.
+Modos de operación
+Extensor/repetidor de señal WiFi y punto de acceso (AP).
+Ubicación típica Oficinas, salas de reuniones, áreas administrativas o
+residenciales con baja cobertura de señal.
+59
+
+Amplía la cobertura inalámbrica, elimina zonas muertas y
+mejora la estabilidad de la conexión WiFi para múltiples
+Función destacada dispositivos.
+Distribuye la conexión a varios equipos sin degradar la señal,
+Función destacada manteniendo la velocidad de transmisión en la LAN.
+ Elaboración del inventario digital de activos tecnológicos
+En esta actividad se realizó el registro detallado de todos los activos tecnológicos de
+la empresa EMPOPAMPLONA S.A. E.S.P., recopilando información clave de cada
+equipo, tales como: código de inventario, cantidad, tipo de equipo, marca, modelo
+comercial, número de serie, ubicación, oficina y estado. Con esta información se generó
+un inventario digital completo, que permite tener un control organizado de los recursos
+tecnológicos, facilitando su seguimiento, mantenimiento y administración dentro de la
+empresa para conocer cada equipo que se encuentra en la empresa.
+El inventario digital de activos tecnológicos quedó almacenado en el repositorio
+institucional de OneDrive y fue incorporado en los anexos correspondientes al Objetivo
+1. En dicho anexo se incluyó el archivo completo, organizado en hojas separadas para
+equipos finales, equipos de red y equipos de energía, permitiendo consultar de manera
+detallada toda la información recopilada durante el proceso de inventario.
+Resultado del objetivo 2. Diseñar la documentación técnica según la norma
+ANSI/TIA-606-C, para garantizar la estandarización, organización y mantenimiento
+eficiente de la infraestructura de red.
+60
+
+El cumplimiento de este objetivo permitió establecer un sistema de registro
+uniforme y organizado de los elementos de la red, facilitando su identificación, seguimiento
+y administración. Como resultado, se genera una guía técnica confiable que respalda la
+gestión de la infraestructura y sirve como referencia para futuras intervenciones dentro de
+la empresa.
+Actividades:
+ Diseño de diagramas físicos y lógicos, incorporando nomenclatura conforme a
+la norma ANSI/TIA-606-C.
+En esta actividad se desarrolló el proceso de digitalización y modelado de la
+infraestructura física y de red de la empresa Empopamplona, partiendo de la
+informacion disponible en formato físico. El propósito fue trasladar el plano impreso
+al entorno digital utilizando AutoCAD, para luego incorporar la distribución de los
+puntos de red, el rack principal y los elementos asociados a las telecomunicaciones.
+Fig. 40 Plano físico de la infraestructura
+Teniendo como base el plano físico de la infraestructura general de la empresa, se
+procedió a diseñar el plano digital de la infraestructura de red en AutoCAD, teniendo en
+61
+
+cuenta los parámetros y estructura secuencial. A continuación, se llevaron diferentes pasos
+para la elaboración del plano.
+Los pasos fueron los siguientes:
+TRAZADO DE MUROS Y DIVISORES: Como punto inicial, se inició con la
+digitalización de los muros perimetrales y divisores internos de la empresa, realizando una
+interpretación visual del plano físico original. En esta etapa se identificaron y marcaron los
+ejes principales de cada pared, respetando de manera aproximada la proporción y
+distribución de los espacios tal como se encuentran físicamente. Se utilizaron herramientas
+de dibujo asistido por software (AutoCAD) para mantener líneas rectas, ángulos coherentes
+y consistencia entre áreas adyacentes.
+Fig. 41 Trazado de muros y divisores
+Incorporación de puertas y ventanas: Una vez trazados los muros, se procedió a
+ubicar puertas y ventanas en el plano digital, tomando como referencia su posición
+62
+
+aproximada en la infraestructura física. Cada abertura fue dibujada considerando
+orientación y acceso, respetando la circulación general de los espacios. Esta representación
+permite visualizar de manera clara los flujos internos, facilita la planificación de la
+instalación de cableado y equipos de red, y asegura que las rutas de circulación no se vean
+comprometidas por la ubicación de elementos tecnológicos.
+Fig. 42 Asignación de puertas y ventanas
+Asignación de nombres a oficinas y áreas: Con la estructura del plano definida,
+se etiquetaron de manera clara todas las oficinas, salas de reuniones, áreas técnicas y zonas
+63
+
+de servicio. Cada nombre fue ubicado estratégicamente para garantizar la visibilidad y una
+comprensión inmediata de los espacios dentro del plano digital. Esta actividad no solo
+facilita la orientación y la planificación de recursos tecnológicos, sino que también sirve
+como guía al momento de localizar las etiquetas en el plano, permitiendo identificar con
+precisión la ubicación de cada punto dentro de la infraestructura.
+Fig. 43 Asignación de nombres a las Áreas
+Integración de elementos de red y telecomunicaciones: A continuación, se
+presenta la imagen del rack principal completamente implementado, donde se pueden
+64
+
+observar los equipos activos y pasivos instalados, que conforman la red de Empopamplona
+S.A. E.S.P. Esta representación visual permite apreciar la organización jerárquica y
+funcional de los elementos que conforman el sistema de cableado estructurado,
+garantizando un montaje ordenado y conforme a las normas técnicas establecidas
+Fig. 44 Integración de elementos de red y telecomunicaciones
+Dado lo anterior, donde se presentó el diseño de los equipos que conforman el rack
+principal AD07, a continuación, se muestra el diseño de los puntos de red en el cual se
+representa la forma y estructura del punto de conexión instalado en cada área.
+PLANO DE LA INFRAESTRUCTURA DE TELECOMUNICACIONES Y SUS
+CONVENCIONES
+65
+
+Se realizó el plano de la infraestructura de telecomunicaciones junto con sus
+respectivas convenciones, con el fin de representar de manera clara y estandarizada todos
+los elementos que conforman la red de la empresa. En este plano se identifican los equipos
+principales, los puntos de red, el cableado, las tomas eléctricas y el recorrido de la fibra
+óptica, permitiendo comprender la distribución física y la conectividad existente en cada
+área del edificio. Estas convenciones facilitan la lectura del plano y aseguran una
+interpretación correcta para labores de mantenimiento, soporte y futuras ampliaciones.
+Fig. 45 Convenciones de la infraestructura de telecomunicaciones
+66
+
+Fig. 46 Plano de la infraestructura de telecomunicaciones
+PLANO LÓGICO Y CONVENCIONES DE LA RED DE
+TELECOMUNICACIONES
+Se elaboraron los planos lógicos de la red de telecomunicaciones con el fin de
+representar cómo están conectados los equipos y puntos de red de la empresa. En estos
+planos se incluyeron el router MikroTik, el switch, el servidor, la PDU, el patch panel, los
+puntos de red, las tomas eléctricas y el recorrido de la fibra óptica desde el poste hasta el
+rack.
+Los planos se realizaron para los dos pisos del edificio, mostrando la distribución
+de los puntos de red y la interconexión hacia el cuarto de comunicaciones ubicado en el
+primer piso. Estos planos permiten entender de forma clara la estructura de la red y facilitan
+su mantenimiento y futuras ampliaciones.
+67
+
+Fig. 47 Convenciones de telecomunicaciones en plano lógico
+68
+
+Fig. 48. Plano lógico de red
+En la siguiente imagen se realiza la identificación completa de los espacios de
+telecomunicaciones de la empresa, siguiendo la estructura establecida por las normas de
+cableado estructurado. En el diagrama se diferencian claramente los tres niveles principales
+del sistema:
+ [EF] Instalación de Entrada: Corresponde al punto donde ingresa el servicio de
+fibra óptica proveniente del proveedor VConexión. Este espacio contiene la caja de
+fibra óptica que recibe el enlace externo hacia la empresa.
+ [ER] Sala de Equipos / Rack Principal: Ubicada en la Oficina de Gerencia (Piso
+1), es el centro de distribución de la red. En este rack se alojan los equipos
+principales como el Router MikroTik, los switches administrables TP-Link, el
+switch 3Com, los patch panels de 48 y 16 puertos, los gestores de cables y las
+69
+
+unidades de distribución eléctrica (PDU). Desde este punto se gestiona y distribuye
+toda la conectividad hacia las diferentes áreas de la empresa.
+ [WA] Áreas de Trabajo: Comprenden las oficinas administrativas de los pisos 1 y
+2, donde se encuentran los usuarios finales conectados a la red corporativa mediante
+el cableado estructurado proveniente del rack principal.
+Fig. 49 Identificación de los espacios de telecomunicaciones
+PUNTO DE RED DOBLE
+En la siguiente imagen se puede observar un punto de red doble para conexión de
+equipos, lo cual cuenta con dos puertos RJ45 destinados a la conexión de equipos de red o
+dispositivos de usuario. Este tipo de placa se utiliza en áreas donde se requiere más de un
+70
+
+punto de conexión, facilitando la organización y expansión del sistema de cableado
+estructurado.
+Fig. 50 Diseño del punto de red doble
+PUNTO DE RED SIMPLE
+En la siguiente imagen se presenta un punto de red simple, compuesta por un solo
+puerto RJ45 para la conexión de un dispositivo de red. Este modelo se emplea en espacios
+donde solo se necesita una salida de datos, manteniendo la uniformidad y estética en la
+instalación del cableado estructurado.
+Fig. 51 Diseño del punto de red simple
+CUADRÍCULA DE LOCALIZACIÓN
+Para garantizar una organización estructurada y una rápida identificación de los
+elementos del sistema de cableado, se implementó una cuadrícula de localización en el
+plano del área técnica. Esta herramienta permite asignar coordenadas específicas (como A1,
+B3 o AD07) a cada punto de red, rack, o dispositivo, facilitando la trazabilidad y el
+mantenimiento de la infraestructura.
+71
+
+Tabla XIV. Cuadricula de localización del rack
+|    A   | B  C  | D   | E  F  |
+| ------ | ----- | --- | ----- |
+| 01     |       |     |       |
+
+| 02     |       |     |     |
+| ------ | ----- | --- | --- |
+
+| 03     |       |     |     |
+| ------ | ----- | --- | --- |
+
+| 04     |       |     |     |
+| ------ | ----- | --- | --- |
+
+| 05     |       |     |     |
+| ------ | ----- | --- | --- |
+
+| 06     |       |     |       |
+| ------ | ----- | --- | ----- |
+AD07 -
+| 07     |       | Rack       |     |
+| ------ | ----- | ---------- | --- |
+|        |       | Principal  |     |
+| 08     |       |            |     |
+
+El uso de una cuadrícula es altamente recomendable porque proporciona una referencia
+visual precisa que ayuda a ubicar físicamente los equipos dentro del espacio, evitando
+confusiones en la instalación o futuras ampliaciones. Además, permite mantener un registro
+técnico  normalizado,  siguiendo  criterios  de  orden  y  estandarización  similares  a  los
+propuestos en normas como la ANSI/TIA-606-C para la identificación de componentes del
+cableado estructurado.
+
+  Elaboración de la matriz de correspondencia: registro en tabla de los puntos
+de red, codificación aplicada y su ubicación en planos y diagramas
+
+El uso de códigos de colores en el etiquetado es fundamental dentro del diseño y
+estructuración de redes, ya que permite una identificación visual rápida y precisa de los
+diferentes tipos de cables, servicios o conexiones. Esta práctica facilita las labores de
+72
+
+instalación, mantenimiento y diagnóstico, reduciendo errores y mejorando la organización
+general del sistema.
+Además, los colores ayudan a establecer una correspondencia estandarizada entre los
+puntos de conexión, equipos y rutas de cableado, garantizando que cualquier técnico pueda
+reconocer fácilmente la función y destino de cada elemento.
+A continuación, se presenta la tabla con los colores utilizados y su respectiva función dentro
+del sistema de etiquetado implementado.
+TABLA XV. TABLA DE COIDGOS DE COLORES SEGUN LA NORMATIVA
+COLOR
+INDICACIÓN DESCRIPCIÓN RESUMIDA
+(PANTONE)
+Naranja Punto de demarcación Marca la terminación del enlace principal de la oficina central.
+Verde Conexión de red Identifica las conexiones de red en el lado del cliente.
+Púrpura Equipo común Señala cables de equipos como PBX, LAN o multiplexores.
+Blanco Columna vertebral primer nivel Indica la red troncal principal dentro del edificio.
+Gris Segundo nivel Identifica la red troncal de segundo nivel o intermedia.
+Azul Cableado horizontal Corresponde a la conexión entre el área de trabajo y el equipo.
+Marrón Inter edificio Indica cables que conectan distintos edificios.
+Amarillo Auxiliar y circuitos varios Señala sistemas telefónicos o auxiliares.
+Rojo Teléfono / sistemas de alerta Indica zonas o sistemas de seguridad y emergencia.
+73
+
+FORMATO DE ETIQUETA DE IDENTIFICADORES PARA PUNTOS DE RED
+En esta actividad se desarrolló la matriz de correspondencia, cuyo propósito es
+establecer una relación clara entre los puntos de red, la codificación aplicada y su ubicación
+dentro de los planos y diagramas de la infraestructura tecnológica de EMPOPAMPLONA
+S.A. E.S.P. El proceso incluyó la asignación de etiquetas únicas a cada punto de red,
+siguiendo la nomenclatura estandarizada según la norma ANSI/TIA-606-C, además del uso
+de colores específicos para facilitar la identificación visual y la trazabilidad del cableado.
+FORMATO DE ETIQUETA DE IDENTIFICADORES PARA PUNTOS DE RED
+En la siguiente Figura se evidencia La estructura que sigue la norma
+ANSI/TIA/EIA-606-C para el etiquetado de puntos de red, lo cual establece los parámetros
+necesarios para asegurar la identificación uniforme, trazabilidad y localización precisa de
+cada componente dentro de la infraestructura de cableado estructurado.
+Fig. 52 Formato de etiqueta de identificadores para puntos de red
+74
+
+De esta manera, la estructura del etiquetado permite una documentación técnica
+clara, coherente con los lineamientos de la norma ANSI/TIA-606-C, facilitando el
+mantenimiento, la administración y las futuras ampliaciones de la red.
+TABLA XVI. ETIQUETAS DE LOS PUNTOS DE RED DE LA EMPRESA EMPOPAMPLONA
+Identificador
+Identificador Numero de Codigo de
+Etiqueta del panel de Piso Oficina Placa Función Color
+del Rack puerto salida
+conexión
+Gestion
+AD07-29:6 / 1GC-01A=XO AD07 29 6 1 01A XO Conectividad Azul
+Comercial
+Gestion
+AD07-X:X / 1GC-01B=XO AD07 X X 1 01B XO Conectividad Azul
+Comercial
+Gestion
+AD07-29:6 / 1GC-02U=XO AD07 29 6 1 02U XO Conectividad Azul
+Comercial
+Servicio al
+AD07-29:4 / 1SC-01A=XO AD07 29 4 1 01A XO Conectividad Azul
+Cliente
+Servicio al
+AD07-29:4 / 1SC-01B=XO AD07 29 4 1 01B XO Conectividad Azul
+Cliente
+Servicio al
+AD07-29:3 / 1SC-02U=XO AD07 29 3 1 02U XO Conectividad Azul
+Cliente
+Talento
+AD07-29:14 / 1TH-01A=XO AD07 29 14 1 01A XO Conectividad Azul
+Humano
+Talento
+AD07-29:14 / 1TH-01B=XO AD07 29 14 1 01B XO Conectividad Azul
+Humano
+Talento
+AD07-29:11 / 1TH-02U=XO AD07 29 11 1 02U XO Conectividad Azul
+Humano
+Talento
+AD07-X:X / 1TH-03U=XO AD07 X X 1 03U XO Conectividad Azul
+Humano
+Talento
+AD07-29:13 / 1TH-04U=XO AD07 29 13 1 04U XO Conectividad Azul
+Humano
+AD07-29:19 / 1GER-
+AD07 29 19 1 Gerencia 01A XO Conectividad Azul
+01A=XO
+AD07-29:19 / 1GER-
+AD07 29 19 1 Gerencia 01B XO Conectividad Azul
+01B=XO
+AD07-29:21 / 1CT-01A=XO AD07 29 21 1 Control Interno 01A XO Conectividad Azul
+AD07-29:21 / 1CT-01B=XO AD07 29 21 1 Control Interno 01B XO Conectividad Azul
+AD07-29:18 / 1TES-01A=XO AD07 29 18 1 Tesorería 01A XO Conectividad Azul
+AD07-29:18 / 1TES-01B=XO AD07 29 18 1 Tesorería 01B XO Conectividad Azul
+AD07-29:33 / 1TES-02A=XO AD07 29 33 1 Tesorería 02A XO Conectividad Azul
+AD07-29:33 / 1TES-02B=XO AD07 29 33 1 Tesorería 02B XO Conectividad Azul
+AD07-X:X \ 2FACT-
+AD07 X X 2 Facturación 01U XO Conectividad Azul
+01U=XO
+AD07-29:29 / 2CONT-
+AD07 29 29 2 Contabilidad 01U XO Conectividad Azul
+01U=XO
+AD07-X:X \ 2CONT-
+AD07 X X 2 Contabilidad 02A XO Conectividad Azul
+02A=XO
+AD07-X:X \ 2CONT-
+AD07 X X 2 Contabilidad 02B XO Conectividad Azul
+02B=XO
+AD07-29:32 /2PLAN-
+AD07 29 32 2 Planeación 01U XO Conectividad Azul
+01U=XO
+AD07-29:31 / 2OB-01U=XO AD07 29 31 2 Obras 01U XO Conectividad Azul
+AD07-29:30 / 2OB-02A=XO AD07 29 30 2 Obras 02A XO Conectividad Azul
+AD07-X:X / 2OB-02B=XO AD07 X X 2 Obras 02B XO Conectividad Azul
+Bienes y
+AD07-29:28 / 2BS-01U=XO AD07 28 28 2 01U XO Conectividad Azul
+Servicios
+Bienes y
+AD07-29:27 / 2BS-02U=XO AD07 29 27 2 02U XO Conectividad Azul
+Servicios
+AD07-X:X \ 2ARCH-
+AD07 X X 2 Archivo 01U XO Conectividad Azul
+01U=XO
+75
+
+La matriz permite una identificación rápida y precisa de cada punto de red dentro
+de la infraestructura, relacionando la información física (etiquetas en patch panels y racks)
+con la documentación técnica y los planos elaborados en AutoCAD. Este registro es clave
+para futuras labores de mantenimiento, auditoría o expansión, garantizando la organización
+y trazabilidad del sistema de cableado estructurado.
+ Prueba de conectividad y verificación del funcionamiento de la infraestructura
+documentada.
+En esta actividad se llevará a cabo la validación de la infraestructura de red previamente
+documentada. Para ello, se realizarán pruebas de conectividad entre los diferentes
+dispositivos y puntos de red, con el fin de verificar que cada enlace opere de forma correcta
+y continua. Estas pruebas permiten confirmar que los puntos identificados en el inventario
+están en funcionamiento, que la estructura física coincide con lo documentado y que la red
+responde adecuadamente en los tramos evaluados. Esta verificación es esencial para
+garantizar la fiabilidad de la información registrada y el correcto desempeño de la
+infraestructura inspeccionada.
+A continuación, se presentan los resultados de las verificaciones realizadas a los puntos
+de red evaluados. La información se organiza en una tabla que incluye el elemento revisado,
+la descripción detallada del resultado obtenido durante la prueba de continuidad, y la
+evidencia fotográfica correspondiente cuando fue posible tomarla.
+En esta sección se registran tanto los puntos que operan correctamente como aquellos
+que presentan fallas, así como los casos en los que no fue posible realizar la validación
+debido a limitaciones de acceso físico.
+76
+
+Prueba de conectividad – Oficina de Gestión Comercial
+En la oficina de Gestión Comercial se realizó la verificación del estado físico de los
+puntos de red mediante el uso de un probador de cable (cable tester). En esta área se
+identificó una placa doble, correspondiente a los puntos registrados en la matriz de
+correspondencia.
+TABLA XVII. PRUEBA DE CONECTIVIDAD GESTIÓN COMERCIAL
+ELEMENTO
+DESCRIPCIÓN DEL RESULTADO EVIDENCIA FOTOGRÁFICA
+EVALUADO
+El tester confirmó la continuidad completa de los
+Placa doble: ocho hilos, indicando que la conexión desde la
+Puerto Derecho placa hasta el patch panel se encuentra operativa y
+en buen estado.
+Placa doble:
+Puerto Izquierdo
+El probador mostró falla de continuidad,
+evidenciando que uno o más hilos no presentan
+conexión adecuada. Esto indica un posible
+problema de terminación, daño en el cable o
+desconexión en el extremo del rack.
+Prueba de conectividad -Oficina de Atención al Cliente
+En el área de Atención al Cliente se realizó la validación del estado operativo de los
+puntos de red mediante el uso de un probador de cable. En este espacio se identificaron dos
+77
+
+placas: una placa doble y una placa sencilla. Cada punto fue evaluado de manera individual
+para comprobar su continuidad y correcto funcionamiento dentro de la infraestructura.
+TABLA XVIII. PRUEBA DE CONECTIVIDAD ATENCIÓN AL CLIENTE
+ELEMENTO
+EVALUADO DESCRIPCIÓN DEL RESULTADO EVIDENCIA FOTOGRÁFICA
+El probador confirmó continuidad en los ocho
+Placa doble:
+hilos, demostrando que el punto se encuentra
+Puerto Derecho
+operativo y en buen estado.
+Placa doble:
+Puerto Izquierdo
+La prueba mostró ausencia de continuidad,
+indicando que el punto no funciona y presenta falla
+en uno o más hilos.
+No se pudo realizar la verificación, ya que la placa
+está ubicada en un compartimiento cerrado que
+Placa Única:
+impide el acceso físico para conectar el probador.
+Sin foto
+Prueba de conectividad – Oficina de Gerencia
+En la oficina de Gerencia se llevó a cabo la inspección del estado y funcionamiento
+de los puntos de red utilizando un probador de cable (cable tester). En este espacio se
+identificó una placa doble instalada, la cual corresponde a los puertos previamente
+documentados en la matriz de identificación. Durante la revisión se comprobó el estado
+78
+
+individual de cada puerto mediante pruebas de continuidad, con el fin de determinar si el
+enlace entre la placa y el rack se encuentra en condiciones adecuadas para la transmisión
+de datos.
+TABLA XIX.. PRUEBA DE CONECTIVIDAD GERENCIA
+ELEMENTO
+EVALUADO DESCRIPCIÓN DEL RESULTADO EVIDENCIA FOTOGRÁFICA
+El probador de cable verificó la continuidad
+completa de los ocho hilos, confirmando que el
+Placa doble: Puerto
+punto de red se encuentra en correcto
+Derecho
+funcionamiento y con transmisión estable
+hacia el patch panel.
+Placa doble: Puerto
+Izquierdo
+La prueba mostró continuidad adecuada en
+todos los hilos, evidenciando que el puerto se
+encuentra operativo, sin fallas de terminación
+ni pérdida de enlace.
+Prueba de conectividad-Oficina de Talento Humano
+En el área de Talento Humano se realizó la revisión de todos los puntos de red
+disponibles, empleando el probador de cable (cable tester) para verificar la continuidad y el
+correcto funcionamiento de cada puerto. En esta oficina se identificaron una placa doble y
+tres placas sencillas, obteniéndose los siguientes resultados:
+79
+
+TABLA XX. PRUEBA DE CONECTIVIDAD TALENTO HUMANO
+ELEMENTO EVIDENCIA FOTOGRÁFICA
+DESCRIPCIÓN DEL RESULTADO
+EVALUADO
+El tester verificó la continuidad completa de los
+Placa doble: Puerto
+ocho hilos, indicando que el punto se encuentra
+Derecho
+en funcionamiento adecuado.
+Placa doble: Puerto
+Izquierdo
+La prueba mostró continuidad total,
+confirmando que el puerto opera correctamente
+sin fallas.
+El probador confirmó continuidad en todos los
+Placa Sencilla #1 hilos, por lo que el punto funciona
+correctamente.
+80
+
+El tester detectó falta de continuidad,
+Placa Sencilla #2 indicando que el puerto no está operativo y
+requiere revisión técnica.
+La verificación fue satisfactoria, evidenciando
+Placa Sencilla #3
+un funcionamiento adecuado del puerto.
+Prueba de conectividad-Oficina de Control interno
+En el área de Control Interno se identificó un punto de red doble, correspondiente a
+los puntos registrados previamente en la matriz de correspondencia. A través del probador
+81
+
+de cable (cable tester) se verificó el estado de cada puerto, confirmando que ambos se
+encuentran en buen funcionamiento.
+TABLA XXI. PRUEBA DE CONECTIVIDAD DE CONTROL INTERNO
+ELEMENTO EVIDENCIA FOTOGRÁFICA
+DESCRIPCIÓN DEL RESULTADO
+EVALUADO
+La prueba con el tester confirmó continuidad
+Placa doble: Puerto
+completa en los ocho hilos, indicando que el
+Derecho
+puerto opera correctamente.
+Placa doble: Puerto
+Izquierdo
+El tester evidenció falla de continuidad,
+mostrando que uno o varios hilos no están
+correctamente conectados. Esto indica un
+posible daño en el cable, error de terminación o
+desconexión en el rack.
+Prueba de conectividad-Oficina de Facturación
+En el área de Facturación se llevó a cabo la validación del punto de red
+correspondiente a la placa sencilla registrada en la matriz de correspondencia. Para ello, se
+82
+
+utilizó un probador de cable (cable tester) con el fin de comprobar la continuidad y correcto
+funcionamiento del enlace desde la placa hasta el patch panel.
+TABLA XXII. PRUEBA DE CONECTIVIDAD DE FACTURACIÓN
+ELEMENTO EVIDENCIA FOTOGRÁFICA
+DESCRIPCIÓN DEL RESULTADO
+EVALUADO
+El probador indicó ausencia de continuidad en
+uno o más hilos, lo que confirma que el punto de
+Placa única red no se encuentra operativo. Esto puede
+deberse a un daño en el cable, una terminación
+incorrecta o desconexión en el rack.
+Prueba de conectividad-Oficina de Contabilidad
+En el área de Contabilidad se realizó la comprobación del estado operativo de los
+puntos de red utilizando un probador de cable (cable tester). Durante la inspección se
+identificaron dos placas: una placa doble, cuyos dos puertos presentan fallas, y una placa
+sencilla, la cual demostró estar en correcto funcionamiento.
+TABLA XXIII. PRUEBA DE CONECTIVIDAD DE CONTABILIDAD
+ELEMENTO
+EVALUADO DESCRIPCIÓN DEL RESULTADO EVIDENCIA FOTOGRÁFICA
+Placa doble: Puerto
+El tester indicó ausencia total de continuidad en
+derecho
+los ocho hilos, confirmando que el punto no se
+encuentra funcional. La falla puede estar
+asociada a una mala terminación, daño en el
+cable o desconexión en el rack.
+83
+
+Placa doble: Puerto
+Izquierdo
+Al igual que el anterior, este puerto no mostró
+continuidad. Se evidencia que ninguno de los
+dos puntos de esta placa doble se encuentra
+operativo.
+La prueba confirmó continuidad completa en los
+Placa Unica ocho hilos, validando que el punto se encuentra
+funcional y en correcto estado.
+Prueba de conectividad-Oficina de Obras
+En el área de Obras se llevó a cabo la validación del estado de los puntos de red
+utilizando un probador de cable (cable tester). En esta oficina se identificaron dos placas:
+una placa doble, previamente registrada en la matriz de correspondencia, y una placa
+sencilla asociada a un único punto de red.
+TABLA XXIV . PRUEBA DE CONECTIVIDAD DE OBRAS
+EVIDENCIA
+DESCRIPCIÓN DEL RESULTADO
+FOTOGRÁFICA
+84
+
+ELEMENTO
+EVALUADO
+Placa doble:
+Puerto derecho
+El tester confirmó continuidad en los ocho
+hilos, verificando que este puerto se
+encuentra en correcto funcionamiento y con
+enlace operativo hacia el rack.
+Placa doble:
+Puerto Izquierdo
+La prueba mostró ausencia de continuidad
+en uno o más hilos, indicando que este punto
+no está funcional. Puede deberse a una
+incorrecta terminación, daño en el cable o
+desconexión en el extremo del patch panel.
+En esta placa no fue posible obtener
+evidencia fotográfica debido a que la placa
+se encuentra ubicada en un espacio que
+actualmente no permite acceso visual
+Placa Unica adecuado. La zona presenta elementos que
+impiden realizar una captura clara y precisa,
+por lo cual únicamente se registró el
+resultado técnico de la prueba realizada con
+el probador de cable. No hay fotos
+El cumplimiento de este objetivo contribuyó al fortalecimiento de las capacidades
+técnicas y metodológicas, permitiendo integrar los conocimientos adquiridos con la práctica
+profesional. El trabajo realizado deja como resultado un soporte técnico y organizativo que
+podrá ser utilizado como guía en procesos similares dentro del entorno institucional.
+Observación sobre la toma de evidencias de: Bienes y Servicios, Archivo, Planeación,
+Tesorería y jurídica.
+85
+
+En las áreas de Bienes y Servicios, Archivo, Planeación y Tesorería no fue posible
+realizar la toma fotográfica de las pruebas de conectividad de los puntos de red. Esto se
+debe a que dichos espacios se encontraban en operación continua y no era viable interrumpir
+el servicio de red, ya que los funcionarios estaban ejecutando procesos institucionales
+importantes que dependen directamente de la conectividad.
+Por esta razón, aunque se efectuaron las verificaciones necesarias con el probador
+de cable, no se pudo desconectar el cableado para obtener evidencia visual sin afectar el
+funcionamiento normal de las actividades internas. No obstante, los resultados de cada
+punto quedaron debidamente registrados en la matriz correspondiente.
+Resultado del objetivo 3. Aplicar el sistema de etiquetado estandarizado
+conforme a la norma ANSI/TIA-606-C, evidenciando su aplicación para optimizar la
+administración y el mantenimiento de la red corporativa.
+Actividades:
+ Diseño de etiquetas y codificación según la norma.
+En esta sección se presenta el formato utilizado para la identificación de gabinetes
+y racks dentro de la infraestructura de telecomunicaciones. El propósito es establecer un
+sistema de etiquetado estandarizado que facilite la localización, el mantenimiento y la
+trazabilidad de los componentes instalados.
+Con el fin de facilitar la comprensión del sistema de identificación implementado, a
+continuación, se presenta una tabla que muestra las abreviaturas y descripciones
+correspondientes a las etiquetas asignadas a cada elemento del rack.
+Tabla XXV.TABLA DE ABREVIATURAS DE EQUIPOS DEL RACK
+AD07 Rack
+AD07-39 Mikrotic
+86
+
+AD07-34 Unidad de distribución eléctrica
+AD07-32 Switch#1
+AD07-31 Gestor de cables superior
+AD07-29 Patch Panel 48 puertos #1
+AD07-27 Gestor de cables intermedio
+AD07-25 Switch de acceso 2
+AD07-24 Patch Panel 16 puertos #2
+AD07-23 Gestor de cables inferior
+AD07-22 Switch de acceso #3
+AD07-20 Panel de fibra
+AD07-12 Unidad de distribución eléctrica inferior
+AD07-1 Servidor principal
+Esta relación permite identificar de forma rápida y clara la función o ubicación de
+cada componente dentro de la estructura del gabinete, manteniendo coherencia con la
+nomenclatura establecida para el proyecto.
+A continuación, se presenta el formato de etiquetado utilizado para la identificación
+de equipos y paneles dentro del rack principal AD07, conforme a la norma ANSI/TIA-606-
+C.
+Fig. 53 Formato de etiquetado para paneles de conexión
+Visto lo anterior, donde se estableció el formato de las etiquetas para la
+identificación de gabinetes y racks, procedemos a detallar y explicar cada una de las
+etiquetas que forman parte del rack AD07.
+87
+
+Cada etiqueta asignada a los dispositivos dentro del rack refleja su posición, función
+y tipo de equipo, permitiendo una correcta identificación y trazabilidad. Esta información
+es fundamental para la administración de la infraestructura, ya que facilita la localización
+de los equipos, el mantenimiento preventivo y correctivo, así como futuras ampliaciones o
+modificaciones en la red. A continuación, se presenta la descripción de cada etiqueta y del
+dispositivo correspondiente dentro del rack, mostrando la función y la posición que ocupa
+en la estructura.
+ETIQUETAS
+}
+AD07
+Fig. 54 Etiqueta del rack
+DESCRIPCIÓN:
+Estructura metálica identificada como AD07, ubicada en el área de Gerencia. Su
+función principal es brindar soporte físico, orden y distribución a los equipos activos y
+pasivos de la red.
+DESGLOSE DEL IDENTIFICADOR:
+AD07: Identifica el rack principal del área de Gerencia.
+AD07-39
+Fig. 55 Etiqueta de la MikroTik
+DESCRIPCIÓN:
+Equipo MikroTik con etiqueta AD07-39, instalado en la posición 39U del Rack
+AD07. Actúa como router principal, encargado de enrutar y gestionar el tráfico de red,
+garantizando la correcta distribución del servicio de internet hacia los distintos switches de
+acceso.
+88
+
+DESGLOSE DEL IDENTIFICADOR:
+AD07: Indica que el equipo pertenece al rack principal de Gerencia.
+39: Señala la posición física (39U) donde está montado dentro del rack.
+Color púrpura: Identifica los dispositivos encargados de la gestión de red y enrutamiento
+principal.
+La documentación correspondiente a esta actividad fue incorporada en el anexo
+del Objetivo 3, dentro del documento titulado “Tercer Objetivo”. Allí se incluyó toda la
+información detallada, organizada y respaldada mediante los registros obtenidos durante
+el desarrollo de las actividades asociadas a este objetivo.
+FORMATO DE ETIQUETADO DE IDENTIFICADORES PARA PUERTOS DE
+EQUIPOS ACTIVOS
+Con el propósito de mantener una identificación clara y estandarizada de los equipos
+que conforman el rack, se implementó un formato de etiquetado específico para los puertos
+de los equipos activos. Este sistema permite reconocer de forma precisa el dispositivo, el
+puerto físico y la función asignada, garantizando una correcta trazabilidad de las conexiones
+y facilitando el mantenimiento de la red.
+A continuación, se mostrará la estructura general de cómo se realiza el etiquetado
+para la identificación de los puertos en los diferentes equipos.
+89
+
+Fig. 56 Estructura general para los puertos
+
+A continuación, se detalla el etiquetado aplicado a cada equipo activo (Puertos) instalado
+en el rack:
+
+ETIQUETAS PARA LOS PUERTOS DE LA MIKROTIK
+
+El router MikroTik RB3011UiAS-RM se encuentra instalado en la posición 39 U
+del rack AD07. Este equipo cuenta con 10 puertos Ethernet Gigabit, 1 puerto SFP para fibra
+óptica y 1 puerto USB 3.0, destinados a la gestión del tráfico de red y la conexión hacia los
+diferentes switches de distribución.
+TABLA XXVI. ETIQUETAS PARA LOS PUERTOS DE LA MIKROTIK
+|             |             |             |             |
+| ----------- | ----------- | ----------- | ----------- |
+| AD07-39:01  | AD07-39:02  | AD07-39:03  | AD07-39:04  |
+|             |             |             |             |
+AD07-39:07
+| AD07-39:05  | AD07-39:06  |              | AD07-39:08  |
+| ----------- | ----------- | ------------ | ----------- |
+|             |             |              |             |
+| AD07-39:09  | AD07-39:10  | AD07-39-SFP  | AD07-39-C   |
+
+ETIQUETAS PARA LOS PUERTOS DEL SWITCH TL-SG3428 #1
+
+90
+
+El switch TL-SG3428 está instalado en la posición 32 U del rack AD07. Es un
+equipo gestionado de capa L2 con 24 puertos Gigabit RJ-45 y 4 ranuras SFP para enlaces
+de fibra, diseñado para distribuir la conectividad hacia los usuarios finales.
+
+TABLA XXVII. ETIQUETAS DE LOS PUERTOS DEL SWITCH TL-SG3428 #1
+|     |     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+AD07-32:04
+| AD07-32:01    |     | AD07-32:02  |     | AD07-32:03  |     |               |     |
+| ------------- | --- | ----------- | --- | ----------- | --- | ------------- | --- |
+|               |     |             |     |             |     |               |     |
+| AD07-32:05    |     | AD07-32:06  |     | AD07-32:07  |     | AD07-32:08    |     |
+|               |     |             |     |             |     |               |     |
+| AD07-32:09    |     | AD07-32:10  |     | AD07-32:11  |     | AD07-32:12    |     |
+|               |     |             |     |             |     |               |     |
+| AD07-32:13    |     | AD07-32:14  |     | AD07-32:15  |     | AD07-32:16    |     |
+|               |     |             |     |             |     |               |     |
+| AD07-32:17    |     | AD07-32:18  |     | AD07-32:19  |     | AD07-32:20    |     |
+|   AD07-32:21  |     |             |     |             |     |   AD07-32:24  |     |
+|               |     | AD07-32:22  |     | AD07-32:23  |     |               |     |
+|               |     |             |     |             |     |               |     |
+| AD07-32:25    |     | AD07-32:26  |     |             |     | AD07-32:28    |     |
+AD07-32:27
+  AD07-32-C
+
+ETIQUETAS PARA LOS PUERTOS DEL PATCH PANEL DE 48 PUERTOS
+
+El Patch Panel de 48 puertos se encuentra instalado en la posición 29 U del rack
+AD07. Este elemento actúa como punto central de terminación del cableado horizontal,
+permitiendo la interconexión entre los equipos activos y los puntos de red distribuidos en
+las diferentes áreas.
+TABLA XXVIII . ETIQUETAS PARA LOS PUERTOS DEL PATCH PANEL DE 48 PUERTOS
+|             |     |             |     |     |     |             |     |
+| ----------- | --- | ----------- | --- | --- | --- | ----------- | --- |
+| AD07-29:01  |     | AD07-29:02  |     |     |     | AD07-29:04  |     |
+AD07-29:03
+|             |     |             |     |             |     |             |     |
+| ----------- | --- | ----------- | --- | ----------- | --- | ----------- | --- |
+| AD07-29:05  |     | AD07-29:06  |     | AD07-29:07  |     | AD07-29:08  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-29:09  |     | AD07-29:10  |     | AD07-29:11  |     | AD07-29:12  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-29:13  |     | AD07-29:14  |     | AD07-29:15  |     | AD07-29:16  |     |
+|             |     |             |     |             |     |             |     |
+AD07-29:19
+| AD07-29:17  |     | AD07-29:18  |     |     |     | AD07-29:20  |     |
+| ----------- | --- | ----------- | --- | --- | --- | ----------- | --- |
+91
+
+|             |     |             |     |             |     |             |     |
+| ----------- | --- | ----------- | --- | ----------- | --- | ----------- | --- |
+| AD07-29:21  |     | AD07-29:22  |     | AD07-29:23  |     | AD07-29:24  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-29:25  |     | AD07-29:26  |     | AD07-29:27  |     | AD07-29:28  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-29:29  |     | AD07-29:30  |     | AD07-29:31  |     | AD07-29:32  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-29:33  |     | AD07-29:34  |     | AD07-29:35  |     | AD07-29:36  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-29:37  |     | AD07-29:38  |     | AD07-29:39  |     | AD07-29:40  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-29:41  |     | AD07-29:42  |     |             |     | AD07-29:44  |     |
+AD07-29:43
+|             |     |             |     |             |     |             |     |
+| ----------- | --- | ----------- | --- | ----------- | --- | ----------- | --- |
+| AD07-29:45  |     | AD07-29:46  |     | AD07-29:47  |     | AD07-29:48  |     |
+
+ETIQUETAS PARA LOS PUERTOS DEL SWITCH TL-SG3428 #2
+El switch TP-Link TL-SG3428 #2 se encuentra instalado en la posición 25 U del
+rack AD07. Es un equipo gestionado de capa 2 con 24 puertos Gigabit RJ-45 y 4 ranuras
+SFP para enlaces de fibra óptica. Su función principal es distribuir la conectividad de red
+hacia  los  puntos  del  Piso  2,  garantizando  un  rendimiento  estable  y  eficiente  en  la
+transmisión de datos.
+
+TABLA XXIX. ETIQUETAS PARA LOS PUERTOS DEL SWITCH TL-SG3428 #2
+|             |     |             |     |             |     |             |     |
+| ----------- | --- | ----------- | --- | ----------- | --- | ----------- | --- |
+| AD07-25:01  |     | AD07-25:02  |     | AD07-25:03  |     | AD07-25:04  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-25:05  |     | AD07-25:06  |     | AD07-25:07  |     | AD07-25:08  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-25:09  |     | AD07-25:10  |     | AD07-25:11  |     | AD07-25:12  |     |
+|             |     |             |     |             |     |             |     |
+| AD07-25:13  |     | AD07-25:14  |     | AD07-25:15  |     | AD07-25:16  |     |
+|             |     |             |     |             |     |             |     |
+AD07-25:19
+| AD07-25:17  |     | AD07-25:18  |     |             |     | AD07-25:20  |     |
+| ----------- | --- | ----------- | --- | ----------- | --- | ----------- | --- |
+|             |     |             |     |             |     |             |     |
+|             |     | AD07-25:22  |     | AD07-25:23  |     | AD07-25:24  |     |
+AD07-25:21
+|             |     |             |     |             |     |             |     |
+| ----------- | --- | ----------- | --- | ----------- | --- | ----------- | --- |
+| AD07-25:25  |     | AD07-25:26  |     | AD07-25:27  |     | AD07-25:28  |     |
+92
+
+AD07-25-C
+
+ETIQUETAS PARA LOS PUERTOS EL PATCH PANEL DE 16 PUERTOS
+
+El Patch Panel de 16 puertos se encuentra instalado en la posición 24 U del rack
+AD07. Este panel sirve como punto de terminación del cableado horizontal correspondiente
+al Piso 2, permitiendo la interconexión entre los puntos de red y el Switch TP-Link TL-
+SG3428 #2.
+
+TABLA XXX . ETIQUETAS PARA LOS PUERTOS DEL PATCH PANEL DE 16 PUERTOS
+|             |             |             |             |
+| ----------- | ----------- | ----------- | ----------- |
+| AD07-24:01  | AD07-24:02  | AD07-24:03  | AD07-24:04  |
+|             |             |             |             |
+| AD07-24:05  | AD07-24:06  | AD07-24:07  | AD07-24:08  |
+|             |             |             |             |
+| AD07-24:09  | AD07-24:10  | AD07-24:11  | AD07-24:12  |
+|             |             |             |             |
+| AD07-24:13  | AD07-24:14  | AD07-24:15  | AD07-24:16  |
+ETIQUETAS PARA LOS PUERTOS EL SWITCH 3COM BASELINE
+
+El Switch 3Com Baseline de 22 puertos Ethernet se encuentra instalado en la
+posición  22  U  del  rack  AD07.  Este  dispositivo,  de  tipo  no  gestionado,  permite  la
+interconexión de equipos de usuario y dispositivos secundarios, ampliando la capacidad de
+distribución de red dentro del sistema de cableado estructurado.
+
+TABLA XXXI . ETIQUETAS PARA LOS PUERTOS DE SWITCH 3COM BASELINE
+|             |             |             |             |
+| ----------- | ----------- | ----------- | ----------- |
+| AD07-22:01  | AD07-22:02  | AD07-22:03  | AD07-22:04  |
+|             |             |             |             |
+|             | AD07-22:06  | AD07-22:07  |             |
+| AD07-22:05  |             |             | AD07-22:08  |
+|             |             |             |             |
+| AD07-22:09  | AD07-22:10  | AD07-22:11  | AD07-22:12  |
+93
+
+|             |             |             |             |
+| ----------- | ----------- | ----------- | ----------- |
+| AD07-22:13  | AD07-22:14  | AD07-22:15  | AD07-22:16  |
+|             |             |             |             |
+|             | AD07-22:18  | AD07-22:19  | AD07-22:20  |
+AD07-22:17
+|             |             |     |     |
+| ----------- | ----------- | --- | --- |
+| AD07-22:21  | AD07-22:22  |     |     |
+
+FORMATO DE ETIQUETADO DE IDENTIFICADORES DE CABLES ENTRE
+PANELES DE CONEXIÓN
+
+En esta sección se procederá a definir el formato de etiquetado para los cables que
+interconectan los distintos paneles de conexión dentro de la infraestructura de red. Este
+formato estandarizado permite identificar de manera clara cada cable, indicando su origen,
+destino y función, lo que facilita la trazabilidad y gestión de las conexiones entre los patch
+panels y los dispositivos de red.
+El uso de etiquetas únicas en cada cable garantiza una administración organizada y
+eficiente, evitando confusiones durante las tareas de mantenimiento, reorganización o
+ampliación de la red. Cada identificador se construye combinando abreviaturas y números
+que reflejan la ubicación de los paneles y la secuencia de conexión, asegurando que
+cualquier técnico pueda reconocer rápidamente la ruta y función de cada cable.
+A continuación, se mostrará la estructura del etiquetado de los cables entre paneles
+de conexión y los criterios utilizados para su asignación.
+94
+
+Fig. 57Formato para el etiquetado de los Patch cords
+Visto lo anterior, donde se definió el formato de etiquetado para los cables que
+interconectan los distintos paneles de conexión, a continuación, se procederá a detallar el
+desglose de cada etiqueta.
+ETIQUETAS
+AD07-29:3 \ AD07-32:P2
+Fig. 58 Etiqueta de Patch Cord #1
+DESCRIPCIÓN:
+Patch cord que conecta el puerto 3 del Patch Panel 29 con el puerto P2 del Switch
+32, en el rack AD07.
+DESGLOSE DEL IDENTIFICADOR:
+ AD07: Identifica el rack de origen donde están instalados el patch panel y el
+switch.
+ 29: Corresponde al panel de conexión (patch panel de salida).
+95
+
+ 3: Indica el puerto de salida del patch panel.
+ 32: Señala el switch de destino dentro del mismo rack.
+ P2: Es el puerto de llegada en el switch.
+AD07-29:4 \ AD07-32:P3
+Fig. 59 Etiqueta de Patch Cord #2
+DESCRIPCIÓN:
+Patch cord que conecta el puerto 4 del Patch Panel 29 con el puerto P3 del Switch
+32, en el rack AD07.
+DESGLOSE DEL IDENTIFICADOR:
+ AD07: Rack principal del sistema de cableado.
+ 29: Panel de conexión.
+ 4: Puerto de salida del patch panel.
+ 32: Switch destino.
+ P3: Puerto de llegada en el switch.
+La documentación correspondiente a esta actividad fue incorporada en el anexo
+del Objetivo 3, dentro del documento titulado “Tercer Objetivo”. Allí se incluyó toda la
+información detallada, organizada y respaldada mediante los registros obtenidos durante
+el desarrollo de las actividades asociadas a este objetivo.
+96
+
+ETIQUETAS DE ENLACE ENTRE DISPOSITIVOS DE RED
+A continuación, se presenta la estructura utilizada para la identificación de los cables
+de conexión dentro de la infraestructura de red. Etiquetar correctamente cada cable es
+fundamental, ya que permite un control organizado y trazable de las conexiones, facilitando
+tareas de mantenimiento, expansión y solución de fallas. La nomenclatura adoptada sigue
+las recomendaciones de la norma ANSI/TIA-606-C, la cual establece estándares para la
+administración de infraestructura de telecomunicaciones en edificios comerciales.
+Este formato define claramente el origen y destino de cada cable, indicando el
+equipo, el puerto y su correspondiente conexión, lo que garantiza que cualquier técnico o
+administrador de la red pueda identificar rápida y fácilmente cada punto de conexión.
+Fig. 60 Formato de etiquetas de cables de conexión
+Una vez conocido el formato general para la identificación de los cables de
+conexión, a continuación, se presentará el desglose de cada etiqueta utilizada en las
+conexiones del rack de la empresa. Este análisis permitirá comprender el significado de
+cada abreviatura y número dentro del identificador, especificando el equipo de origen,
+puerto, equipo de destino y puerto correspondiente.
+De esta manera, se asegura que cada conexión pueda ser interpretada de forma clara
+y precisa, facilitando la gestión, mantenimiento y trazabilidad de la infraestructura de red,
+de acuerdo con las normas de administración de cableado estructurado ANSI/TIA-606-C.
+97
+
+ETIQUETAS
+AD07-39:02 / 1:01
+Fig. 61 86-conexión #1
+DESCRIPCIÓN:
+Patch cord que conecta el puerto 2 del MikroTik (AD07-39) con el puerto 1 del
+Servidor principal (AD07-1) dentro del rack AD07.
+DESGLOSE DEL IDENTIFICADOR:
+ AD07: Identifica el rack de origen.
+ 39: Equipo de origen, el MikroTik.
+ 2: Puerto de salida del MikroTik.
+ 1: Equipo de destino, el Servidor principal.
+ 1: Puerto de llegada en el Servidor principal.
+AD07-39:03 / ISP01:WAN1
+Fig. 62 Conexión #2
+DESCRIPCIÓN:
+Patch cord que conecta el puerto 3 del MikroTik (AD07-39) con el puerto WAN1
+del equipo ISP01 (router del proveedor de Internet) dentro del rack AD07.
+DESGLOSE DEL IDENTIFICADOR:
+ AD07: Identifica el rack de origen.
+ 39: Equipo de origen, el MikroTik.
+98
+
+ 3: Puerto de salida del MikroTik.
+ ISP01: Equipo de destino, router del proveedor de Internet.
+ WAN1: Puerto de llegada en ISP01.
+La documentación correspondiente a esta actividad fue incorporada en el anexo
+del Objetivo 3, dentro del documento titulado “Tercer Objetivo”. Allí se incluyó toda la
+información detallada, organizada y respaldada mediante los registros obtenidos durante
+el desarrollo de las actividades asociadas a este objetivo.
+El uso de etiquetas estandarizadas para cada conexión dentro del rack AD07 permite
+una identificación clara y rápida de los dispositivos y puertos involucrados en la
+infraestructura de red. Cada etiqueta, desglosada por rack, equipo, puerto de origen y puerto
+de destino, garantiza trazabilidad, organización y mantenimiento eficiente de la red.
+Gracias a este sistema, cualquier intervención futura, ya sea para ampliar la red,
+reemplazar equipos o solucionar falla, se puede realizar con precisión y menor riesgo de
+errores, evitando confusiones entre múltiples dispositivos y conexiones. La documentación
+detallada de cada cableado y puerto, como se presenta en las etiquetas, constituye una
+práctica recomendada según las normas ANSI/TIA-606-C, asegurando así una
+infraestructura profesional y fácilmente gestionable.
+APLICACIÓN DE ETIQUETAS EN RACK, CABLES Y EQUIPOS
+En esta fase se lleva a cabo la aplicación real del sistema de etiquetado estandarizado
+conforme a la norma ANSI/TIA-606-C, tanto en la infraestructura física como en el plano
+digital de la red elaborado en AutoCAD.
+En la parte física, se procede a colocar las etiquetas en todos los elementos del rack
+AD07, incluyendo el router MikroTik, los switches, la regleta PDU, el servidor, los patch
+panels y los accesorios de gestión. Cada equipo es identificado con su respectiva
+99
+
+nomenclatura según la ubicación, función y jerarquía establecida en el sistema de
+codificación.
+Seguidamente, se etiquetan los patch cords que interconectan switches, routers y
+patch panels. Cada cable recibe una etiqueta en ambos extremos, indicando claramente su
+origen y destino, lo que permite mantener una trazabilidad completa de cada enlace. Del
+mismo modo, se rotulan los puertos de los patch panels y los puntos de red distribuidos en
+las diferentes áreas de la empresa, garantizando que la identificación física coincida con la
+documentación oficial.
+Paralelamente, esta misma codificación se aplica al plano de la red en AutoCAD,
+donde se incorporan las etiquetas correspondientes a cada equipo, cableado y punto de red.
+Esto asegura que la representación digital refleje con precisión la disposición física y facilite
+futuras tareas de mantenimiento, control y expansión de la red.
+Esta actividad permite estandarizar visual y documentalmente la infraestructura,
+manteniendo coherencia entre lo que está instalado físicamente y lo que está documentado
+en el plano, cumpliendo así con los lineamientos de la norma ANSI/TIA-606-C.
+ETIQUETADO DE LOS PUNTOS GENERALES
+En la siguiente imagen se puede evidenciar el etiquetado de la MikroTik, donde se
+muestran claramente los puertos con sus respectivas etiquetas, la etiqueta general del equipo
+y las conexiones identificadas. Esta representación permite visualizar de manera precisa
+cómo se ha documentado cada punto de conexión.
+100
+
+Fig. 63 Etiquetado del equipo MikroTik
+En esta imagen se evidencia el etiquetado de la Unidad de Distribución Eléctrica
+(PDU) instalada en el rack AD07. Se identifica la etiqueta general del equipo, aplicada de
+acuerdo con la nomenclatura definida en la norma ANSI/TIA-606-C, garantizando
+uniformidad en el sistema de identificación. Este etiquetado permite reconocer fácilmente
+la ubicación y función del PDU dentro del rack, contribuyendo a una organización clara y
+estandarizada de la infraestructura.
+Fig. 64 Etiquetado para el equipo de la PDU
+En esta imagen se observa el etiquetado del switch, donde se distinguen la etiqueta
+general del equipo, los puertos identificados y las conexiones correctamente marcadas
+según la nomenclatura establecida. Este proceso garantiza la trazabilidad y organización
+del cableado, permitiendo ubicar de forma precisa cada enlace dentro del rack AD07. La
+aplicación del sistema de identificación facilita las labores de mantenimiento,
+administración y futuras expansiones de la red.
+101
+
+Fig. 65 Etiquetado del Switch #1
+Fig. 66 Etiquetado del Switch #1
+En esta imagen se aprecia el etiquetado del gestor de cables, elemento destinado a
+mantener la organización y canalización del cableado estructurado dentro del rack AD07.
+Se ha identificado el equipo con su etiqueta correspondiente, respetando la nomenclatura
+definida en la norma ANSI/TIA-606-C.
+Fig. 67Etiquetado del elemento Gestor de cable s#1
+102
+
+En esta imagen se muestra el etiquetado del patch panel, donde se identifican la
+etiqueta general del equipo y los puertos numerados con su respectiva nomenclatura, según
+el sistema de identificación definido. Cada punto de conexión ha sido organizado y
+documentado para garantizar una trazabilidad precisa entre el origen y el destino del
+cableado dentro del rack AD07.
+Fig. 68 Etiquetado para el equipo Patch panel #1
+Fig. 69 Etiquetado para el equipo Patch panel
+En esta imagen se aprecia el etiquetado del gestor de cables intermedio, el cual
+cumple la función de canalizar y ordenar el cableado horizontal y vertical dentro del rack
+AD07. Se aplicó la etiqueta identificadora del equipo conforme a la nomenclatura
+establecida por la norma ANSI/TIA-606-C, asegurando uniformidad en todo el sistema.
+103
+
+Fig. 70 Etiquetado para el Gestor de cables intermedio
+En esta imagen se observa el etiquetado del Switch de acceso #2, donde se
+distinguen claramente la etiqueta general del equipo, los puertos identificados y las
+conexiones debidamente marcadas según la nomenclatura definida en la norma ANSI/TIA-
+606-C.
+Fig. 71 73 Etiquetado del equipo Switch #2
+En esta imagen se muestra el etiquetado del Patch Panel #2, donde se identifican la
+etiqueta general del equipo y los puertos numerados conforme a la nomenclatura
+establecida. Cada punto de conexión ha sido organizado de manera que se garantice una
+trazabilidad clara entre el origen y destino de los cables dentro del rack AD07.
+Fig. 72 Etiquetado para el Patch panel #2
+En esta imagen se evidencia el etiquetado del gestor de cables inferior (#3),
+componente encargado de mantener la organización y distribución adecuada del cableado
+en la parte baja del rack AD07. Se aplicó la etiqueta identificadora del equipo conforme a
+104
+
+la nomenclatura establecida por la norma ANSI/TIA-606-C, garantizando coherencia en el
+sistema de identificación.
+Fig. 73 Etiquetado para el Gestor de cables inferior
+En esta imagen se observa el etiquetado del Switch #3, dispositivo activo encargado
+de la conmutación y distribución del tráfico de red entre los distintos puntos de conexión
+del rack AD07. La identificación se realizó siguiendo la nomenclatura establecida por la
+norma ANSI/TIA-606-C, etiquetando los puertos generales del equipo y registrando la
+etiqueta general del equipo.
+Fig. 74 Etiquetado del Switch #3
+En esta imagen se aprecia la PDU #2 (Power Distribution Unit), elemento encargado
+de distribuir la energía eléctrica de manera organizada y segura hacia los distintos equipos
+instalados en el rack AD07. Su presencia garantiza una alimentación estable y facilita el
+control de los consumos eléctricos dentro del sistema. Aunque este componente no requiere
+Fig. 75 Etiquetado para el equipo PDU #2
+105
+
+En esta imagen se observa el servidor principal, componente esencial dentro del rack
+AD07 encargado de gestionar los servicios y aplicaciones de red. Se aplicó el etiquetado
+correspondiente, identificando claramente el equipo y sus conexiones hacia el switch,
+siguiendo la norma ANSI/TIA-606-C.
+Fig. 76 Etiquetado para el servidor
+En esta imagen se aprecia la caja de fibra óptica, elemento destinado a la distribución
+y resguardo de los hilos de fibra que interconectan los diferentes equipos del rack con otros
+puntos de la red. Se implementó el etiquetado correspondiente, identificando las entradas y
+salidas de fibra.
+Fig. 77 Etiquetado para la caja de fibra óptica
+106
+
+ETIQUETADO GENERAL DE LOS PUNTOS DE RED
+ETIQUETADO EN EL AREA DE GESTION COMERCIAL
+En la siguiente imagen se presenta la distribución del área de Gestión Comercial,
+donde se pueden observar los puntos de red instalados en las distintas estaciones de trabajo.
+Posteriormente, se detallan las placas de red correspondientes a esta área, mostrando
+su etiquetado e identificación conforme a la norma ANSI/TIA-606-C, tanto en el patch
+panel como en los puntos finales.
+Fig. 78 Distribución del Área de Gestión comercial
+En esta área se identificaron los siguientes aspectos relevantes respecto a la instalación
+de puntos de red:
+ Se dispone de una placa doble y una placa sencilla instaladas en las estaciones de
+trabajo.
+ Ambas placas están conectadas al mismo puerto del rack (puerto 6).
+ En la placa doble, solo uno de los conectores RJ45 está funcional, mientras que el
+segundo no presenta continuidad.
+107
+
+ETIQUETADO EN EL AREA DE SERVICIO AL CLIENTE
+En la imagen se muestra la distribución del área de Atención al Cliente, donde se
+visualizan los puntos de red instalados en cada estación de trabajo. Seguidamente, se
+presentan las placas de red identificadas, evidenciando su etiquetado y organización
+conforme a la norma ANSI/TIA-606-C, tanto en el patch panel como en los puntos
+terminales.
+Fig. 79 Distribución del Área de Servicio al cliente
+En esta zona se registraron las siguientes observaciones relacionadas con la instalación
+de los puntos de red:
+ Se cuenta con una placa doble y una placa sencilla ubicadas en las estaciones de
+trabajo.
+ La placa doble presenta ambos conectores RJ45 funcionales, aunque comparten el
+mismo puerto del switch, lo cual no es lo más recomendable según la normativa
+ANSI/TIA-606-C.
+ La placa sencilla está conectada a un puerto diferente, funcionando correctamente y
+con buena continuidad.
+108
+
+ Se implementó un etiquetado e identificación conforme a la norma ANSI/TIA-606-
+C, garantizando la trazabilidad y correcta organización de los puntos de red.
+ETIQUETADO EN EL AREA de TALENTO HUMANO
+En la imagen correspondiente al área de Talento Humano, se aprecia la disposición
+de los puntos de red asignados a los diferentes puestos de trabajo.
+Posteriormente, se detalla el etiquetado individual de cada placa, siguiendo los
+lineamientos de la norma ANSI/TIA-606-C.
+Fig. 80 Distribución del área de Talento Humano
+En esta sección se identificaron varios puntos de red instalados en las diferentes
+estaciones de trabajo, con las siguientes observaciones:
+ Se cuenta con una placa doble, cuyos dos conectores RJ45 están operativos,
+aunque comparten el mismo puerto del switch, lo cual no cumple totalmente con
+las recomendaciones de la norma ANSI/TIA-606-C.
+ Además, existen tres placas sencillas:
+o Una conectada a un puerto diferente del switch, en correcto
+funcionamiento.
+109
+
+o Otra asociada a un puerto distinto, también operativa.
+o Y una última placa sencilla que no presenta continuidad ni conexión activa.
+ Todas las placas cuentan con etiquetado visible y ordenado, conforme a la norma
+ANSI/TIA-606-C, lo que facilita la trazabilidad del cableado y el mantenimiento
+del sistema.
+ETIQUETADO EN EL AREA DE TESORERIA
+En la imagen correspondiente al área de Tesorería se observa la disposición de los
+puntos de red ubicados en las estaciones de trabajo asignadas.
+Fig. 81 Distribución del área de Tesorería
+En la imagen correspondiente al área de Tesorería se puede observar la disposición y
+organización de los puntos de red instalados. En este espacio se identificaron las
+siguientes configuraciones:
+ Se cuenta con una placa doble cuyos dos puertos comparten el mismo hilo y
+presentan funcionalidad en ambos conectores.
+110
+
+ Existe una segunda placa doble, también con pares compartidos, la cual está
+asociada a un puerto diferente al de la primera.
+ Finalmente, se identificó una placa sencilla conectada directamente a la MikroTik,
+sin pasar por el switch, utilizando un puerto dedicado e independiente.
+ETIQUETADO EN EL AREA DE GERENCIA
+En la imagen correspondiente al área de Gerencia se observa la ubicación de los
+puntos de red instalados en el mismo espacio donde se encuentra el rack principal.
+Posteriormente, se detalla el etiquetado de cada conexión, realizado conforme a la norma
+ANSI/TIA-606-C, tanto en los puertos del rack como en las placas de red.
+Fig. 82 Distribución del área de Gerencia
+En el área de Gerencia, donde se encuentra el rack principal, se identificaron los
+siguientes puntos de red:
+ Una placa doble, cuyos dos puertos comparten hilos y se encuentran en correcto
+funcionamiento.
+ Las conexiones están etiquetadas e identificadas según la norma ANSI/TIA-606-
+C, garantizando la organización dentro del sistema.
+111
+
+ETIQUETADO EN EL AREA DE CONTROL INTERNO
+En la imagen correspondiente al área de Control Interno se observa la instalación de
+un punto de red doble, destinada a la conexión del equipo de trabajo de esta dependencia.
+Dicha placa se encuentra correctamente etiquetada e identificada conforme a la norma
+ANSI/TIA-606-C, garantizando su trazabilidad dentro del sistema y el orden en la
+distribución del cableado estructurado.
+Fig. 83 Etiquetado del área de Control interno
+En el área de Control Interno se identificaron las siguientes características:
+ Una placa doble, cuyos dos puertos comparten hilos.
+ Un puerto funcional y otro sin continuidad.
+ El punto se encuentra etiquetado e identificado conforme a la norma ANSI/TIA-
+606.
+112
+
+ETIQUETADO EN EL AREA DE BIENES Y SERVICIOS
+En la imagen correspondiente al área de Bienes y Servicios se observa la instalación
+de placas de red, destinada a la conexión de los equipos de trabajo de esta dependencia.
+Dichas placas se encuentran correctamente etiquetada e identificada conforme a la norma
+ANSI/TIA-606-C, asegurando un orden en el sistema y manteniendo en la distribución del
+cableado estructurado.
+Fig. 84 Etiquetado del área de Bienes y Servicios
+En la imagen correspondiente al área de Bienes y Servicios se puede observar la
+disposición y organización de los puntos de red instalados. En este espacio se identificaron
+las siguientes configuraciones:
+ Se cuenta con una primera placa sencilla, cuyo único puerto se encuentra funcional,
+destinada a uno de los equipos de trabajo de la dependencia con su correcta etiqueta
+conforme a la norma ANSI/TIA-606-C
+113
+
+ Existe una segunda placa sencilla, también con un único puerto funcional, con su
+correcta etiqueta conforme a la norma ANSI/TIA-606-C
+ETIQUETADO EN EL AREA DE FACTURACION
+En la imagen correspondiente al área de Facturación se observa la instalación de un
+punto de red, destinadas a la conexión de los equipos de trabajo de esta dependencia. La
+placa se encuentra correctamente etiquetada e identificadas conforme a la norma
+ANSI/TIA-606-C.
+Fig. 85 Etiquetado en el área de Facturación
+En la imagen correspondiente al área de Facturación se puede observar la
+disposición y organización de los puntos de red instalados. En este espacio se identificaron
+las siguientes observaciones:
+• Se cuenta con una placa sencilla destinada a la conexión de los equipos de trabajo de la
+114
+
+dependencia, la cual no presenta continuidad, por lo que actualmente no permite la
+comunicación con la red.
+ETIQUETADO EN EL AREA DE CONTABILIDAD
+En la imagen correspondiente al área de Contabilidad se observa la instalación de
+las placas de red destinadas a la conexión de los equipos de trabajo de esta dependencia.
+Las placas se encuentran correctamente etiquetadas e identificadas conforme a la norma
+ANSI/TIA-606-C.
+Fig. 86 Etiquetado en el área de Contabilidad
+En la imagen correspondiente al área de Contabilidad se puede observar la
+disposición y organización de los puntos de red instalados. En este espacio se identificaron
+las siguientes configuraciones:
+• Se cuenta con una placa doble, cuyos dos puertos no presentan funcionamiento, por lo que
+actualmente no permiten la conexión de equipos a la red.
+115
+
+• Existe una placa sencilla, cuyo único puerto se encuentra funcional, destinada a la
+conexión de un equipo de trabajo de la dependencia.
+ETIQUETADO EN EL AREA DE OBRAS
+En la imagen correspondiente al área de Obras se observa la instalación de las placas
+de red destinadas a la conexión de los equipos de trabajo de esta dependencia.
+Fig. 87 Etiquetado en el área de Obras
+En la imagen correspondiente al área de Obras se puede observar la disposición y
+organización de los puntos de red instalados. En este espacio se identificaron las siguientes
+configuraciones:
+ Se cuenta con una placa sencilla, cuyo único puerto se encuentra funcional,
+conectada a un equipo de trabajo.
+ Existe una placa doble, cuyos dos puertos funcionan correctamente y comparten los
+mismos hilos, permitiendo la conexión de dos equipos de manera simultánea.
+116
+
+ETIQUETA DEL AREA DE PLANEACION
+En la imagen correspondiente al área de Planeación se observa la instalación de un
+punto de red, destinada a la conexión del equipo de trabajo de esta dependencia. La placa
+se encuentra correctamente etiquetada e identificada conforme a la norma ANSI/TIA-606-
+C, garantizando el orden en la distribución del cableado estructurado y facilitando la
+localización de la conexión dentro del sistema.
+Fig. 88 Etiquetado en el área de Planeación
+En la imagen correspondiente al área de Planeación se puede observar la disposición
+y organización del punto de red instalado. En este espacio se identificaron las siguientes
+configuraciones:
+• Se cuenta con una placa sencilla, cuyo único puerto se encuentra funcional, destinada a la
+conexión del equipo de trabajo de la dependencia.
+ETIQUETA DEL ÁREA DE ARCHIVO
+En la imagen correspondiente al área de Archivo se observa la instalación de un
+punto de red, destinada a la conexión del equipo de trabajo de esta dependencia.
+117
+
+Fig. 89 Etiquetado en el área de Archivo
+En la imagen correspondiente al área de Archivo se puede observar la disposición y
+organización del punto de red instalado. En este espacio se identificaron las siguientes
+configuraciones:
+• Se cuenta con un punto de red sencilla, cuyo único puerto no presenta funcionamiento,
+por lo que actualmente no permite la conexión del equipo de trabajo de la dependencia.
+PROCESO REALIZADO PARA EL PEINADO Y ORGANIZACIÓN DEL
+CABLEADO DEL RACK
+Con el fin de mejorar la organización, funcionalidad y mantenimiento del rack de
+telecomunicaciones, se llevó a cabo un proceso completo de ordenamiento y peinado del
+cableado estructurado. Este procedimiento permitió optimizar la administración de la red,
+reducir riesgos de desconexiones accidentales, mejorar la ventilación de los equipos y
+asegurar que el sistema cumpliera con las buenas prácticas recomendadas para la
+infraestructura de telecomunicaciones.
+A continuación, se describieron los pasos que se realizaron durante este proceso:
+118
+
+Pasos del proceso realizado
+Reemplazo de los patch cords existentes: El primer paso consistió en retirar los patch
+cords amarillos que estaban previamente instalados, los cuales no contaban con la categoría
+ni la resistencia necesaria. Estos fueron reemplazados por patch cords categoría 6, que
+ofrecían mayor robustez y mejores características para garantizar un desempeño adecuado
+y una conexión estable entre los equipos del rack.
+Fig. 90 Reemplazo de los Patch cords Existentes
+Posteriormente, se realizó una organización básica del cableado, acomodándolo de manera
+que no quedara doblado, tensionado o cruzado. Este orden inicial permitió evitar daños en
+los cables y facilitó el manejo durante el proceso de peinado.
+119
+
+Fig. 91 Organización del cableado
+Fig. 92 Organización del cableado
+120
+
+Fig. 93 Organización del cableado
+Fig. 94 Organización del cableado
+121
+
+Peinado del cableado: Luego, se llevó a cabo el peinado de los cables, alineándolos y
+agrupándolos siguiendo un mismo sentido. Para ello, se utilizaron amarres provisionales
+que ayudaron a mantener los cables paralelos y uniformes. Este paso mejoró la estética del
+rack, facilitó la identificación de los enlaces y redujo la interferencia visual y física dentro
+del gabinete.
+Durante el proceso de organización y adecuación del cableado en el rack de
+telecomunicaciones, se implementó el uso de amarres plásticos como método de sujeción y
+ordenamiento de los cables. Esta práctica se realizó por recomendación del ingeniero
+Álvaro, Asesor Empresarial de VConexión, quien indicó la importancia de utilizar amarres
+para mejorar la organización, reducir la tensión sobre los cables y evitar enredos que puedan
+afectar la operatividad de la red. Asimismo, se recomendó ajustar los amarres sin ejercer
+presión excesiva, garantizando la integridad del cableado y el cumplimiento de buenas
+prácticas en infraestructura de telecomunicaciones.
+Fig. 95 Peinado del cableado
+122
+
+Fig. 96 Peinado del cableado
+Fig. 97 Peinado del cableado
+123
+
+Ubicación en los gestores de cables: Después del peinado, los cables fueron acomodados
+dentro de los gestores u organizadores de cable del rack. Estos gestores permitieron
+distribuir el cableado de manera ordenada, evitando que quedara colgando o que interfiriera
+con otros dispositivos instalados.
+Fig. 98 Ubicación en los gestores de cables
+Fig. 99 Ubicación en los gestores de cables
+124
+
+Fig. 100 Ubicación en los gestores de cables
+Una vez finalizado el proceso de organización y peinado del cableado dentro del
+rack de telecomunicaciones, se realizó el etiquetado final de todos los equipos Esta etapa
+se llevó a cabo después de que los cables estuvieran acomodados, peinados y ubicados
+correctamente en los gestores, lo que permitió identificar cada elemento con mayor
+precisión.
+125
+
+Fig. 101 Etiquetado
+Fig. 102 Etiquetado
+126
+
+Fig. 103 Etiquetado
+Durante el etiquetado se marcaron los switches, patch panel, router, PDU, gestores
+de cable y enlaces, aplicando un esquema de identificación uniforme y coherente con la
+documentación del proyecto. Gracias a este proceso final, el rack quedó completamente
+organizado, documentado y preparado para facilitar futuras intervenciones, mantenimientos
+y ampliaciones de la infraestructura de red.
+Al completar todas las actividades de reorganización del rack, el sistema de
+telecomunicaciones quedó significativamente optimizado tanto a nivel estético como
+funcional. El proceso de reemplazo de patch cords, organización del cableado, peinado y
+distribución dentro de los gestores permitió dejar una infraestructura más limpia, segura y
+fácil de mantener.
+Finalmente, la aplicación del etiquetado sobre los equipos y enlaces consolidó el
+trabajo realizado, garantizando una correcta identificación de cada componente y
+facilitando la trazabilidad de la red. Gracias a este conjunto de acciones, el rack quedó
+completamente documentado, ordenado y preparado para futuras intervenciones sin generar
+impacto en la operación de la empresa.
+127
+
+Fig. 104 Etiquetado final
+128
+
+ Elaborar un manual de documentación y procedimiento de gestión
+El presente manual de documentación y procedimiento de gestión se estructura en
+diferentes secciones que permiten registrar, organizar y estandarizar toda la información
+relacionada con la infraestructura de red y el sistema de identificación implementado en el
+rack AD07. Cada ítem incluido cumple un propósito específico que contribuye a mejorar la
+trazabilidad, el orden, el mantenimiento y la correcta operación del cableado estructurado
+conforme a la norma ANSI/TIA-606-C. Esta organización meticulosa facilita la
+identificación de componentes, reduce el riesgo de errores durante intervenciones técnicas
+y asegura que cualquier modificación o ampliación futura se realice de manera coherente
+con los estándares establecidos.
+A continuación, se describirán los ítems que conforman el presente manual, detallando
+en qué se basa cada uno y explicando sus aspectos más relevantes dentro de la gestión de la
+infraestructura de red. Cada sección se presenta con el objetivo de orientar al personal
+técnico en la correcta aplicación de las prácticas recomendadas, asegurando que el uso del
+cableado estructurado, los dispositivos de red y el sistema de identificación se realice de
+manera eficiente y conforme a los estándares establecidos.
+Este análisis de los ítems no solo permite comprender la función de cada componente,
+sino que también promueve el buen uso de las prácticas documentadas, fomentando
+procedimientos ordenados y consistentes. De esta manera, el manual se convierte en una
+herramienta integral que respalda la operación, el mantenimiento y la trazabilidad de la red,
+garantizando que todas las acciones realizadas sigan criterios claros y estandarizados.
+1. Introducción: Explica el propósito del manual y la necesidad de contar con
+documentación estructurada para garantizar claridad operativa y continuidad en la
+gestión de la red.
+129
+
+2. Objetivos (General y Específicos): Definen las metas del manual, enfocándose en
+la estandarización del etiquetado, la organización del rack, la correcta identificación
+de componentes y la optimización de procesos de mantenimiento.
+3. Alcance: Delimita los componentes, áreas y elementos que fueron analizados y
+documentados. Esto asegura que la información contenida sea precisa y acorde al
+entorno real.
+4. Normas Aplicadas: Integra la ANSI/TIA-606-C y las mejores prácticas de
+cableado estructurado, garantizando que la identificación, registro y gestión de la
+infraestructura se realicen bajo estándares internacionales.
+5. Definiciones y Terminología: Establece un glosario técnico que facilita la
+comprensión uniforme de términos como rack, patch panel, punto de red, etiqueta,
+entre otros.
+6. Descripción de la Infraestructura de Red: Proporciona una visión completa del
+sistema, el inventario detallado del rack AD07 y la distribución física de los equipos.
+Esto permite una mejor administración y facilita futuras intervenciones.
+7. Sistema de Identificación: Define la estructura de etiquetado utilizada, incluyendo
+la composición de los identificadores y la relación entre rack, paneles, puertos y
+equipos de destino.
+8. Etiquetado de Puertos y Equipos del Rack AD07: Documenta los puertos
+utilizados en cada panel o switch (AD07-39, AD07-32, AD07-29, etc.), lo cual
+garantiza trazabilidad, reduce errores y facilita labores de soporte técnico.
+130
+
+9. Etiquetado para Puntos de Red: Registra de manera estandarizada todas las
+salidas de red en áreas administrativas, asegurando claridad en la conexión entre el
+cableado horizontal y el rack.
+10. Formato de Etiquetas para Cables de Conexión: Describe el modelo aplicado
+para identificar los patch cords, permitiendo conocer origen, destino, función y color
+del cable, lo que mejora el orden del rack y disminuye tiempos de diagnóstico.
+11. Control de Cambios: Establece un registro histórico de modificaciones realizadas
+a la infraestructura, garantizando actualización continua y trazabilidad del sistema
+identificado.
+12. Gestión y Mantenimiento: Incluye procedimientos preventivos y correctivos que
+buscan mantener la integridad del sistema de cableado y prolongar su vida útil.
+13. Seguridad: Presenta recomendaciones para la manipulación segura de equipos y
+cableado, condiciones del entorno, prevención de riesgos y protección de los
+componentes físicos del rack.
+La documentación correspondiente a esta actividad fue incluida en el Anexo 3, dentro
+del documento titulado “Manual de Gestión de Etiquetado EMPOPAMPLONA”. En este
+anexo se presenta de manera detallada toda la información técnica relacionada con el
+sistema de identificación y etiquetado implementado.
+131
+
+8. DISCUSIÓN
+La ejecución del proyecto permitió evidenciar la importancia de realizar un
+levantamiento detallado de la infraestructura tecnológica de EMPOPAMPLONA, ya que
+antes no existía un inventario actualizado ni una documentación técnica organizada.
+Durante la inspección física de racks, equipos y puntos de red, se identificaron
+inconsistencias en la disposición de los dispositivos, ausencia de registros previos y falta
+de estandarización en la nomenclatura utilizada, lo que dificultaba la administración y el
+mantenimiento de la red corporativa.
+La recolección de datos técnicos y la elaboración del inventario digital de activos
+tecnológicos representaron un avance significativo para la empresa, pues permitió
+centralizar información dispersa y generar una base confiable sobre el estado, ubicación y
+características de cada equipo. Este proceso también evidenció la necesidad de implementar
+controles continuos, ya que varios activos no contaban con identificación adecuada o
+presentaban condiciones físicas que requerían mantenimiento.
+La aplicación de la norma ANSI/TIA-606-C fue un componente esencial dentro del
+proyecto. La actualización de diagramas físicos y lógicos según la nomenclatura
+estandarizada facilitó la organización del cableado y mejoró la comprensión general de la
+arquitectura de red. Este proceso permitió corregir errores existentes en la documentación
+anterior y establecer una codificación clara para cables, racks, patch panels y puntos de red,
+lo que contribuye a un manejo técnico más eficiente.
+Finalmente, la elaboración del manual de documentación y procedimientos permitió
+consolidar todo el trabajo realizado, ofreciendo a EMPOPAMPLONA una herramienta
+práctica para mantener su infraestructura organizada de manera continua. Este documento
+establece pautas claras para el manejo futuro del cableado estructurado, la rotulación de
+activos, la actualización de diagramas y el control de cambios, garantizando así una gestión
+más eficiente y alineada con buenas prácticas y estándares internacionales.
+132
+
+9. CONCLUSIONES
+ Durante el levantamiento y registro de la infraestructura de red y los activos
+tecnológicos, pude generar un inventario completo y actualizado, lo cual me
+permitió tener un panorama claro del estado y las características de cada equipo,
+facilitando la planificación de mantenimientos y la gestión de los recursos
+tecnológicos.
+ Al diseñar la documentación técnica siguiendo la norma ANSI/TIA-606-C, logré
+que cada punto de red, rack y dispositivo quedara correctamente identificado y
+codificado, lo que garantiza una trazabilidad eficiente y un fácil acceso a la
+información cuando se requiera realizar modificaciones o expansiones de la red.
+ La estandarización de la nomenclatura y el etiquetado según la norma ANSI/TIA-
+606-C me permitió reducir errores, simplificar la comunicación con otros técnicos
+y asegurar que el mantenimiento de la red se realice de manera consistente y
+organizada.
+ La documentación y el etiquetado de los elementos de la red contribuyeron a
+garantizar la continuidad operativa de los servicios tecnológicos, al asegurar que la
+información crítica esté siempre disponible y que la identificación de los
+componentes sea rápida y confiable.
+ Gracias a la estandarización y codificación de la infraestructura, ahora puedo
+planificar la expansión de la red de manera ordenada, incorporando nuevos equipos
+o puntos de red sin comprometer la organización ni la eficiencia del sistema
+existente.
+133
+
+10. RECOMENDACIONES
+ Mantener actualizado el inventario de activos tecnológicos: Se recomienda realizar
+revisiones periódicas del inventario de equipos y componentes de red para asegurar
+que refleje siempre el estado real de la infraestructura y facilite la planificación de
+mantenimientos y reemplazos.
+ Seguir estrictamente los estándares ANSI/TIA-606-C: Es fundamental continuar
+aplicando las normas de codificación, etiquetado y documentación de la
+infraestructura de red, ya que esto garantiza estandarización, trazabilidad y reduce
+el riesgo de errores durante instalaciones, expansiones o mantenimientos.
+ Implementar mantenimientos preventivos y correctivos periódicos: Se sugiere
+establecer un programa sistemático de mantenimiento que incluya inspecciones
+físicas, pruebas de conectividad y verificación de hardware y software, para
+asegurar la continuidad operativa y la confiabilidad de la red.
+ Capacitar al personal en gestión de infraestructura de red: Es recomendable que el
+personal encargado de la administración de la red reciba formación continua sobre
+estándares de cableado, etiquetado, documentación técnica y buenas prácticas de
+gestión de TIC, para optimizar las operaciones y el control de la infraestructura.
+ Planificar la escalabilidad de la red de manera estructurada: Se aconseja proyectar
+futuras ampliaciones de la red considerando la organización y codificación actual
+de los componentes, para que la integración de nuevos equipos o servicios se realice
+de manera ordenada y sin afectar la eficiencia de la infraestructura existente.
+134
+
+11. REFERENCIAS
+[1] SlideShare, «Norma TIA-606: Estándar para la Administración de Infraestructura,» SlideShare, Inc.,
+[En línea]. Available: https://es.slideshare.net/slideshow/norma-tia-606-estandar-para-la-
+administracion-de-infraestructura/269405559. [Último acceso: 19 11 2025].
+[2] Ministerio de Tecnologías de la Información y las Comunicaciones – MinTIC, «Quiénes Somos,»
+Ministerio TIC – Gobierno de Colombia, [En línea]. Available:
+https://www.mintic.gov.co/portal/inicio/Ministerio/Acerca-del-MinTIC/118042:Quienes-
+Somos#:~:text=El%20Ministerio%20de%20Tecnolog%C3%ADas%20de,la%20Informaci%C3%B3n%2
+0y%20las%20Comunicaciones.. [Último acceso: 19 Noviembre 2025].
+[3] Elsevier / ScienceDirect, «Telecommunications Industry Association — an overview,» Elsevier /
+ScienceDirect, [En línea]. Available:
+https://www.sciencedirect.com/topics/engineering/telecommunications-industry-association. [Último
+acceso: 29 Noviembre 2025].
+[4] Telecommunications Industry Association (TIA), «ANSI/TIA-568-D: Generic Telecommunications
+Cabling for Customer Premises,» TIA / Fiber Optics Technology Consortium (FOTC), [En línea].
+Available: https://www.tiafotc.org/ansi-tia-568-d/. [Último acceso: 19 Noviembre 2025].
+[5] Secureframe, «ISO/IEC 11801 — Glosario de estándares y frameworks,» Secureframe, Inc., [En línea].
+Available: https://secureframe.com/es-es/frameworks-glossary/iso-iec-11801. [Último acceso: 19
+Noviembre 2025].
+[6] Cloudflare, Inc., «¿Qué es una LAN (red de área local)?,» Cloudflare, Inc, [En línea]. Available:
+https://www.cloudflare.com/es-es/learning/network-layer/what-is-a-lan/. [Último acceso: 19 Noviembre
+2025].
+[7] Amazon Web Services (AWS), «¿Qué es IoT (Internet de las cosas)?,» AWS, Inc., [En línea]. Available:
+https://aws.amazon.com/es/what-is/iot/. [Último acceso: 19 Noviembre 2025].
+[8] Lenovo, Inc., «¿Qué es un punto de acceso inalámbrico (WAP)?,» Lenovo, Inc., [En línea]. Available:
+https://www.lenovo.com/co/es/glosario/wap/?orgRef=https%253A%252F%252Fwww.google.com%252
+F&srsltid=AfmBOor18FLrmlkAP3g-0J158XNRKgsEV6Bd2jt9LyVLWhWWxUsOpi89. [Último acceso: 19
+Noviembre 2025].
+[9] Tronex Industrial, «UPS: qué es, cómo funciona y beneficios de tenerla,» Tronex Industrial, [En línea].
+Available: https://tronex-industrial.com/ups-que-es-como-funciona-y-beneficios/. [Último acceso: 19
+Noviembre 2025].
+[10] IBM Corporation, «¿Qué es el mantenimiento de instalaciones? / What Is Facility Maintenance,» IBM —
+Think Topics, [En línea]. Available: https://www.ibm.com/es-es/think/topics/facility-maintenance. [Último
+acceso: 19 Noviembre 2025].
+[11] Amazon Web Services (AWS), «¿Qué es la infraestructura de TI?,» AWS, Inc, [En línea]. Available:
+https://aws.amazon.com/es/what-is/it-infrastructure/. [Último acceso: 2025 Noviembre 2025].
+[12] Telecommunications Industry Association (TIA), «Standards — What We Do,» TIA (TIAOnline), [En
+línea]. Available: https://tiaonline.org/what-we-do/standards/. [Último acceso: 19 Noviembre 2025].
+[13] Brady Latin America, «TIA-606-C: ¿Qué hay de nuevo?,» Brady Latin America , [En línea]. Available:
+https://www.bradylatinamerica.com/recursos/norma-tia-606-c. [Último acceso: 19 Noviembree 2025].
+[14] Ministerio de Tecnologías de la Información y las Comunicaciones – MinTIC, «Normograma –
+Compilación Jurídica MinTIC,» MinTIC – República de Colombia, [En línea]. Available:
+https://www.mintic.gov.co/portal/inicio/. [Último acceso: 19 Noviembre 2025].
+[15] Gobernación de Norte de Santander, «Gobernación y MinTIC cerrarán brechas digitales en Norte de
+Santander,» Gobernación de Norte de Santander (sitio oficial), 9 Octubre 2024. [En línea]. Available:
+135
+
+https://administrador.nortedesantander.gov.co/gobernacion-y-mintic-cerraran-brechas-digitales-en-
+norte-de-santander/. [Último acceso: 19 Noviembre 2025].
+[16] Empresa de Servicios Públicos de Pamplona – EMPOPAMPLONA S.A. E.S.P., «Transparencia y
+acceso a la información – EMPOPAMPLONA,» EMPOPAMPLONA S.A. E.S.P., [En línea]. Available:
+https://www.empopamplona.com.co/transparencia-y-acceso-a-la-informacion/. [Último acceso: 19
+Noviembre 2025].
+[17] Empresa de Servicios Públicos de Pamplona – EMPOPAMPLONA S.A. E.S.P., «Transparencia y
+acceso a la información – EMPOPAMPLONA,» EMPOPAMPLONA S.A. E.S.P., [En línea]. Available:
+https://www.empopamplona.com.co/transparencia-y-acceso-a-la-informacion/. [Último acceso: 19
+Noviembre 2025].
+[18] Wikipedia, «Pamplona (Colombia),» Wikimedia Foundation, [En línea]. Available:
+https://es.wikipedia.org/wiki/Pamplona_(Colombia). [Último acceso: 19 Noviembre 2025].
+[19] Tasmiha Khan; Gita Jackson; Michael Goodwin, «¿Qué es la topología de red? (“What Is Network
+Topology”),» IBM — Think, 15 Febrero 2024. [En línea]. Available: https://www.ibm.com/mx-
+es/think/topics/network-topology. [Último acceso: 19 Noviembre 2025].
+[20] Cloudflare, Inc., «¿Qué es una LAN? / What is a LAN,» Cloudflare, Inc., [En línea]. Available:
+https://www.cloudflare.com/es-es/learning/network-layer/what-is-a-lan/. [Último acceso: 19 Noviembre
+2025].
+[21] Cloudflare, Inc., «What is a router / ¿Qué es un enrutador?,» Cloudflare Learning Center — Network
+Layer, [En línea]. Available: https://www.cloudflare.com/learning/network-layer/what-is-a-router/. [Último
+acceso: 19 Noviembre 2025].
+[22] I. Cisco Systems, «¿Cómo funciona un switch? / How a Network Switch Works?,» Cisco – Small
+Business Resource Center, [En línea]. Available: https://www.cisco.com/c/es_mx/solutions/small-
+business/resource-center/networking/network-switch-how.html. [Último acceso: 19 Noviembre 2025].
+[23] Cisco Systems, Inc.?, «¿Qué es un access point? (“What Is a Wireless Access Point”) ?,» Cisco —
+Small Business Resource Center, [En línea]. Available: https://www.cisco.com/c/es_mx/solutions/small-
+business/resource-center/networking/what-is-access-point.html. [Último acceso: 19 Noviembre 2025].
+[24] Lenovo, Inc., «¿Qué es un módem? (“What Is a Modem”)?,» Lenovo — Glosario Lenovo, [En línea].
+Available: https://www.lenovo.com/mx/es/glosario/que-es-
+modem/?orgRef=https%253A%252F%252Fwww.google.com%252F&srsltid=AfmBOopQsv5zHFvrLvh
+g_8j3DaTmC2tcWkd8egJh21BCm5Pr6FMhb-yE. [Último acceso: 19 Noviembre 2025].
+[25] Xoán Mallón , «¿Qué son los dispositivos de red y para qué sirven?,» KeepCoding, Bootcamps Tech
+School, 2025. [En línea]. Available: https://keepcoding.io/blog/dispositivos-de-red-y-para-que-sirven/.
+[Último acceso: 19 Noviembre 2025].
+[26] Sergio De Luz, «¿Qué es un armario rack y qué modelos existen?,» RedesZone, 25 Mayo 2025. [En
+línea]. Available: https://www.redeszone.net/tutoriales/redes-cable/que-es-armario-rack-modelos/.
+[Último acceso: 19 Noviembre 2025].
+[27] Linkwell Electrics, «CMS Cable Management — Sistema de gestión de cables,» Linkwell Electrics, [En
+línea]. Available: https://linkwellelectrics.com/es/cms-cable-
+management/#:~:text=Un%20sistema%20de%20gesti%C3%B3n%20de%20cables%20organiza%20y
+%20enruta%20cables,%2C%20conductos%2C%20bridas%20y%20etiquetas. [Último acceso: 19
+Noviembre 2025].
+[28] RackOnline, «¿Qué es un sistema de cableado estructurado?,» RackOnline, [En línea]. Available:
+https://www.rackonline.es/content/que-es-un-sistema-de-cableado-
+estructurado?srsltid=AfmBOoogUxxax474wOUza7oYBDrgs7v5EcoyMDbosnuf1mm9-Pl32Zlm. [Último
+acceso: 19 Noviembre 2025].
+136
+
+[29] Aurum Informática, «¿Qué es el cableado de red y qué tipos existen?,» Aurum Informática — Blog, 13
+Abril 2021. [En línea]. Available: https://www.aurum-informatica.es/blog/cableado-de-red-tipos. [Último
+acceso: 19 Noviembre 2025].
+[30] Aurum Informática, «¿Qué es el cableado de red y qué tipos existen?,» Aurum Informática — Blog, 13
+Abril 2021. [En línea]. Available: https://www.aurum-informatica.es/blog/cableado-de-red-tipos. [Último
+acceso: 19 Noviembre 2025].
+[31] Aurum Informática, «¿Qué es el cableado de red y qué tipos existen?,» Aurum Informática — Blog, 13
+Abril 2021. [En línea]. Available: https://www.aurum-informatica.es/blog/cableado-de-red-tipos. [Último
+acceso: 19 Noviembre 2025].
+[32] Aurum Informática, «¿Qué es el cableado de red y qué tipos existen?,» Aurum Informática — Blog, 13
+Abril 2021. [En línea]. Available: https://www.aurum-informatica.es/blog/cableado-de-red-tipos. [Último
+acceso: 19 Noviembre 2025].
+[33] Aurum Informática, «Aurum Informática,» Aurum Informática — Blog, 13 Abril 2023. [En línea]. Available:
+https://www.aurum-informatica.es/blog/cableado-de-red-tipos. [Último acceso: 19 Noviembre 2025].
+[34] Brady Latin America, «Normas para etiquetado de cables ANSI / TIA-606-C: ¿Qué hay de nuevo?,»
+Brady Latin America, [En línea]. Available: https://www.bradylatinamerica.com/recursos/norma-tia-606-
+c. [Último acceso: 19 Noviembre 2025].
+[35] Telecommunications Industry Association (TIA), «TIA 606 Labeling Standards E-book Latin America,»
+[En línea]. Available:
+https://d37iyw84027v1q.cloudfront.net/Common/TIA_606_Labeling_Standards_ebook_Latin_America.
+pdf. [Último acceso: 19 Noviembre 2025].
+[36] Domestika, S.L., «¿Qué es AutoCAD y cómo funciona?,» Domestika — Blog, [En línea]. Available:
+https://www.domestika.org/es/blog/11958-que-es-autocad-y-como-funciona. [Último acceso: 19
+Noviembre 2025].
+[37] Congreso de la República de Colombia, «Función Pública – Gestor Normativo,» Función Pública, 30
+Julio 2009. [En línea]. Available:
+https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=36913. [Último acceso: 2025
+Noviembre 2025].
+[38] Congreso de la República de Colombia, «Función Pública – Gestor Normativo,» Función Pública, 30
+Julio 2009. [En línea]. Available:
+https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=36913. [Último acceso: 19
+Noviembre 2025].
+[39] Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC), «Función Pública – Gestor
+Normativo,» Función Pública, 26 Mayo 2015. [En línea]. Available:
+https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=77888. [Último acceso: 19
+Noviembre 2025].
+[40] Telecommunications Industry Association (TIA), «TIA-606: Labeling Standards eBook Latin America,»
+[En línea]. Available:
+https://d37iyw84027v1q.cloudfront.net/Common/TIA_606_Labeling_Standards_ebook_Latin_America.
+pdf. [Último acceso: 19 Noviembre 2025].
+[41] Miro Team, «¿Qué es una estructura de desglose de trabajo (WBS) / What is a Work Breakdown
+Structure?,» Miro Team, 16 Octubre 2025. [En línea]. Available: https://miro.com/es/gestion-
+proyectos/que-es-wbs/. [Último acceso: 19 Noviembre 2025].
+[42] Salt Lake County, «Network Cabling Global Specification,» Salt Lake County Facilities Management,
+Junio 2017. [En línea]. Available: https://www.saltlakecounty.gov/globalassets/1-site-files/facilities/slco-
+network-cabling-specification.pdf?. [Último acceso: 10 Noviembre 2025].
+137
+
+[43] Brady Corporation, «Datacom Guidebook Europe English,» Brady Corporation, [En línea]. Available:
+https://d37iyw84027v1q.cloudfront.net/Common/Datacom_Guidebook_Europe_English.pdf?. [Último
+acceso: 10 Noviembre 2025].
+[44] AKCP, «Data Center Cable Labeling Standards,» AKCP, 07 Abril 2025. [En línea]. Available:
+https://www.akcp.com/index.php/2025/04/07/data-center-cable-labeling-standards/?. [Último acceso:
+10 Noviembre 2025].
+[45] ICO México, «Normas para etiquetado de cables ANSI/TIA-606-C,» ICO México, [En línea]. Available:
+https://ico.mx/blogs/conectando-el-exito-tu-guia-completa-para-proyectos-de-telecomunicacion-e-
+infraestructura/normas-para-etiquetado-de-cables-ansi-tia-606-c?srsltid=AfmBOor2MG8ep-
+vOcWzyQ7s0AC6lZk8u_GB1M48J6rOQpgsbrx2wrVnm. [Último acceso: 10 Noviembre 2025].
+[46] SlideShare, «Norma TIA-606: Estándar para la Administración de Infraestructura,» SlideShare, Inc., [En
+línea]. Available: https://es.slideshare.net/slideshow/norma-tia-606-estandar-para-la-administracion-de-
+infraestructura/269405559. [Último acceso: 19 Noviembre 2025].
+[47] Empresa de Servicios Públicos de Pamplona – EMPOPAMPLONA S.A. E.S.P., «EMPOPAMPLONA –
+Empresa de Servicios Públicos de Pamplona,» EMPOPAMPLONA S.A. E.S.P, [En línea]. Available:
+https://www.empopamplona.com.co/. [Último acceso: 19 Noviembre 2025].
+[48] Empresa de Servicios Públicos de Pamplona – EMPOPAMPLONA S.A. E.S.P., «EMPOPAMPLONA –
+Empresa de Servicios Públicos de Pamplona,» EMPOPAMPLONA S.A. E.S.P, [En línea]. Available:
+https://www.empopamplona.com.co/. [Último acceso: 19 Noviembre 2025].
+138

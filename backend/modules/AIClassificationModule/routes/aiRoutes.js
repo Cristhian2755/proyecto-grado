@@ -1,6 +1,6 @@
 const express = require("express");
 const { verifyToken } = require("../../../middleware/authMiddleware");
-const { chatWithDocument } = require("../services/documentChatService");
+const { chatWithDocument, getBibliotecaCatalog } = require("../services/documentChatService");
 const { chatEstudianteHandler } = require("../ia/controllers/estudianteController");
 const { chatDocenteHandler } = require("../ia/controllers/docenteController");
 const { chatCoordinadorHandler } = require("../ia/controllers/coordinadorController");
@@ -15,13 +15,59 @@ router.get("/health", (req, res) => {
   });
 });
 
+router.get('/biblioteca/catalog', async (req, res) => {
+  try {
+    const documents = await getBibliotecaCatalog();
+    return res.json({
+      message: 'Catálogo de biblioteca generado correctamente.',
+      data: documents,
+    });
+  } catch (error) {
+    console.error('Error biblioteca catalog:', error);
+    return res.status(500).json({
+      message: error.message || 'No se pudo generar el catálogo de biblioteca.',
+      stack: error.stack,
+    });
+  }
+});
+
+router.post('/biblioteca/document-chat', async (req, res) => {
+  try {
+    const { documentUrl, documentName, question } = req.body || {};
+
+    if (!question) {
+      return res.status(400).json({
+        message: 'Debes enviar question.',
+      });
+    }
+
+    const result = await chatWithDocument({
+      documentUrl,
+      documentName: documentName || 'documento',
+      question,
+      roleLabel: 'biblioteca',
+    });
+
+    return res.json({
+      message: 'Consulta procesada correctamente.',
+      data: result,
+    });
+  } catch (error) {
+    console.error('Error biblioteca document-chat:', error);
+    return res.status(500).json({
+      message: error.message || 'No se pudo procesar el documento.',
+      stack: error.stack,
+    });
+  }
+});
+
 router.post("/document-chat", verifyToken, async (req, res) => {
   try {
     const { documentUrl, documentName, question, roleLabel } = req.body || {};
 
-    if (!documentUrl || !question) {
+    if (!question) {
       return res.status(400).json({
-        message: "Debes enviar documentUrl y question."
+        message: "Debes enviar question."
       });
     }
 

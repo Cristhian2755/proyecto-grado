@@ -28,7 +28,7 @@ type CarreraRow = {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './home-administrador.html',
-  styleUrl: './home-administrador.scss',
+  styleUrls: ['./home-administrador.scss'],
 })
 export class HomeAdministradorComponent {
   private readonly http = inject(HttpClient);
@@ -278,6 +278,7 @@ export class HomeAdministradorComponent {
     this.projectLoading.set(true);
     this.error.set('');
 
+    // Intentar cargar proyectos desde la API principal
     this.projectService
       .getAllProjects()
       .pipe(finalize(() => this.projectLoading.set(false)))
@@ -293,12 +294,93 @@ export class HomeAdministradorComponent {
               estado: project.estado || 'Pendiente',
             })),
           );
+
+          // Además, solicitar catálogo público de biblioteca y mezclar
+          this.http.get<{ data: any[] }>('/api/ai/biblioteca/catalog').subscribe({
+            next: (catRes) => {
+              const docs = (catRes?.data ?? []).map((d) => ({
+                ...d,
+                id: `bibl-${d.id}`,
+                fuente: 'biblioteca',
+              }));
+              this.projects.set([...this.projects(), ...docs]);
+            },
+            error: () => {
+              // ignorar fallos del catálogo público
+            },
+          });
         },
         error: (err: any) => {
+          // Si falla la API principal, seguimos intentando mostrar la biblioteca pública
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
+          this.http.get<{ data: any[] }>('/api/ai/biblioteca/catalog').pipe(finalize(() => this.projectLoading.set(false))).subscribe({
+            next: (catRes) => {
+              const docs = (catRes?.data ?? []).map((d) => ({
+                ...d,
+                id: `bibl-${d.id}`,
+                fuente: 'biblioteca',
+              }));
+              this.projects.set(docs);
+              this.error.set('');
+            },
+            error: () => {
+              this.error.set(err?.error?.message ?? 'No se pudieron cargar los proyectos.');
+            },
+          });
         },
       });
   }
+
+    importFromBiblioteca(documentName: string): void {
+      if (!documentName) {
+        this.error.set('Nombre de documento inválido.');
+        return;
+      }
+
+      if (!window.confirm(`Importar ${documentName} como proyecto en la base de datos?`)) return;
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        this.error.set('No hay sesión activa.');
+        return;
+      }
+
+      this.projectLoading.set(true);
+      const headers = new HttpHeaders({ Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' });
+      this.http.post<{ message: string; data: any }>('/api/projects/import-biblioteca', { documentName }, { headers }).subscribe({
+        next: (res) => {
+          this.success.set(res?.message || 'Importado correctamente.');
+          this.loadProjects();
+        },
+        error: (err) => {
+          this.error.set(err?.error?.message || 'Error importando documento.');
+          this.projectLoading.set(false);
+        },
+      });
+    }
+
+    deleteBibliotecaFile(fileName: string): void {
+      if (!window.confirm(`Eliminar archivo ${fileName} de ProjectsBiblioteca?`)) return;
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        this.error.set('No hay sesión activa.');
+        return;
+      }
+
+      this.projectLoading.set(true);
+      const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+      const encoded = encodeURIComponent(fileName);
+      this.http.delete<{ message: string }>(`/api/projects/biblioteca/${encoded}`, { headers }).pipe(finalize(() => this.projectLoading.set(false))).subscribe({
+        next: (res) => {
+          this.success.set(res?.message || 'Archivo eliminado.');
+          this.loadProjects();
+        },
+        error: (err) => {
+          this.error.set(err?.error?.message || 'No se pudo eliminar el archivo.');
+        },
+      });
+    }
 
   createUser(payload: {
     nombre: string;
@@ -331,6 +413,28 @@ export class HomeAdministradorComponent {
           this.error.set(err?.error?.message ?? 'No se pudo crear el usuario.');
         },
       });
+  }
+
+  deleteProject(projectId: number | string): void {
+    if (!window.confirm('Eliminar proyecto de la base de datos?')) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.error.set('No hay sesión activa.');
+      return;
+    }
+
+    this.projectLoading.set(true);
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    this.projectService.deleteProject(Number(projectId)).pipe(finalize(() => this.projectLoading.set(false))).subscribe({
+      next: (res) => {
+        this.success.set(res?.message || 'Proyecto eliminado.');
+        this.loadProjects();
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message || 'No se pudo eliminar el proyecto.');
+      },
+    });
   }
 
   updateUser(

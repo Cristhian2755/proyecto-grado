@@ -134,7 +134,7 @@ export class HomeDocenteComponent {
   saveObservation(): void {
     const project = this.selectedProject();
     if (!project) return;
-    this.projectService.updateProject(project.id, { comentario: project.comentario }).subscribe({
+    this.projectService.updateProject(Number(project.id), { comentario: project.comentario }).subscribe({
       next: () => {
         this.closeModal();
         this.loadAssignedProjects();
@@ -148,7 +148,7 @@ export class HomeDocenteComponent {
   changeState(): void {
     const project = this.selectedProject();
     if (!project) return;
-    this.projectService.updateProject(project.id, { estado: project.estado }).subscribe({
+    this.projectService.updateProject(Number(project.id), { estado: project.estado }).subscribe({
       next: () => {
         this.closeModal();
         this.loadAssignedProjects();

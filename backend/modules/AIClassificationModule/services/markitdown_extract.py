@@ -26,16 +26,23 @@ def main() -> int:
 
     text_content = getattr(result, 'text_content', None)
     if text_content:
-        sys.stdout.write(text_content)
+        sys.stdout.write(normalize_output(text_content))
         return 0
 
     markdown_content = getattr(result, 'markdown', None)
     if markdown_content:
-        sys.stdout.write(markdown_content)
+        sys.stdout.write(normalize_output(markdown_content))
         return 0
 
-    sys.stdout.write(str(result))
+    sys.stdout.write(normalize_output(str(result)))
     return 0
+
+
+def normalize_output(text: str) -> str:
+    normalized = (text or '').replace('\r\n', '\n').replace('\r', '\n')
+    lines = [line.rstrip() for line in normalized.split('\n')]
+    cleaned = '\n'.join(lines).strip()
+    return f'{cleaned}\n' if cleaned else ''
 
 
 if __name__ == '__main__':
