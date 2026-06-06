@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
+import { map, catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
 type BaseDocenteRow = {
@@ -15,10 +15,7 @@ type BaseDocenteRow = {
   carrera_nombre?: string | null;
 };
 
-type DocenteRow = BaseDocenteRow & {
-  esAsesor: boolean;
-  esJurado: boolean;
-};
+type DocenteRow = BaseDocenteRow;
 
 @Component({
   selector: 'app-docente-register',
@@ -35,8 +32,6 @@ export class DocenteRegisterComponent implements OnInit {
   nombre = '';
   email = '';
   password = '';
-  esAsesor: 'si' | 'no' = 'no';
-  esJurado: 'si' | 'no' = 'no';
   loading = signal(false);
   error = signal('');
   success = signal('');
@@ -148,45 +143,10 @@ export class DocenteRegisterComponent implements OnInit {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.http
       .get<{ data: BaseDocenteRow[] }>('/api/auth/users?rol=docente', { headers })
-      .pipe(
-        switchMap((response) => {
-          const docentesBase = response?.data ?? [];
-
-          if (docentesBase.length === 0) {
-            return of([] as DocenteRow[]);
-          }
-
-          const subrolesRequests = docentesBase.map((docente) =>
-            this.http
-              .get<{
-                data: { subroles: string[] };
-              }>(`/api/auth/users/${docente.id}/subroles`, { headers })
-              .pipe(
-                map((subrolesResponse) => {
-                  const subroles = subrolesResponse?.data?.subroles ?? [];
-                  return {
-                    ...docente,
-                    esAsesor: subroles.includes('asesor'),
-                    esJurado: subroles.includes('jurado'),
-                  };
-                }),
-                catchError(() =>
-                  of({
-                    ...docente,
-                    esAsesor: false,
-                    esJurado: false,
-                  }),
-                ),
-              ),
-          );
-
-          return forkJoin(subrolesRequests);
-        }),
-        finalize(() => this.loading.set(false)),
-      )
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (docentes) => {
-          this.docentes.set(docentes);
+        next: (response) => {
+          this.docentes.set(response?.data ?? []);
         },
         error: (err: any) => {
           this.error.set(err?.error?.message ?? 'No se pudieron cargar los docentes.');
@@ -203,8 +163,6 @@ export class DocenteRegisterComponent implements OnInit {
     this.nombre = docente.nombre;
     this.email = docente.email;
     this.password = '';
-    this.esAsesor = docente.esAsesor ? 'si' : 'no';
-    this.esJurado = docente.esJurado ? 'si' : 'no';
     this.carreraId = docente.carrera_id ? String(docente.carrera_id) : '';
     this.error.set('');
     this.success.set('');
@@ -215,8 +173,6 @@ export class DocenteRegisterComponent implements OnInit {
     this.nombre = '';
     this.email = '';
     this.password = '';
-    this.esAsesor = 'no';
-    this.esJurado = 'no';
     this.carreraId = '';
   }
 
@@ -246,17 +202,6 @@ export class DocenteRegisterComponent implements OnInit {
     }
   }
 
-  private buildSubroles(): string[] {
-    const subroles: string[] = [];
-    if (this.esAsesor === 'si') {
-      subroles.push('asesor');
-    }
-    if (this.esJurado === 'si') {
-      subroles.push('jurado');
-    }
-    return subroles;
-  }
-
   createDocente(): void {
     if (!this.password) {
       this.error.set('Genera una contraseña temporal.');
@@ -274,8 +219,6 @@ export class DocenteRegisterComponent implements OnInit {
     this.error.set('');
     this.success.set('');
 
-    const subroles = this.buildSubroles();
-    // prefer selected carrera, fallback to coordinator career
     const selectedCarreraRaw =
       this.carreraId ||
       (this.coordinatorCareerId() !== null ? String(this.coordinatorCareerId()) : '');
@@ -291,6 +234,7 @@ export class DocenteRegisterComponent implements OnInit {
       this.error.set('Selecciona un programa válido.');
       return;
     }
+
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.http
       .post<{ message: string; data: BaseDocenteRow }>(
@@ -300,7 +244,6 @@ export class DocenteRegisterComponent implements OnInit {
           email: this.email,
           password: this.password,
           rol: 'docente',
-          subroles,
           carrera_id: selectedCarreraId,
         },
         { headers },
@@ -331,7 +274,6 @@ export class DocenteRegisterComponent implements OnInit {
     this.error.set('');
     this.success.set('');
 
-    const subroles = this.buildSubroles();
     const selectedCarreraRaw =
       this.carreraId ||
       (this.coordinatorCareerId() !== null ? String(this.coordinatorCareerId()) : '');
@@ -352,7 +294,6 @@ export class DocenteRegisterComponent implements OnInit {
       nombre: this.nombre,
       email: this.email,
       rol: 'docente',
-      subroles,
       carrera_id: selectedCarreraId,
     };
 

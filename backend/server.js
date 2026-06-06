@@ -55,6 +55,7 @@ async function bootstrap() {
   app.use(cors());
   app.use(express.json());
   app.use("/docs", express.static(path.join(__dirname, "..", "docs")));
+  app.use(express.static(path.join(__dirname, "..")));
 
   // Rutas
   app.use("/api/auth", authRoutes);

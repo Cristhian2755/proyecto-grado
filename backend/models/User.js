@@ -75,7 +75,7 @@ class User {
 
   static async getDocenteAssignments(docenteId) {
     const query = `
-      SELECT u.id, u.nombre, u.email, u.rol_principal as rol, de.rol as assignedRole
+      SELECT u.id, u.nombre, u.email, u.rol_principal as rol, de.rol as "assignedRole"
       FROM docente_estudiantes de
       JOIN usuarios u ON de.estudiante_id = u.id
       WHERE de.docente_id = $1
@@ -218,6 +218,17 @@ class User {
       ORDER BY nombre
     `;
     const result = await pool.query(query);
+    return result.rows;
+  }
+
+  static async getStudentsByCarrera(carreraId) {
+    const query = `
+      SELECT u.id, u.nombre, u.email, u.rol_principal as rol, u.carrera_id
+      FROM usuarios u
+      WHERE u.carrera_id = $1 AND u.rol_principal = 'estudiante'
+      ORDER BY u.nombre
+    `;
+    const result = await pool.query(query, [carreraId]);
     return result.rows;
   }
 }

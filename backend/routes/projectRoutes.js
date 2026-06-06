@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
-const { listProjects, getProjectById } = require('../controllers/projectController');
+const { listProjects, getProjectById, getMyAssignedProjects } = require('../controllers/projectController');
 const { importBiblioteca, deleteBibliotecaFile } = require('../controllers/projectController');
 const { verifyToken } = require('../middleware/authMiddleware');
 const { checkRole } = require('../middleware/roleMiddleware');
 
 // GET /api/projects - listar proyectos (admin/coordinador)
 router.get('/', verifyToken, checkRole('administrador', 'coordinador'), listProjects);
+
+// GET /api/projects/my-assigned-projects - listar estudiantes asignados al docente
+router.get('/my-assigned-projects', verifyToken, getMyAssignedProjects);
 
 // GET /api/projects/:id - obtener proyecto por id (admin/coordinador)
 router.get('/:id', verifyToken, checkRole('administrador', 'coordinador'), getProjectById);

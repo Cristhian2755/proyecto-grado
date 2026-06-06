@@ -53,22 +53,6 @@
           </div>
 
           <div class="form-group pill-field">
-            <label>Asesor</label>
-            <select name="esAsesor" [(ngModel)]="esAsesor">
-              <option value="no">No</option>
-              <option value="si">Sí</option>
-            </select>
-          </div>
-
-          <div class="form-group pill-field">
-            <label>Jurado</label>
-            <select name="esJurado" [(ngModel)]="esJurado">
-              <option value="no">No</option>
-              <option value="si">Sí</option>
-            </select>
-          </div>
-
-          <div class="form-group pill-field">
             <label>Programa</label>
             <select name="carreraId" [(ngModel)]="carreraId">
               <option value="">Selecciona un programa</option>
@@ -99,9 +83,7 @@
               <tr>
                 <th>Nombre</th>
                 <th>Correo</th>
-                <th>Contraseña</th>
                 <th>Rol</th>
-                <th>Subrol</th>
                 <th>Programa</th>
                 <th>Acciones</th>
               </tr>
@@ -110,9 +92,7 @@
               <tr *ngFor="let docente of docentes()">
                 <td>{{ docente.nombre }}</td>
                 <td>{{ docente.email }}</td>
-                <td><span class="password-mask">********</span></td>
                 <td><span class="badge">{{ docente.rol }}</span></td>
-                <td>{{ docente.esAsesor && docente.esJurado ? 'asesor, jurado' : (docente.esAsesor ? 'asesor' : (docente.esJurado ? 'jurado' : '-')) }}</td>
                 <td>{{ docente.carrera_nombre || coordinatorProgramName() }}</td>
                 <td>
                   <div class="table-actions">

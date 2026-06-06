@@ -19,31 +19,36 @@
     </div>
   </header>
 
-  
-
   <section class="dashboard-layout">
     <div class="left-column">
       <div class="panel files-panel glass-panel">
+        <h4>Carpetas</h4>
         <div class="panel-inner">
           <div *ngFor="let f of fileTypes" class="file-item">
             <button class="file-button" [class.active]="selectedFile() === f" (click)="selectFile(f)">
               {{ f }}
             </button>
           </div>
-          <div class="carpeta-viewer">
-            <label>Carpeta</label>
-            <select [(ngModel)]="selectedCarpeta">
-              <option *ngFor="let f of fileTypes" [value]="f">{{ f }}</option>
-            </select>
-            <button class="btn" (click)="loadEntregasByCarpeta(selectedCarpeta())">Ver archivos</button>
-            <ul class="entregas-list">
-              <li *ngFor="let e of entregas()">
-                <span>{{ e.nombre_original || e.archivo }}</span>
-                <small>{{ e.fecha_entrega | date:'short' }}</small>
-                <button class="btn-link" (click)="verDocumento(e)">Ver</button>
-              </li>
-            </ul>
+        </div>
+      </div>
+      
+      <div class="panel stats-panel glass-panel" *ngIf="selectedStudent()">
+        <h4>Estadísticas de Entregas</h4>
+        <div class="ring-container">
+          <svg class="progress-ring" width="120" height="120" viewBox="0 0 120 120">
+            <circle class="ring-track" cx="60" cy="60" r="52" stroke-width="12" fill="none"/>
+            <circle class="ring-progress" cx="60" cy="60" r="52" stroke-width="12" fill="none"
+              [attr.stroke-dasharray]="ringCircumference"
+              [attr.stroke-dashoffset]="ringOffset"/>
+          </svg>
+          <div class="ring-text">
+            <span class="ring-percent">{{ studentDocStats.percent }}%</span>
+            <span class="ring-label">Completado</span>
           </div>
+        </div>
+        <div class="ring-stats">
+          <span>{{ studentDocStats.submitted }} entregados</span>
+          <span>{{ studentDocStats.missing }} pendientes</span>
         </div>
       </div>
     </div>
@@ -52,9 +57,10 @@
       <div class="panel students-panel glass-panel">
         <h4>Estudiantes</h4>
         <div class="students-list">
-            <button *ngFor="let u of estudiantes()" class="student-item" (click)="selectStudent(u)">
+          <button *ngFor="let u of estudiantes()" class="student-item" (click)="selectStudent(u)">
             {{ u.nombre }}
           </button>
+          <p *ngIf="!estudiantes().length" class="empty-message">No hay estudiantes registrados.</p>
         </div>
       </div>
 
@@ -64,19 +70,18 @@
           <button *ngFor="let d of docentes()" class="student-item" (click)="selectDocente(d)">
             {{ d.nombre }}
           </button>
+          <p *ngIf="!docentes().length" class="empty-message">No hay docentes registrados.</p>
         </div>
       </div>
     </div>
 
     <div class="right-column">
       <div class="panel viewer-panel glass-panel">
+        <h4>Visor Documento</h4>
         <div class="viewer-content">
-          <!-- Sin selección -->
           <p *ngIf="!selectedStudent() && !selectedDocente()">Seleccione un estudiante y un tipo de archivo para ver su contenido.</p>
           
-          <!-- Docente seleccionado: CRUD de asignaciones -->
           <div *ngIf="selectedDocente() && !selectedStudent()" class="docente-crud-container">
-            <h4>Vinculación de Estudiantes</h4>
             <p class="docente-name"><strong>Docente:</strong> {{ selectedDocente()?.nombre }}</p>
             
             <div class="crud-section">
@@ -84,7 +89,7 @@
                 <h5>Estudiantes del Docente</h5>
                 <div class="student-assign-list">
                   <button *ngFor="let s of getStudentsForDocente()" class="student-assign-item" type="button" (click)="selectStudentForDocente(s)">
-                    {{ s.nombre }} <span class="role-badge">{{ s.assignedRole || '-' }}</span>
+                    <span class="role-badge">{{ s.assignedRole || 'rol' }}</span> {{ s.nombre }}
                   </button>
                   <p *ngIf="!getStudentsForDocente().length" class="empty-message">No hay estudiantes asignados todavía.</p>
                 </div>
@@ -97,9 +102,9 @@
                 <form (ngSubmit)="assignOrUpdateStudentRole()">
                   <div class="form-group">
                     <label>Estudiante</label>
-                    <select [(ngModel)]="selectedStudentForRole" name="selectedStudentForRole">
+                    <select [(ngModel)]="selectedStudentForRoleId" name="selectedStudentForRoleId">
                       <option [ngValue]="null">-- Selecciona --</option>
-                        <option *ngFor="let u of estudiantes()" [ngValue]="u.id">
+                      <option *ngFor="let u of estudiantes()" [ngValue]="u.id">
                         {{ u.nombre }}
                       </option>
                     </select>
@@ -107,49 +112,48 @@
                   
                   <div class="form-group">
                     <label>Rol</label>
-                    <select [(ngModel)]="roleType" name="roleType">
+                    <select [(ngModel)]="roleTypeValue" name="roleTypeValue">
                       <option value="asesor">Asesor</option>
                       <option value="jurado">Jurado</option>
                     </select>
                   </div>
                   
                   <div class="form-actions">
-                    <button type="submit" class="btn-save" [disabled]="!selectedStudentForRole">Asignar / Actualizar</button>
-                    <button type="button" class="btn-delete" (click)="removeStudentRole()" *ngIf="selectedStudentForRole">Eliminar</button>
+                    <button type="submit" class="btn-save" [disabled]="!selectedStudentForRole()">Asignar / Actualizar</button>
+                    <button type="button" class="btn-delete" (click)="removeStudentRole()" *ngIf="selectedStudentForRole()">Eliminar</button>
                   </div>
                 </form>
               </div>
             </div>
           </div>
           
-          <!-- Estudiante seleccionado: visor de archivos -->
           <div *ngIf="selectedStudent()" class="student-viewer-container">
             <p><strong>Estudiante:</strong> {{ selectedStudent()?.nombre }}</p>
             <p><strong>Archivo:</strong> {{ selectedFile() }}</p>
-            <div class="document-placeholder">Contenido del documento (vista previa)</div>
+            <div class="document-placeholder document-preview">
+              <div class="document-content">
+                @if (previewLoading()) {
+                  <div class="loading-preview">Cargando documento...</div>
+                } @else if (previewUrlSafe()) {
+                  <iframe class="doc-frame" title="Documento PDF" [src]="previewUrlSafe()"></iframe>
+                } @else if (previewHtml()) {
+                  <iframe class="doc-frame" title="Vista del documento" sandbox="sandbox allow-same-origin" [srcdoc]="previewHtml()"></iframe>
+                } @else if (previewError()) {
+                  <div class="error-preview">{{ previewError() }}</div>
+                } @else {
+                  <div class="empty-preview">No hay documento disponible para esta carpeta.</div>
+                }
+              </div>
+            </div>
           </div>
-
-          <app-document-chatbot
-            [roleLabel]="'Coordinador'"
-            [documentUrl]="selectedEntrega()?.url_descarga || ''"
-            [documentName]="selectedEntrega()?.nombre_original || selectedEntrega()?.archivo || selectedFile()"
-          />
         </div>
       </div>
 
-      <div class="panel progress-panel glass-panel">
-        <h4>Barra de nivel de los trabajos</h4>
-        <div class="progress-track">
-          <div class="segment pending" [style.width.%]="pendingPercent">&nbsp;</div>
-          <div class="segment approved" [style.width.%]="approvedPercent">&nbsp;</div>
-          <div class="segment failed" [style.width.%]="failedPercent">&nbsp;</div>
-        </div>
-        <div class="legend">
-          <span class="legend-item"><span class="dot pending"></span> pendientes</span>
-          <span class="legend-item"><span class="dot approved"></span> aprobados</span>
-          <span class="legend-item"><span class="dot failed"></span> reprobados</span>
-        </div>
-      </div>
+      <app-document-chatbot
+        [roleLabel]="'Coordinador'"
+        [documentUrl]="selectedEntrega()?.url_descarga || ''"
+        [documentName]="selectedEntrega()?.nombre_original || selectedEntrega()?.archivo || selectedFile()"
+      />
     </div>
   </section>
 </main>

@@ -5,20 +5,6 @@
       <h1>Docente</h1>
     </div>
 
-    <div class="search-area">
-      <form class="search-form" role="search" (submit)="$event.preventDefault()">
-        <div class="search-input-wrap">
-          <input class="search-input" type="search" placeholder="Buscar proyectos, estudiantes..." aria-label="Buscar" />
-          <button class="search-btn" type="submit" title="Buscar" (click)="$event.preventDefault()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M21 21l-4.35-4.35" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="11" cy="11" r="6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </button>
-        </div>
-      </form>
-    </div>
-
     <div class="navbar-right">
       <div class="user-profile">
         <div class="avatar">{{ userInitials }}</div>
@@ -28,56 +14,85 @@
     </div>
   </header>
 
-  <section class="dashboard-grid">
-    <aside class="panel files-panel">
-      <div class="file-list">
-        <label>Carpeta</label>
-        <select [(ngModel)]="selectedCarpeta">
-          <option *ngFor="let f of carpetaOptions" [value]="f">{{ f }}</option>
-        </select>
-        <button class="btn" (click)="loadEntregasByCarpeta(selectedCarpeta())">Ver archivos</button>
-        <ul class="entregas-list">
-          <li *ngFor="let e of entregas()">
-            <span>{{ e.nombre_original || e.archivo }}</span>
-            <small>{{ e.fecha_entrega | date:'short' }}</small>
-            <button class="btn-link" (click)="verDocumento(e)">Ver</button>
-          </li>
-        </ul>
+  <section class="dashboard-layout">
+    <div class="left-column">
+      <div class="panel files-panel glass-panel">
+        <h4>Carpetas</h4>
+        <div class="panel-inner">
+          <div *ngFor="let f of fileTypes" class="file-item">
+            <button class="file-button" [class.active]="selectedFile() === f" (click)="selectFile(f)">
+              {{ f }}
+            </button>
+          </div>
+        </div>
       </div>
-    </aside>
-
-    <div class="panel students-column">
-      <div class="student-list">
-        <button class="student-button" *ngFor="let p of assignedProjects()"> 
-          {{ p.estudiante_nombre || p.titulo || 'nombre' }}
-        </button>
-        <p *ngIf="!assignedProjects().length" class="empty-students">nombre</p>
+      
+      <div class="panel stats-panel glass-panel" *ngIf="selectedStudent()">
+        <h4>Estadísticas</h4>
+        <div class="ring-container">
+          <svg class="progress-ring" width="120" height="120" viewBox="0 0 120 120">
+            <circle class="ring-track" cx="60" cy="60" r="52" stroke-width="12" fill="none"/>
+            <circle class="ring-progress" cx="60" cy="60" r="52" stroke-width="12" fill="none"
+              [attr.stroke-dasharray]="ringCircumference"
+              [attr.stroke-dashoffset]="ringOffset"/>
+          </svg>
+          <div class="ring-text">
+            <span class="ring-percent">{{ studentDocStats.percent }}%</span>
+            <span class="ring-label">Completado</span>
+          </div>
+        </div>
+        <div class="ring-stats">
+          <span>{{ studentDocStats.submitted }} entregados</span>
+          <span>{{ studentDocStats.missing }} pendientes</span>
+        </div>
       </div>
     </div>
 
-    <div class="panel viewer-large">
+    <div class="middle-column">
+      <div class="panel students-panel glass-panel">
+        <h4>Estudiantes</h4>
+        <div class="students-list">
+          <button *ngFor="let p of assignedProjects()" class="student-item" (click)="selectStudent(p)">
+            {{ p.estudiante_nombre || p.titulo || 'nombre' }}
+          </button>
+          <p *ngIf="!assignedProjects().length" class="empty-message">No hay estudiantes asignados.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="panel viewer-panel glass-panel">
+        <h4>Visor Documento</h4>
+        <div class="viewer-content">
+          <p *ngIf="!selectedStudent()">Seleccione un estudiante para ver sus documentos.</p>
+
+          <div *ngIf="selectedStudent()" class="student-viewer-container">
+            <p><strong>Estudiante:</strong> {{ selectedStudent()?.estudiante_nombre }}</p>
+            <p><strong>Carpeta:</strong> {{ selectedCarpeta() }}</p>
+            <div class="document-placeholder document-preview">
+              <div class="document-content">
+                @if (previewLoading()) {
+                  <div class="loading-preview">Cargando documento...</div>
+                } @else if (previewUrlSafe()) {
+                  <iframe class="doc-frame" title="Documento PDF" [src]="previewUrlSafe()"></iframe>
+                } @else if (previewHtml()) {
+                  <iframe class="doc-frame" title="Vista del documento" sandbox="sandbox allow-same-origin" [srcdoc]="previewHtml()"></iframe>
+                } @else if (previewError()) {
+                  <div class="error-preview">{{ previewError() }}</div>
+                } @else {
+                  <div class="empty-preview">No hay documento disponible para esta carpeta.</div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <app-document-chatbot
         [roleLabel]="'Docente'"
         [documentUrl]="selectedEntrega()?.url_descarga || ''"
         [documentName]="selectedEntrega()?.nombre_original || selectedEntrega()?.archivo || selectedCarpeta()"
       />
-    </div>
-
-    <div class="panel progress-box">
-      <div class="progress-title">% tabajos</div>
-      <div class="progress-bar-outer">
-        <div class="progress-sections">
-          <button class="pill pending">pendientes</button>
-          <button class="pill approved">aprobados</button>
-          <button class="pill failed">reprobados</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel right-info">
-      <div class="info-row">info de alumno (ser el asesor o el jurado)</div>
-      <div class="info-row">info de alumno (ser el asesor o el jurado)</div>
-      <div class="info-row">info de alumno (ser el asesor o el jurado)</div>
     </div>
   </section>
 </main>

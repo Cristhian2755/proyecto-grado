@@ -71,7 +71,7 @@
                   @if (previewUrlSafe()) {
                     <iframe class="doc-frame" title="Documento PDF" [src]="previewUrlSafe()"></iframe>
                   } @else if (previewHtml()) {
-                    <iframe class="doc-frame" title="Vista del documento" sandbox [srcdoc]="previewHtml()"></iframe>
+                    <iframe class="doc-frame" title="Vista del documento" sandbox="sandbox allow-same-origin" [srcdoc]="previewHtml()"></iframe>
                   } @else {
                     <div class="empty-preview">No es posible mostrar el documento seleccionado.</div>
                   }
@@ -84,40 +84,14 @@
               <p>Cuando el coordinador habilite esta entrega, podrás subir el archivo respectivo.</p>
             </div>
           }
-
-          <app-document-chatbot
-            [roleLabel]="'Estudiante'"
-            [documentUrl]="selectedEntrega()?.url_descarga || ''"
-            [documentName]="selectedEntrega()?.nombre_original || selectedEntrega()?.archivo || selectedFile()"
-          />
         </div>
       </div>
 
-      <div class="panel progress-panel card-shell">
-        <h4>% trabajos</h4>
-        <div class="progress-track">
-          <div class="segment pending" [style.width.%]="pendingPercent">&nbsp;</div>
-          <div class="segment approved" [style.width.%]="approvedPercent">&nbsp;</div>
-          <div class="segment failed" [style.width.%]="failedPercent">&nbsp;</div>
-        </div>
-        <div class="legend">
-          <span class="legend-item"><span class="dot pending"></span> pendientes</span>
-          <span class="legend-item"><span class="dot approved"></span> aprobados</span>
-          <span class="legend-item"><span class="dot failed"></span> reprobados</span>
-        </div>
-        <div class="state-buttons">
-          <button class="state-btn pending">pendientes</button>
-          <button class="state-btn approved">aprobados</button>
-          <button class="state-btn failed">reprobados</button>
-        </div>
-      </div>
+      <app-document-chatbot
+        [roleLabel]="'Estudiante'"
+        [documentUrl]="selectedEntrega()?.url_descarga || ''"
+        [documentName]="selectedEntrega()?.nombre_original || selectedEntrega()?.archivo || selectedFile()"
+      />
     </div>
-
-    <aside class="right-column card-shell">
-      <h3>Cronograma académico</h3>
-      <div class="cronograma-placeholder">
-        Cronograma trabajo de grado
-      </div>
-    </aside>
   </section>
 </main>

@@ -3,115 +3,36 @@
   min-height: 100dvh;
 }
 
-.home-page {
-  min-height: 100dvh;
+.home-page,
+.home-administrador {
+  height: 100dvh;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0;
   position: relative;
   overflow: hidden;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  padding: 18px;
+  background: #e7f0ef url('/assets/fondo.png') center top / cover no-repeat;
   color: #0f172a;
-}
-
-.home-page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)),
-    url('../../../../assets/fondo.png') center/cover no-repeat;
-  pointer-events: none;
-}
-
-.home-page > * {
-  position: relative;
-  z-index: 1;
 }
 
 .top-navbar {
   display: grid;
-  grid-template-columns: 280px 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 20px;
-  padding: 14px 20px;
-  border-radius: 0;
-  border: 0;
-  background: #12a693;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  margin-bottom: 16px;
-}
-
-.search-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.search-form {
-  width: 100%;
-  max-width: 520px;
-}
-
-.search-input-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.search-input {
-  flex: 1;
-  padding: 10px 16px;
-  border-radius: 6px;
-  border: none;
-  font-size: 0.95rem;
-  background: rgba(255, 255, 255, 0.95);
+  gap: 24px;
+  padding: 16px 28px;
+  background: #0ca58c;
+  min-height: 70px;
+  box-sizing: border-box;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  outline: none;
-  transition:
-    box-shadow 0.15s ease,
-    transform 0.12s ease;
-  color: #0f172a;
-}
-
-.search-input::placeholder {
-  color: #94a3b8;
-}
-
-.search-input:focus {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateY(-1px);
-}
-
-.search-btn {
-  display: inline-grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  border: none;
-  background: linear-gradient(90deg, #0ca58c, #099276);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  transition: all 0.2s;
-}
-
-.search-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
-}
-
-.search-btn svg {
-  display: block;
 }
 
 .navbar-brand h1 {
   margin: 0;
-  font-size: 1.32rem;
-  font-weight: 800;
-  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
 }
 
 .nav-menu {
@@ -190,9 +111,9 @@
 
 .dashboard-layout {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 14px;
-  flex: 1;
+  grid-template-columns: 220px 260px 1fr;
+  gap: 18px;
+  align-items: start;
 }
 
 .main-content {
@@ -672,166 +593,235 @@ td {
   }
 }
 
-/* Docente layout overrides to match the screenshot */
-.docente-layout .dashboard-grid {
+/* Estilos para visualización de documentos del docente */
+.document-viewer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.student-info {
+  font-size: 0.95rem;
+  color: #0f172a;
+  margin: 0 0 10px 0;
+}
+
+.document-preview {
   display: grid;
-  grid-template-columns: 220px 220px 1fr;
-  grid-template-rows: 1fr 160px;
-  gap: 24px;
-  align-items: start;
+  align-content: start;
+  gap: 10px;
+  flex: 1;
 }
 
-.files-panel {
-  padding: 18px;
-  border-radius: 32px;
-  background: #9aa3a1;
+.document-content {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 400px;
 }
 
-.file-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.doc-frame {
   width: 100%;
-  max-width: 160px;
-}
-.file {
-  padding: 14px 18px;
-  border-radius: 12px;
-  background: #ffffff;
+  height: 100%;
   border: none;
-  font-weight: 700;
-  cursor: pointer;
-}
-.file.active {
-  background: linear-gradient(90deg, #d64a4a, #8b2e2e);
-  color: white;
+  min-height: 400px;
 }
 
-.students-column {
-  padding: 18px;
-  border-radius: 32px;
-  background: #9aa3a1;
-  max-height: calc(100vh - 220px);
-  overflow: auto;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-.student-list {
-  width: 100%;
-  max-width: 180px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
-.student-button {
-  width: 100%;
-  padding: 12px;
-  background: #ffffff;
-  border-radius: 12px;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-  text-align: center;
-}
-.student-button:hover {
-  transform: translateY(-2px);
-}
-.empty-students {
-  color: rgba(15, 23, 42, 0.6);
-  text-align: center;
-  padding: 12px;
-  background: #ffffff;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 180px;
-}
-
-.viewer-large {
-  grid-column: 3 / 4;
-  grid-row: 1 / 2;
-  border-radius: 32px;
-  background: #ffffff;
-  height: 480px;
+.loading-preview,
+.error-preview,
+.empty-preview {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.viewer-empty {
-  width: calc(100% - 40px);
-  height: calc(100% - 40px);
-  border-radius: 20px;
-  background: linear-gradient(180deg, #fff, #f7f7f7);
-}
-
-.progress-box {
-  grid-column: 1 / 3;
-  grid-row: 2 / 3;
-  border-radius: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #9aa3a1;
+  width: 100%;
+  min-height: 400px;
   padding: 20px;
-}
-.progress-title {
-  background: white;
-  padding: 14px 20px;
-  border-radius: 12px;
-  width: 80%;
   text-align: center;
-  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.loading-preview {
+  color: #0ca58c;
+  background: #f0fdf9;
+}
+
+.error-preview {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+}
+
+.empty-preview {
+  color: #94a3b8;
+  background: #f8fafc;
+}
+
+.empty-message {
+  padding: 16px;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Estilos específicos del layout del docente (similar al coordinador) */
+.glass-panel {
+  border: 1px solid rgba(148, 163, 184, 0.34);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 16px;
+}
+
+.left-column .files-panel {
+  border-radius: 28px;
+  padding: 18px;
+  background: #d1d7d8;
+  border: 18px solid #9aa19f;
   margin-bottom: 12px;
 }
-.progress-sections {
+
+.left-column .stats-panel {
+  border-radius: 28px;
+  padding: 14px;
+  background: #d1d7d8;
+  border: 18px solid #9aa19f;
+}
+
+.files-panel .panel-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.file-item .file-button {
+  width: 100%;
+  text-transform: capitalize;
+  padding: 12px 10px;
+  border-radius: 22px;
+  border: 0;
+  background: #ffffff;
+  color: #1f2937;
+  font-weight: 700;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.file-item .file-button.active {
+  background: linear-gradient(180deg, #d96b6b, #b93b3b);
+  color: #fff;
+}
+
+.middle-column .students-panel {
+  border-radius: 28px;
+  padding: 14px;
+  background: #d1d7d8;
+  border: 18px solid #9aa19f;
+  display: flex;
+  flex-direction: column;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.students-panel h4 {
+  margin: 0 0 8px 0;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.students-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.student-item {
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.student-item:hover {
+  transform: translateY(-2px);
+}
+
+.right-column .viewer-panel {
+  border-radius: 28px;
+  padding: 18px;
+  background: #ffffff;
+  border: 18px solid #9aa19f;
+  min-height: 420px;
+}
+
+/* Stats panel styles for docente (same as coordinador) */
+.ring-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  stroke: #e2e8f0;
+}
+
+.ring-progress {
+  stroke: #0ca58c;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.ring-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ring-percent {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0ca58c;
+  line-height: 1;
+}
+
+.ring-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.ring-stats {
+  width: 100%;
+  justify-content: center;
   display: flex;
   gap: 16px;
   margin-top: 10px;
-}
-.pill {
-  padding: 10px 18px;
-  border-radius: 999px;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-}
-.pill.pending {
-  background: #f59e0b;
-}
-.pill.approved {
-  background: #10b981;
-}
-.pill.failed {
-  background: #ef4444;
+  font-size: 0.9rem;
+  color: #1f2937;
+  font-weight: 600;
 }
 
-.right-info {
-  grid-column: 3 / 4;
-  grid-row: 2 / 3;
+.right-column {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-.info-row {
-  background: white;
-  padding: 14px;
-  border-radius: 12px;
-  text-align: center;
-}
-
-/* Small responsive tweaks */
-@media (max-width: 1100px) {
-  .docente-layout .dashboard-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-  }
-  .viewer-large {
-    height: 320px;
-  }
+  gap: 18px;
 }

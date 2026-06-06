@@ -129,3 +129,33 @@ exports.getProjectById = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener proyecto', error: error.message });
   }
 };
+
+// Obtener proyectos asignados al docente (estudiantes bajo su tutoría)
+exports.getMyAssignedProjects = async (req, res) => {
+  try {
+    const docenteId = req.user.id;
+    const query = `
+      SELECT u.id, u.nombre as estudiante_nombre, u.email as estudiante_email, de.rol as rol
+      FROM docente_estudiantes de
+      JOIN usuarios u ON de.estudiante_id = u.id
+      WHERE de.docente_id = $1
+      ORDER BY u.nombre
+    `;
+    const result = await pool.query(query, [docenteId]);
+    
+    const projects = result.rows.map(row => ({
+      id: row.id,
+      estudiante_id: row.id,
+      estudiante_nombre: row.estudiante_nombre,
+      estudiante_email: row.estudiante_email,
+      rol: row.rol,
+      titulo: `Proyecto de ${row.estudiante_nombre}`,
+      estado: 'pendiente',
+    }));
+    
+    res.json({ data: projects });
+  } catch (error) {
+    console.error('Error obteniendo proyectos asignados:', error);
+    res.status(500).json({ message: 'Error al obtener proyectos asignados', error: error.message });
+  }
+};

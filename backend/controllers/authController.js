@@ -56,7 +56,7 @@ exports.loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, rol: user.rol },
+      { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol, carrera_id: user.carrera_id },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
@@ -65,7 +65,7 @@ exports.loginUser = async (req, res) => {
       message: "Login exitoso",
       data: {
         token,
-        user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol }
+        user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol, carrera_id: user.carrera_id }
       }
     });
 
@@ -340,18 +340,26 @@ exports.setUserSubroles = async (req, res) => {
 exports.getUserAssignments = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('[getUserAssignments] Obteniendo asignaciones para:', id);
+    
     const user = await User.findById(id);
+    console.log('[getUserAssignments] Usuario:', { id: user?.id, rol: user?.rol });
+    
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
-    if (user.rol !== 'docente') {
+    
+    const userRolNormalized = (user.rol || '').trim().toLowerCase();
+    if (userRolNormalized !== 'docente') {
+      console.warn('[getUserAssignments] Usuario no es docente:', { rol: user.rol });
       return res.status(400).json({ message: "Solo los docentes tienen asignaciones" });
     }
 
     const assignments = await User.getDocenteAssignments(id);
+    console.log('[getUserAssignments] Asignaciones encontradas:', assignments.length);
     res.json({ data: assignments });
   } catch (error) {
-    console.error(error);
+    console.error('[getUserAssignments] Error:', error.message);
     res.status(500).json({ message: "Error al obtener asignaciones", error: error.message });
   }
 };
@@ -361,37 +369,50 @@ exports.assignStudentToDocente = async (req, res) => {
     const { id } = req.params;
     const { studentId, role } = req.body;
 
+    console.log('[assignStudentToDocente] Iniciando:', { docenteId: id, studentId, role });
+
     if (!studentId || !role) {
+      console.warn('[assignStudentToDocente] Faltan datos requeridos');
       return res.status(400).json({ message: "studentId y role son requeridos" });
     }
 
     const user = await User.findById(id);
+    console.log('[assignStudentToDocente] Docente:', { id: user?.id, rol: user?.rol });
     if (!user) {
       return res.status(404).json({ message: "Docente no encontrado" });
     }
 
-    if (user.rol !== 'docente') {
-      return res.status(400).json({ message: "Solo los docentes pueden recibir asignaciones" });
+    const userRolNormalized = (user.rol || '').trim().toLowerCase();
+    if (userRolNormalized !== 'docente') {
+      console.warn('[assignStudentToDocente] Usuario no es docente:', { rol: user.rol });
+      return res.status(400).json({ message: `Solo docentes pueden recibir asignaciones. Usuario es: ${user.rol}` });
     }
 
     const student = await User.findById(studentId);
+    console.log('[assignStudentToDocente] Estudiante:', { id: student?.id, rol: student?.rol });
     if (!student) {
       return res.status(404).json({ message: "Estudiante no encontrado" });
     }
 
-    if (student.rol !== 'estudiante') {
-      return res.status(400).json({ message: "Solo se pueden asignar estudiantes" });
+    const studentRolNormalized = (student.rol || '').trim().toLowerCase();
+    if (studentRolNormalized !== 'estudiante') {
+      console.warn('[assignStudentToDocente] Usuario no es estudiante:', { rol: student.rol });
+      return res.status(400).json({ message: `Solo estudiantes pueden ser asignados. Usuario es: ${student.rol}` });
     }
 
     const allowedRoles = ['asesor', 'jurado'];
     if (!allowedRoles.includes(role)) {
-      return res.status(400).json({ message: "Rol inválido" });
+      console.warn('[assignStudentToDocente] Rol inválido:', role);
+      return res.status(400).json({ message: "Rol debe ser 'asesor' o 'jurado'" });
     }
 
+    console.log('[assignStudentToDocente] Guardando asignación...');
     const assignment = await User.setDocenteAssignment(id, studentId, role);
+    console.log('[assignStudentToDocente] Asignación guardada:', assignment);
     res.json({ message: "Asignación guardada correctamente", data: assignment });
   } catch (error) {
-    console.error(error);
+    console.error('[assignStudentToDocente] Error:', error.message);
+    console.error('[assignStudentToDocente] Stack:', error.stack);
     res.status(500).json({ message: "Error al guardar asignación", error: error.message });
   }
 };
@@ -400,23 +421,30 @@ exports.removeUserAssignment = async (req, res) => {
   try {
     const { id, studentId } = req.params;
 
+    console.log('[removeUserAssignment] Iniciando:', { docenteId: id, studentId });
+
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "Docente no encontrado" });
     }
 
-    if (user.rol !== 'docente') {
+    const userRolNormalized = (user.rol || '').trim().toLowerCase();
+    if (userRolNormalized !== 'docente') {
       return res.status(400).json({ message: "Solo los docentes tienen asignaciones" });
     }
 
+    console.log('[removeUserAssignment] Eliminando asignación...');
     const deleted = await User.deleteDocenteAssignment(id, studentId);
     if (!deleted) {
+      console.warn('[removeUserAssignment] Asignación no encontrada');
       return res.status(404).json({ message: "Asignación no encontrada" });
     }
 
+    console.log('[removeUserAssignment] Asignación eliminada');
     res.json({ message: "Asignación eliminada correctamente" });
   } catch (error) {
-    console.error(error);
+    console.error('[removeUserAssignment] Error:', error.message);
+    console.error('[removeUserAssignment] Stack:', error.stack);
     res.status(500).json({ message: "Error al eliminar asignación", error: error.message });
   }
 };

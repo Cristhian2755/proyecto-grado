@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, AfterViewInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { DocumentChatbotComponent } from '../../../shared/document-chatbot/docum
   templateUrl: './home-estudiante.html',
   styleUrl: './home-estudiante.scss',
 })
-export class HomeEstudianteComponent {
+export class HomeEstudianteComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly http = inject(HttpClient);
@@ -39,12 +39,13 @@ export class HomeEstudianteComponent {
     'cronograma',
     'informe semana 6',
     'anexos',
-    'asesorias',
+    'asesoria',
     'informe final',
   ];
   readonly selectedFile = signal<string>(this.fileTypes[0]);
 
   readonly selectedEntrega = signal<any | null>(null);
+  readonly onlyofficeReady = signal(false);
 
   selectFile(file: string): void {
     this.selectedFile.set(file);
@@ -91,6 +92,10 @@ export class HomeEstudianteComponent {
     this.displayName = this.getDisplayName(user);
     this.userInitials = this.buildInitials(this.displayName);
     this.loadEntregasByCarpeta(this.selectedFile());
+  }
+
+  ngAfterViewInit(): void {
+    this.onlyofficeReady.set(true);
   }
 
   goToHome(path: string): void {
@@ -232,13 +237,9 @@ export class HomeEstudianteComponent {
         return;
       }
 
-      if (extension === 'docx' || extension === 'doc') {
-        await this.readDOCX(fileUrl);
-        return;
-      }
-
-      if (extension === 'xlsx' || extension === 'xls') {
-        await this.readXLSX(fileUrl);
+      // Para DOCX, XLSX y otros formatos compatibles con OnlyOffice
+      if (['docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt'].includes(extension)) {
+        await this.renderOnlyOfficePreview(fileUrl, fileName);
         return;
       }
 
@@ -253,38 +254,126 @@ export class HomeEstudianteComponent {
     }
   }
 
-  private async readDOCX(fileUrl: string): Promise<void> {
-    const mammoth: any = await import('mammoth');
-    const response = await fetch(fileUrl);
-    const arrayBuffer = await response.arrayBuffer();
-    const result = await mammoth.convertToHtml({ arrayBuffer });
-    this.previewHtml.set(result.value || '<p>Documento sin contenido.</p>');
+  private async renderOnlyOfficePreview(fileUrl: string, fileName: string): Promise<void> {
+    try {
+      const extension = this.getFileExtension(fileName);
+      
+      if (extension === 'docx' || extension === 'doc') {
+        await this.readDOCXWithStyle(fileUrl);
+      } else if (extension === 'xlsx' || extension === 'xls') {
+        await this.readXLSXWithStyle(fileUrl);
+      }
+    } catch (error) {
+      console.error('Error renderizando documento:', error);
+      this.previewError.set('No se pudo procesar el documento.');
+    }
   }
 
-  private async readXLSX(fileUrl: string): Promise<void> {
-    const XLSX: any = await import('xlsx');
-    const response = await fetch(fileUrl);
-    const arrayBuffer = await response.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+  private async readDOCXWithStyle(fileUrl: string): Promise<void> {
+    try {
+      const mammoth: any = await import('mammoth');
+      const response = await fetch(fileUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      
+      const styledHtml = `
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; }
+          p { margin: 10px 0; }
+          table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+          td, th { border: 1px solid #ddd; padding: 10px; text-align: left; }
+          th { background: #f5f5f5; font-weight: bold; }
+          h1, h2, h3 { color: #0ca58c; margin: 15px 0 10px; }
+          strong { font-weight: bold; }
+          em { font-style: italic; }
+          ul, ol { margin: 10px 0; padding-left: 20px; }
+        </style>
+        ${result.value || '<p>Documento sin contenido.</p>'}
+      `;
+      this.previewHtml.set(styledHtml);
+    } catch (error) {
+      console.error('Error leyendo DOCX:', error);
+      this.previewError.set('No se pudo leer el archivo DOCX.');
+    }
+  }
 
-    let html = '';
-    workbook.SheetNames.forEach((sheetName: string) => {
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+  private async readXLSXWithStyle(fileUrl: string): Promise<void> {
+    try {
+      const XLSXModule: any = await import('xlsx');
+      const XLSX = XLSXModule.default || XLSXModule;
+      
+      const response = await fetch(fileUrl);
+      if (!response.ok) {
+        throw new Error(`Error al descargar archivo: ${response.statusText}`);
+      }
+      
+      const arrayBuffer = await response.arrayBuffer();
+      if (arrayBuffer.byteLength === 0) {
+        throw new Error('Archivo vacío');
+      }
+      
+      const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+      
+      if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+        throw new Error('El archivo no contiene hojas válidas');
+      }
 
-      html += `<h4>Hoja: ${this.escapeHtml(sheetName)}</h4>`;
-      html += '<table class="preview-table">';
-      jsonData.forEach((row: any[]) => {
-        html += '<tr>';
-        row.forEach((cell) => {
-          html += `<td>${this.escapeHtml(cell ?? '')}</td>`;
-        });
-        html += '</tr>';
+      let html = `
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+          .sheet-container { margin-bottom: 30px; }
+          .sheet-title { font-size: 18px; font-weight: bold; color: #0ca58c; margin: 20px 0 10px; }
+          table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+          td, th { border: 1px solid #cbd5e1; padding: 12px; text-align: left; }
+          th { background: #0ca58c; color: white; font-weight: bold; }
+          tr:nth-child(even) { background: #f8fafc; }
+          tr:hover { background: #e8f5f2; }
+        </style>
+      `;
+
+      workbook.SheetNames.forEach((sheetName: string) => {
+        try {
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          html += `<div class="sheet-container">`;
+          html += `<div class="sheet-title">📋 ${this.escapeHtml(sheetName)}</div>`;
+          html += '<table><tbody>';
+          
+          if (jsonData && jsonData.length > 0) {
+            jsonData.forEach((row: any[], rowIdx: number) => {
+              html += '<tr>';
+              row.forEach((cell: any) => {
+                const tag = rowIdx === 0 ? 'th' : 'td';
+                const cellValue = cell !== null && cell !== undefined ? String(cell) : '';
+                html += `<${tag}>${this.escapeHtml(cellValue)}</${tag}>`;
+              });
+              html += '</tr>';
+            });
+          } else {
+            html += '<tr><td colspan="100%">Hoja vacía</td></tr>';
+          }
+          
+          html += '</tbody></table></div>';
+        } catch (sheetError) {
+          console.error(`Error procesando hoja ${sheetName}:`, sheetError);
+          html += `<div class="sheet-container"><p>Error al procesar hoja: ${this.escapeHtml(sheetName)}</p></div>`;
+        }
       });
-      html += '</table>';
-    });
 
-    this.previewHtml.set(html || '<p>Hoja vacía.</p>');
+      this.previewHtml.set(html || '<p>No se pudo procesar el archivo.</p>');
+    } catch (error) {
+      console.error('Error leyendo XLSX:', error);
+      this.previewError.set(`No se pudo leer el archivo XLSX: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    }
+  }
+
+  private getDocumentType(fileName: string): string {
+    const ext = this.getFileExtension(fileName).toLowerCase();
+    if (['docx', 'doc'].includes(ext)) return 'text';
+    if (['xlsx', 'xls'].includes(ext)) return 'spreadsheet';
+    if (['pptx', 'ppt'].includes(ext)) return 'presentation';
+    return 'text';
   }
 
   private getEntregaUrl(entrega: any): string {

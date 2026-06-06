@@ -14,12 +14,27 @@ const folderAliases = new Map([
   ["informe final", "informe final"]
 ]);
 
+const normalizeCarpeta = (carpeta) => {
+  const normalized = (carpeta || 'propuesta').toString().toLowerCase().trim();
+  return folderAliases.get(normalized) || "propuesta";
+};
+
 const ensureFolder = (folderName) => {
   const target = path.join(docsPath, folderName);
   if (!fs.existsSync(target)) {
     fs.mkdirSync(target, { recursive: true });
   }
   return target;
+};
+
+const sanitizeFolderName = (name) => {
+  if (!name || typeof name !== "string") return "sin_nombre";
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "_")
+    .substring(0, 100) || "sin_nombre";
 };
 
 if (!fs.existsSync(docsPath)) {
@@ -34,11 +49,25 @@ const { randomUUID } = require('crypto');
 
 const storage = multer.diskStorage({
   destination: (req, _file, cb) => {
-    // Preferir campo en body (multipart) pero aceptar query param como respaldo
-    const rawFolderSource = (typeof req.body?.carpeta === "string" && req.body.carpeta) || req.query?.carpeta || "propuesta";
-    const rawFolder = typeof rawFolderSource === "string" ? rawFolderSource.toLowerCase().trim() : "propuesta";
-    const folderName = folderAliases.get(rawFolder) || "propuesta";
-    cb(null, ensureFolder(folderName));
+    try {
+      // Obtener carpeta principal y normalizarla
+      const rawFolderSource = (typeof req.body?.carpeta === "string" && req.body.carpeta) || req.query?.carpeta || "propuesta";
+      const folderName = normalizeCarpeta(rawFolderSource);
+      
+      // Obtener nombre del estudiante
+      const studentName = sanitizeFolderName(req.user?.nombre || "sin_nombre");
+      
+      // Crear ruta: docs/carpeta/nombre_estudiante/
+      const studentFolder = path.join(docsPath, folderName, studentName);
+      
+      if (!fs.existsSync(studentFolder)) {
+        fs.mkdirSync(studentFolder, { recursive: true });
+      }
+      
+      cb(null, studentFolder);
+    } catch (error) {
+      cb(error);
+    }
   },
   filename: (req, file, cb) => {
     const uniqueName = `${req.user.id}-${Date.now()}-${path.basename(file.originalname)}`;

@@ -76,10 +76,11 @@ class Entrega {
     return result.rows;
   }
 
-  static async findByCarpetaPaged(carpeta, page = 1, limit = 20, usuarioId = null) {
+  static async findByCarpetaPaged(carpeta, page = 1, limit = 20, usuarioId = null, carreraId = null) {
     const offset = (page - 1) * limit;
     const likePattern = `docs/${carpeta}/%`;
 
+    // Si es estudiante, filtra por su ID
     if (usuarioId) {
       const query = `
         SELECT
@@ -101,6 +102,29 @@ class Entrega {
       return result.rows;
     }
 
+    // Si se proporciona carreraId (coordinador viendo su carrera), filtra por carrera
+    if (carreraId) {
+      const query = `
+        SELECT
+          e.id,
+          e.usuario_id,
+          u.nombre AS usuario_nombre,
+          u.email AS usuario_email,
+          e.archivo,
+          e.carpeta,
+          e.version,
+          e.fecha_subida AS fecha_entrega
+        FROM entregas e
+        LEFT JOIN usuarios u ON u.id = e.usuario_id
+        WHERE e.archivo LIKE $1 AND u.carrera_id = $2
+        ORDER BY e.fecha_subida DESC
+        LIMIT $3 OFFSET $4
+      `;
+      const result = await pool.query(query, [likePattern, carreraId, limit, offset]);
+      return result.rows;
+    }
+
+    // Sino, devuelve todas las entregas (admin/docentes sin filtro)
     const query = `
       SELECT
         e.id,

@@ -8,6 +8,7 @@ export interface Proyecto {
   problema: string;
   justificacion: string;
   objetivos: string;
+  usuario_id: number;
   estudiante_id: number;
   estudiante_nombre: string;
   estudiante_email: string;
@@ -21,7 +22,6 @@ export interface Proyecto {
   comentario?: string;
   aprobado?: boolean;
   fecha_revision?: string;
-  // Fuente opcional (ej. 'biblioteca') y nombre de documento cuando aplique
   fuente?: string;
   documentName?: string;
 }
