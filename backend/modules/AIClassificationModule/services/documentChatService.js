@@ -489,19 +489,18 @@ function buildDocumentContext({
       'Si no encuentras la sección, dilo claramente y explica qué sí aparece en el documento.',
     ],
     summary: [
-      'Si el usuario pide un resumen, sintetiza el documento en lenguaje natural y claro.',
-      'Conserva la jerarquía del Markdown para entender la intención de cada apartado.',
-      'Incluye solo las ideas principales, sin citar todo el texto.',
+      'Si el usuario pide un resumen, sintetiza el documento como si se lo explicaras a un amigo curioso.',
+      'Conserva las ideas principales pero habla con naturalidad, como en una charla real.',
     ],
     explain: [
-      'Si el usuario pide explicación, traduce el contenido a palabras sencillas sin perder precisión académica.',
-      'Aclara el propósito, la lógica y las implicaciones del fragmento consultado.',
-      'Mantén un tono amable, útil y coherente con el rol activo.',
+      'Si el usuario pide explicación, traduce el contenido a palabras sencillas como si fuera una tutoría informal.',
+      'Aclara el propósito y la lógica del fragmento, mostrando interés genuino por ayudar.',
+      'Puedes usar ejemplos cotidianos para ilustrar conceptos complejos.',
     ],
     answer: [
-      'Responde de forma directa y útil con base en el contenido disponible.',
-      'Si la pregunta apunta a una sección concreta, enfoca la respuesta en esa sección antes que en el resto del documento.',
-      'No inventes información que no esté en el texto.',
+      'Responde como en una conversación real, con naturalidad y sin sonar como manual.',
+      'Si la pregunta apunta a una sección concreta, enfócate en esa sección antes que en el resto.',
+      'Puedes preguntar de vuelta o mostrar entusiasmo si la consulta es interesante.',
     ],
   };
 
@@ -515,12 +514,7 @@ function buildDocumentContext({
     sourceBlocks.join('\n\n---\n\n'),
     '---',
     'Instrucciones de respuesta:',
-    '- Mantén la personalidad institucional de la Muñeca de Bloodborne: serena, cálida, elegante y ligeramente mística.',
-    '- Responde como un asistente académico de alta calidad, con claridad y naturalidad.',
     ...modeInstructions[mode || 'answer'].map((line) => `- ${line}`),
-    '- Si el usuario pide una parte del documento, una página o una sección, responde solo con lo solicitado y con mínima introducción.',
-    '- Si el usuario pide resumen o explicación, conserva el sentido del documento y adapta el nivel de detalle a la petición.',
-    '- Si hace falta citar, prioriza fragmentos fieles al texto.',
     '',
     `Consulta del usuario:\n${question}`,
   ]
@@ -639,10 +633,8 @@ async function buildSearchGuidanceResponse({ question, roleLabel, suggestedDocum
   const guidanceContext = [
     'No hay un documento seleccionado todavía.',
     'Tu tarea es ayudar a la persona a encontrar qué investigar o qué proyecto abrir.',
-    'Primero haz una sola pregunta breve y natural para aclarar la búsqueda.',
-    'No listes proyectos de inmediato salvo que la intención esté muy clara.',
-    'Cuando el usuario responda, entonces podrás orientar mejor o sugerir proyectos.',
-    `Pregunta sugerida para iniciar la guía: ${followUpQuestion}`,
+    'Haz una sola pregunta breve y natural para aclarar la búsqueda, como conversando cara a cara.',
+    `Pregunta sugerida: ${followUpQuestion}`,
   ]
     .filter(Boolean)
     .join('\n\n');
@@ -658,8 +650,15 @@ async function buildSearchGuidanceResponse({ question, roleLabel, suggestedDocum
   } catch (error) {
     console.warn('No se pudo generar la guía de búsqueda con Gemini:', error.message || error);
 
-    const intro = 'Claro, puedo ayudarte a buscar con más precisión.';
-    const extra = `${followUpQuestion} Si quieres, también puedo orientarte por carrera, tecnología o problema a resolver.`;
+    const ROLES = {
+      estudiante: '¡Claro! 😊 ',
+      docente: 'Con gusto te ayudo, colega.',
+      coordinador: 'Vamos a resolverlo.',
+      biblioteca: '¡Con mucho gusto te oriento!',
+    };
+
+    const intro = ROLES[roleLabel] || ROLES.estudiante;
+    const extra = `${followUpQuestion} ¿Te interesa alguna temática en específico?`;
 
     return `${intro} ${extra}`;
   }

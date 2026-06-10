@@ -18,7 +18,7 @@
 
 .top-navbar {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 24px;
   padding: 16px 28px;
@@ -28,11 +28,27 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.brand-logo {
+  display: block;
+  width: 50px;
+  height: auto;
+  object-fit: contain;
+  flex: none;
+}
+
 .navbar-brand h1 {
   margin: 0;
   font-size: 1.8rem;
   font-weight: 700;
   color: #fff;
+  white-space: nowrap;
 }
 
 .nav-menu {
@@ -78,6 +94,12 @@
   padding: 8px 16px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.1);
+}
+
+.user-profile span {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .avatar {
@@ -583,13 +605,16 @@ td {
 }
 
 @media (max-width: 768px) {
-  .top-navbar {
-    grid-template-columns: 1fr;
+  .navbar-brand h1 {
+    font-size: 1.4rem;
   }
 
-  .nav-menu {
-    order: 3;
-    width: 100%;
+  .navbar-right {
+    gap: 12px;
+  }
+
+  .user-profile {
+    display: none;
   }
 }
 
